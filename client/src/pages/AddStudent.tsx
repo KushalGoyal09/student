@@ -1,5 +1,3 @@
-"use client";
-
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -72,7 +70,7 @@ export default function AddStudentPage() {
     };
 
     return (
-        <div className="container mx-auto p-4">
+        <div className="flex items-center justify-center min-h-screen bg-gray-100">
             <Card className="w-full max-w-2xl mx-auto">
                 <CardHeader>
                     <CardTitle className="text-2xl">Add New Student</CardTitle>
