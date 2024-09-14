@@ -34,7 +34,7 @@ export default function MentorRatingPage() {
       }
     }
 
-    // fetchMentors()
+    fetchMentors()
   }, [])
 
   const handleRatingChange = (parameter: string, value: number[]) => {
