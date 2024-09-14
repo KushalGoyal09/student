@@ -12,7 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { AlertCircle } from "lucide-react";
 
-export default function Component() {
+export default function MentorLoginPage() {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
@@ -20,26 +20,27 @@ export default function Component() {
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         setError("");
+
         if (!username || !password) {
             setError("Please enter both username and password");
             return;
         }
-        setError("");
-        if (
-            username === import.meta.env.VITE_ADMIN_USERNAME &&
-            password === import.meta.env.VITE_ADMIN_PASSWORD
-        ) {
-            console.log("Loged in");
-        }
+
+        // Here you would typically handle the login logic
+        // For this example, we'll just log the attempt
+        console.log("Login attempted with:", { username, password });
+        // In a real application, you would make an API call here to authenticate
     };
 
     return (
         <div className="flex items-center justify-center min-h-screen bg-gray-100">
             <Card className="w-full max-w-md">
-                <CardHeader>
-                    <CardTitle className="text-2xl">Admin Login</CardTitle>
-                    <CardDescription>
-                        Enter your credentials to access the admin panel
+                <CardHeader className="space-y-1">
+                    <CardTitle className="text-2xl font-bold text-center">
+                        Mentor Login
+                    </CardTitle>
+                    <CardDescription className="text-center">
+                        Enter your credentials to access the mentor dashboard
                     </CardDescription>
                 </CardHeader>
                 <form onSubmit={handleSubmit}>
@@ -73,7 +74,7 @@ export default function Component() {
                     </CardContent>
                     <CardFooter>
                         <Button type="submit" className="w-full">
-                            Login
+                            Log In
                         </Button>
                     </CardFooter>
                 </form>

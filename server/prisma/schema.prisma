@@ -1,0 +1,108 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Supervisor {
+  id                 String               @id @default(uuid())
+  name               String
+  username           String               @unique
+  password           String
+  SeniorMentor       SeniorMentor[]
+  RatingBySupervisor RatingBySupervisor[]
+}
+
+model SeniorMentor {
+  id          String        @id @default(uuid())
+  name        String
+  username    String        @unique
+  password    String
+  rating      Float         @default(0)
+  GroupMentor GroupMentor[]
+
+  supervisor   Supervisor? @relation(fields: [supervisorId], references: [id])
+  supervisorId String?
+}
+
+model GroupMentor {
+  id       String    @id @default(uuid())
+  name     String
+  username String    @unique
+  password String
+  rating   Float     @default(0)
+  Student  Student[]
+
+  seniorMentor       SeniorMentor?        @relation(fields: [seniorMentorId], references: [id])
+  seniorMentorId     String?
+  RatingBySupervisor RatingBySupervisor[]
+  RatingByStudent    RatingByStudent[]
+}
+
+model Student {
+  id             String   @id @default(uuid())
+  name           String
+  gender         String
+  fatherName     String
+  motherName     String
+  whattsapNumber String   @unique
+  callNumber     String
+  motherNumber   String
+  fatherNumber   String
+  language       String
+  target         String
+  StudyHours     Int
+  class          String
+  dropperStatus  String
+  previousScore  String
+  platform       String
+  expectation    String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  groupMentor GroupMentor? @relation(fields: [groupMentorId], references: [id])
+
+  groupMentorId   String?
+  RatingByStudent RatingByStudent[]
+}
+
+model RatingBySupervisor {
+  id          String      @id @default(uuid())
+  supervisor  Supervisor  @relation(fields: [supervisorId], references: [id])
+  groupMentor GroupMentor @relation(fields: [groupMentorId], references: [id])
+
+  status           Int
+  meeting          Int
+  calling          Int
+  responsibility   Int
+  availability     Int
+  targetAssaigning Int
+  targetChecking   Int
+
+  supervisorId  String
+  groupMentorId String
+}
+
+model RatingByStudent {
+  id String @id @default(uuid())
+
+  bonding                     Int
+  targetAssaigningAndChecking Int
+  calling                     Int
+  seriousness                 Int
+  exceptation                 String
+
+  studentId     String
+  groupMentorId String
+
+  student     Student     @relation(fields: [studentId], references: [whattsapNumber])
+  groupMentor GroupMentor @relation(fields: [groupMentorId], references: [id])
+}
+
+model Admin {
+  username String @id @default("admin")
+  password String @default("admin")
+}

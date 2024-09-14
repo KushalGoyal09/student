@@ -7,7 +7,9 @@ function getEnvVariable(key: string) {
 }
 
 const Secret = {
-    PORT: getEnvVariable('PORT')
+    PORT: getEnvVariable('PORT'),
+    SECRET: getEnvVariable('SECRET'),
+    DATABASE_URL: getEnvVariable('DATABASE_URL')
 };
 
 export default Secret;

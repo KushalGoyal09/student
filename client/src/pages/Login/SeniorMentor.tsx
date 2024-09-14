@@ -10,63 +10,49 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { AlertCircle, CheckCircle2 } from "lucide-react";
+import { AlertCircle } from "lucide-react";
 
-export default function Component() {
-    const [name, setName] = useState("");
+export default function MentorLoginPage() {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
-    const [success, setSuccess] = useState("");
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         setError("");
-        setSuccess("");
 
-        if (!name || !username || !password) {
-            setError("Please fill in all fields");
+        if (!username || !password) {
+            setError("Please enter both username and password");
             return;
         }
 
-        // Here you would typically make an API call to add the mentor
-        // For this example, we'll just add to the local state
-
-        setName("");
-        setUsername("");
-        setPassword("");
-        setSuccess("Mentor added successfully");
-
-        console.log("New mentor added:", { name, username, password });
+        // Here you would typically handle the login logic
+        // For this example, we'll just log the attempt
+        console.log("Login attempted with:", { username, password });
+        // In a real application, you would make an API call here to authenticate
     };
 
     return (
         <div className="flex items-center justify-center min-h-screen bg-gray-100">
-            <Card className="w-full max-w-2xl mx-auto">
-                <CardHeader>
-                    <CardTitle className="text-2xl">Add New Mentor</CardTitle>
-                    <CardDescription>
-                        Enter the details of the new mentor
+            <Card className="w-full max-w-md">
+                <CardHeader className="space-y-1">
+                    <CardTitle className="text-2xl font-bold text-center">
+                        Mentor Login
+                    </CardTitle>
+                    <CardDescription className="text-center">
+                        Enter your credentials to access the mentor dashboard
                     </CardDescription>
                 </CardHeader>
                 <form onSubmit={handleSubmit}>
                     <CardContent className="space-y-4">
                         <div className="space-y-2">
-                            <Label htmlFor="name">Full Name</Label>
-                            <Input
-                                id="name"
-                                value={name}
-                                onChange={(e) => setName(e.target.value)}
-                                placeholder="Enter mentor's full name"
-                            />
-                        </div>
-                        <div className="space-y-2">
                             <Label htmlFor="username">Username</Label>
                             <Input
                                 id="username"
+                                type="text"
+                                placeholder="Enter your username"
                                 value={username}
                                 onChange={(e) => setUsername(e.target.value)}
-                                placeholder="Choose a username"
                             />
                         </div>
                         <div className="space-y-2">
@@ -74,9 +60,9 @@ export default function Component() {
                             <Input
                                 id="password"
                                 type="password"
+                                placeholder="Enter your password"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
-                                placeholder="Enter a strong password"
                             />
                         </div>
                         {error && (
@@ -85,16 +71,10 @@ export default function Component() {
                                 <span className="text-sm">{error}</span>
                             </div>
                         )}
-                        {success && (
-                            <div className="flex items-center space-x-2 text-green-600">
-                                <CheckCircle2 size={16} />
-                                <span className="text-sm">{success}</span>
-                            </div>
-                        )}
                     </CardContent>
                     <CardFooter>
                         <Button type="submit" className="w-full">
-                            Add Mentor
+                            Log In
                         </Button>
                     </CardFooter>
                 </form>
