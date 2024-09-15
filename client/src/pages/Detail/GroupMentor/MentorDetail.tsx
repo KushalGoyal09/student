@@ -5,17 +5,15 @@ import axios from "axios";
 import { toast } from "@/hooks/use-toast";
 import { Outlet, useNavigate } from "react-router-dom";
 
-const fetchSupervisors = async () => {
+const fetchSeniomMentors = async () => {
     try {
-        const { data } = await axios.get("/api/util/getSupervisor", {
+        const { data } = await axios.get("/api/detail/mentors", {
             headers: {
                 Authorization: `Bearer ${localStorage.getItem("token")}`,
             },
         });
-        console.log(data);
         return data.data;
     } catch (error) {
-        console.log(error);
         toast({
             description: "Something went wrong",
         });
@@ -23,14 +21,14 @@ const fetchSupervisors = async () => {
 };
 
 export default function SupervisorDetails() {
-    const [supervisors, setSupervisors] = useState<
+    const [sm, setSm] = useState<
         { id: number; name: string; username: string }[]
     >([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        fetchSupervisors().then((data) => {
-            setSupervisors(data);
+        fetchSeniomMentors().then((data) => {
+            setSm(data);
             setLoading(false);
         });
     }, []);
@@ -42,7 +40,7 @@ export default function SupervisorDetails() {
             <aside className="w-full md:w-64 p-4 border-r">
                 <h2 className="text-xl font-bold mb-4">Supervisors</h2>
                 <ScrollArea className="h-[calc(100vh-8rem)]">
-                    {loading && !supervisors.length
+                    {loading && !sm.length
                         ? Array(5)
                               .fill(0)
                               .map((_, i) => (
@@ -51,12 +49,12 @@ export default function SupervisorDetails() {
                                       className="h-10 w-full mb-2"
                                   />
                               ))
-                        : supervisors.map((supervisor) => (
+                        : sm.map((supervisor) => (
                               <button
                                   key={supervisor.id}
                                   className={`w-full text-left p-2 rounded mb-2`}
                                   onClick={() =>
-                                      navigate(`/supervisorDetail/${supervisor.username}`)
+                                      navigate(`/mentor/${supervisor.username}`)
                                   }
                               >
                                   {supervisor.name}

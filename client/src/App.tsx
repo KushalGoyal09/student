@@ -15,13 +15,14 @@ import {
 } from "./pages/Add";
 import Mentor from "./pages/Mentors";
 import AddTarget from "./pages/AddTarget";
-import ChangePassword from "./pages/ChangePassword";
+import ChangePassword from "./pages/Admin/ChangePassword";
 import MentorRatingPage from "./pages/SupervisorRating";
-import SupervisorDetails from "./pages/SupervisorDetail";
-import SMDetail from "./pages/SMDetail";
-import SupervisorDetailMain from "./components/SupervisorDetailMain";
-import SMDetailsMain from "./components/SMDetailMain";
-import path from "path";
+import SupervisorDetails from "./pages/Detail/Supervisor/SupervisorDetail";
+import SupervisorDetailMain from "./pages/Detail/Supervisor/SupervisorDetailMain";
+import SeniorMentorDetail from "./pages/Detail/SeniorMentor/SeniorMentorDetail";
+import SeniorMentorDetailMain from "./pages/Detail/SeniorMentor/SeniorMentorDetailMain";
+import MentorDetail from "./pages/Detail/GroupMentor/MentorDetail";
+import MentorDetailMain from "./pages/Detail/GroupMentor/MentorDetailMain";
 
 const App = () => {
     const router = createBrowserRouter([
@@ -54,22 +55,10 @@ const App = () => {
             path: "/admin",
             children: [
                 {
-                    path: "supervisor",
-
+                    path: "ChangePassword",
+                    element: <ChangePassword />,
                 },
-                {
-                    path: "senior-mentor",
-
-                },
-                {
-                    path: "mentor",
-
-                },
-                {
-                    path: "student",
-
-                }
-            ]
+            ],
         },
         {
             path: "/add",
@@ -101,10 +90,6 @@ const App = () => {
             element: <AddTarget />,
         },
         {
-            path: "/change-password",
-            element: <ChangePassword />,
-        },
-        {
             path: "/mentor-rating",
             element: <MentorRatingPage />,
         },
@@ -120,23 +105,33 @@ const App = () => {
         },
         {
             path: "/seniorMentor",
-            element: <SMDetail />,
+            element: <SeniorMentorDetail />,
             children: [
                 {
                     path: ":username",
-                    element: <SMDetailsMain />,
+                    element: <SeniorMentorDetailMain />,
                 },
             ],
         },
         {
             path: "/mentor",
+            element: <MentorDetail />,
             children: [
                 {
                     path: ":username",
-                    
-                }
-            ]
-        }
+                    element: <MentorDetailMain />,
+                },
+            ],
+        },
+        {
+            path: "/student",
+            children: [
+                {
+                    path: ":Id",
+
+                },
+            ],
+        },
     ]);
 
     return (

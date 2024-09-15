@@ -41,7 +41,7 @@ export default function AddSeniorMentor() {
     useEffect(() => {
         const getSupervisors = async () => {
             try {
-                const { data } = await axios.get("/api/util/getSupervisor", {
+                const { data } = await axios.get("/api/detail/supervisors", {
                     headers: {
                         Authorization: `Bearer ${localStorage.getItem("token")}`,
                     },
@@ -69,7 +69,7 @@ export default function AddSeniorMentor() {
         setSuccess("");
         try {
             const { data } = await axios.post(
-                "/api/addseniormentor",
+                "/api/add/senior-mentor",
                 formData,
                 {
                     headers: {
@@ -162,7 +162,7 @@ export default function AddSeniorMentor() {
                                 onValueChange={handleSelectChange}
                             >
                                 <SelectTrigger>
-                                    <SelectValue placeholder="Select a senior mentor" />
+                                    <SelectValue placeholder="Select a supervisor" />
                                 </SelectTrigger>
                                 <SelectContent>
                                     {supervisor.map((mentor) => (

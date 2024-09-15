@@ -34,7 +34,17 @@ const getMentorDetail = async (req: AuthRequest, res: Response) => {
             name: true,
             username: true,
             id: true,
-            Student: true,
+            Student: {
+                select: {
+                    id: true,
+                    name: true,
+                    whattsapNumber: true,
+                    fatherNumber:true,
+                    motherNumber: true,
+                    platform: true,
+                    previousScore: true,
+                }
+            },
         },
     });
     if (!data) {

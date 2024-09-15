@@ -41,7 +41,7 @@ export default function AddMentor() {
     useEffect(() => {
         const getSupervisors = async () => {
             try {
-                const { data } = await axios.get("/api/util/getSeniorMentor", {
+                const { data } = await axios.get("/api/detail/senior-mentors", {
                     headers: {
                         Authorization: `Bearer ${localStorage.getItem("token")}`,
                     },
@@ -68,7 +68,7 @@ export default function AddMentor() {
         setError("");
         setSuccess("");
         try {
-            const { data } = await axios.post("/api/addmentor", formData, {
+            const { data } = await axios.post("/api/add/mentor", formData, {
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem("token")}`,
                 },

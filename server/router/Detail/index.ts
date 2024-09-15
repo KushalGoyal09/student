@@ -1,5 +1,5 @@
 import { Router } from "express";
-const detailRouter = Router(); 
+const detailRouter = Router();
 import getAllStudents from "./getAllStudents";
 import getAllGroupMentor from "./getAllMentors";
 import getAllSeniorMentor from "./getAllSeniorMentor";
@@ -7,11 +7,18 @@ import getAllSupervisors from "./getAllSupervisor";
 import getMentorDetail from "./getMentorDetail";
 import getSeniorMentorDetail from "./getSeniorMentorDetail";
 import getSupervisorDetail from "./getSupervisorDetail";
+import authMiddleware from "../../middleware/auth";
 
-detailRouter.get("/students", getAllStudents);
-detailRouter.get("/mentors", getAllGroupMentor);
-detailRouter.get("/senior-mentors", getAllSeniorMentor);
-detailRouter.get("/supervisors", getAllSupervisors);
-detailRouter.post("/mentor-detail", getMentorDetail);
-detailRouter.post("/senior-mentor-detail", getSeniorMentorDetail);
-detailRouter.post("/supervisor-detail", getSupervisorDetail);
+detailRouter.get("/students", authMiddleware, getAllStudents);
+detailRouter.get("/mentors", authMiddleware, getAllGroupMentor);
+detailRouter.get("/senior-mentors", authMiddleware, getAllSeniorMentor);
+detailRouter.get("/supervisors", authMiddleware, getAllSupervisors);
+detailRouter.post("/mentor-detail", authMiddleware, getMentorDetail);
+detailRouter.post(
+    "/senior-mentor-detail",
+    authMiddleware,
+    getSeniorMentorDetail,
+);
+detailRouter.post("/supervisor-detail", authMiddleware, getSupervisorDetail);
+
+export default detailRouter;

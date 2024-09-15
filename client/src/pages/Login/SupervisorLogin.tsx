@@ -11,13 +11,22 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { AlertCircle } from "lucide-react";
+import axios, { isAxiosError } from "axios";
+import { useNavigate } from "react-router-dom";
+
+interface Response {
+    success: boolean;
+    message: string;
+    token: string;
+}
 
 export default function MentorLoginPage() {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
+    const navigate = useNavigate();
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setError("");
 
@@ -25,11 +34,25 @@ export default function MentorLoginPage() {
             setError("Please enter both username and password");
             return;
         }
-
-        // Here you would typically handle the login logic
-        // For this example, we'll just log the attempt
-        console.log("Login attempted with:", { username, password });
-        // In a real application, you would make an API call here to authenticate
+        try {
+            const { data } = await axios.post<Response>(
+                "/api/login/supervisor",
+                {
+                    username,
+                    password,
+                },
+            );
+            localStorage.setItem("token", data.token);
+            navigate("/");
+        } catch (error) {
+            if (isAxiosError(error)) {
+                if (error.response?.data.message) {
+                    setError(error.response.data.message);
+                    return;
+                }
+            }
+            setError("Something went wrong");
+        }
     };
 
     return (
@@ -37,7 +60,7 @@ export default function MentorLoginPage() {
             <Card className="w-full max-w-md">
                 <CardHeader className="space-y-1">
                     <CardTitle className="text-2xl font-bold text-center">
-                        Mentor Login
+                        Supervisor Login
                     </CardTitle>
                     <CardDescription className="text-center">
                         Enter your credentials to access the mentor dashboard

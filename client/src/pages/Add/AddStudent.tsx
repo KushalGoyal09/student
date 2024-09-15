@@ -134,7 +134,7 @@ export default function AddStudent() {
         setIsSubmitting(true);
         try {
             await axios.post(
-                "/api/addstudent",
+                "/api/add/student",
                 {
                     name: data.fullName,
                     gender: data.gender,
@@ -171,6 +171,7 @@ export default function AddStudent() {
                     "Your registration has been submitted successfully.",
             });
             setIsSubmitting(false);
+            form.reset();
         } catch (error) {
             setIsSubmitting(false);
             if (axios.isAxiosError(error)) {

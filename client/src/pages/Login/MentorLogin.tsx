@@ -11,25 +11,44 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { AlertCircle } from "lucide-react";
+import axios, { isAxiosError } from "axios";
+import { useNavigate } from "react-router-dom";
+
+interface Response {
+    success: boolean;
+    message: string;
+    token: string;
+}
 
 export default function MentorLoginPage() {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
+    const navigate = useNavigate();
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setError("");
-
         if (!username || !password) {
             setError("Please enter both username and password");
             return;
         }
-
-        // Here you would typically handle the login logic
-        // For this example, we'll just log the attempt
-        console.log("Login attempted with:", { username, password });
-        // In a real application, you would make an API call here to authenticate
+        try {
+            const { data } = await axios.post<Response>("/api/login/mentor", {
+                username,
+                password,
+            });
+            localStorage.setItem("token", data.token);
+            navigate("/");
+        } catch (error) {
+            if (isAxiosError(error)) {
+                if (error.response?.data.message) {
+                    setError(error.response.data.message);
+                    return;
+                }
+            }
+            setError("Something went wrong");
+        }
     };
 
     return (

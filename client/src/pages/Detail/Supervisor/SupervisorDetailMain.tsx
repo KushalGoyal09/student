@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import axios from "axios";
 import { User } from "lucide-react";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 const fetchSupervisorDetails = async (
     username: string,
@@ -17,7 +17,7 @@ const fetchSupervisorDetails = async (
     }[];
 }> => {
     const { data } = await axios.post(
-        "/api/supervisorDetail",
+        "/api/detail/supervisor-detail",
         {
             supervisorUsername: username,
         },
@@ -42,6 +42,7 @@ const SupervisorDetailMain = () => {
         }[];
     }>();
     let { username } = useParams();
+    const navigate = useNavigate();
 
     useEffect(() => {
         if (!username) return;
@@ -67,6 +68,7 @@ const SupervisorDetailMain = () => {
                                     <div
                                         key={index}
                                         className="flex items-center mb-2"
+                                        onClick={() => navigate(`/seniorMentor/${mentor.username}`)}
                                     >
                                         <User className="mr-2" />
                                         <span>

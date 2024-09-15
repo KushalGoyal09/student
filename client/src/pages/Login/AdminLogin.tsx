@@ -35,7 +35,7 @@ export default function Component() {
             return;
         }
         try {
-            const {data} = await axios.post<Response>("/api/admin/login", {
+            const {data} = await axios.post<Response>("/api/login/admin", {
                 username,
                 password,
             });

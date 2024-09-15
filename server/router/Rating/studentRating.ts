@@ -1,6 +1,5 @@
-import {Request, Response, Router} from 'express';
-import { PrismaClient } from '@prisma/client';
-const router = Router();
+import { Request, Response } from "express";
+import { PrismaClient } from "@prisma/client";
 const db = new PrismaClient();
 import { z } from "zod";
 
@@ -11,41 +10,49 @@ const bodySchema = z.object({
     targetAssaigningAndChecking: z.coerce.number().int(),
     calling: z.coerce.number().int(),
     seriousness: z.coerce.number().int(),
-    exceptation: z.string()
-})
+    exceptation: z.string(),
+});
 
 const studentRating = async (req: Request, res: Response) => {
     const parsedData = bodySchema.safeParse(req.body);
-    if(parsedData.success === false) {
+    if (parsedData.success === false) {
         res.json({
             success: false,
-            message: "Wrong Inputs"
-        })
+            message: "Wrong Inputs",
+        });
         return;
     }
-    const {bonding, targetAssaigningAndChecking, calling, seriousness,exceptation,email,phoneNumber} = parsedData.data;
+    const {
+        bonding,
+        targetAssaigningAndChecking,
+        calling,
+        seriousness,
+        exceptation,
+        email,
+        phoneNumber,
+    } = parsedData.data;
     const student = await db.student.findUnique({
         where: {
-            whattsapNumber: phoneNumber
+            whattsapNumber: phoneNumber,
         },
         select: {
-            id:true,
-            groupMentorId: true
-        }
-    })
-    if(student === null) {
+            id: true,
+            groupMentorId: true,
+        },
+    });
+    if (student === null) {
         res.json({
             success: false,
-            message: "Student is not found"
-        })
+            message: "Student is not found",
+        });
         return;
     }
-    if(student.groupMentorId === null) {
+    if (student.groupMentorId === null) {
         res.json({
             success: false,
-            message: "Student is not assigned to any mentor"
-        })
-        return
+            message: "Student is not assigned to any mentor",
+        });
+        return;
     }
     await db.ratingByStudent.create({
         data: {
@@ -55,15 +62,13 @@ const studentRating = async (req: Request, res: Response) => {
             seriousness,
             exceptation,
             studentId: student.id,
-            groupMentorId: student.groupMentorId
-        }
-    })
+            groupMentorId: student.groupMentorId,
+        },
+    });
     res.json({
         success: true,
-        message: "Rating is added successfully"
-    })
-}
+        message: "Rating is added successfully",
+    });
+};
 
-router.post('/', studentRating)
-
-export default router;
+export default studentRating;

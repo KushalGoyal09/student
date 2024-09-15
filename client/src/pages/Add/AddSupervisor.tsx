@@ -34,7 +34,7 @@ const AddSupervisor = () => {
 
         try {
             const { data } = await axios.post(
-                "/api/addsupervisor",
+                "/api/add/supervisor",
                 {
                     name,
                     username,
