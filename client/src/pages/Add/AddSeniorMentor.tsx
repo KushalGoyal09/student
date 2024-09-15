@@ -20,7 +20,7 @@ import { EyeIcon, EyeOffIcon } from "lucide-react";
 import axios, { isAxiosError } from "axios";
 import { AlertCircle, CheckCircle2 } from "lucide-react";
 
-export default function AddSeniorMentorPage() {
+export default function AddSeniorMentor() {
     const [showPassword, setShowPassword] = useState(false);
     const [formData, setFormData] = useState({
         name: "",
@@ -68,11 +68,15 @@ export default function AddSeniorMentorPage() {
         setError("");
         setSuccess("");
         try {
-            const { data } = await axios.post("/api/addseniormentor", formData, {
-                headers: {
-                    Authorization: `Bearer ${localStorage.getItem("token")}`,
+            const { data } = await axios.post(
+                "/api/addseniormentor",
+                formData,
+                {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem("token")}`,
+                    },
                 },
-            });
+            );
             setFormData({
                 name: "",
                 username: "",
@@ -166,7 +170,7 @@ export default function AddSeniorMentorPage() {
                                             key={mentor.id}
                                             value={mentor.id}
                                         >
-                                        {`${mentor.name} (${mentor.username})`}
+                                            {`${mentor.name} (${mentor.username})`}
                                         </SelectItem>
                                     ))}
                                 </SelectContent>

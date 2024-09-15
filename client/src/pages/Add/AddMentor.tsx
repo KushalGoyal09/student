@@ -20,7 +20,7 @@ import { EyeIcon, EyeOffIcon } from "lucide-react";
 import axios, { isAxiosError } from "axios";
 import { AlertCircle, CheckCircle2 } from "lucide-react";
 
-export default function AddSeniorMentorPage() {
+export default function AddMentor() {
     const [showPassword, setShowPassword] = useState(false);
     const [formData, setFormData] = useState({
         name: "",
@@ -68,15 +68,11 @@ export default function AddSeniorMentorPage() {
         setError("");
         setSuccess("");
         try {
-            const { data } = await axios.post(
-                "/api/addmentor",
-                formData,
-                {
-                    headers: {
-                        Authorization: `Bearer ${localStorage.getItem("token")}`,
-                    },
+            const { data } = await axios.post("/api/addmentor", formData, {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem("token")}`,
                 },
-            );
+            });
             setFormData({
                 name: "",
                 username: "",
@@ -177,7 +173,7 @@ export default function AddSeniorMentorPage() {
                             </Select>
                         </div>
                         <Button type="submit" className="w-full">
-                            Add  Mentor
+                            Add Mentor
                         </Button>
                     </form>
                     {error && (

@@ -1,10 +1,9 @@
 import { PrismaClient , Prisma} from "prisma/prisma-client";
 const db = new PrismaClient();
-import {Response,Router} from 'express'
-import { AuthRequest } from "../types";
+import {Response} from 'express'
+import { AuthRequest, Role } from "../../types";
 import { z } from "zod";
-import { throwForbiddenError, throwInternalServerError } from "../custom-error/customError";
-const router = Router()
+import { throwForbiddenError, throwInternalServerError } from "../../custom-error/customError";
 
 const bodySchema = z.object({
     name: z.coerce.string(),
@@ -15,6 +14,10 @@ const bodySchema = z.object({
 
 
 const addSenior = async (req: AuthRequest, res: Response) => {
+    if(req.role !== Role.admin) {
+        throwForbiddenError("You are not authorized to add a mentor");
+        return;
+    }
     const parsedData = bodySchema.safeParse(req.body);
     if(parsedData.success === false) {
         throwForbiddenError("Wrong Inputs");
@@ -47,6 +50,4 @@ const addSenior = async (req: AuthRequest, res: Response) => {
     }
 }
 
-router.post('/', addSenior)
-
-export default router;
+export default addSenior;

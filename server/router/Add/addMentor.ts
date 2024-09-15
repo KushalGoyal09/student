@@ -1,22 +1,20 @@
 import { PrismaClient , Prisma} from "prisma/prisma-client";
 const db = new PrismaClient();
-import {Response,Router} from 'express'
-import { AuthRequest, Role } from "../types";
+import {Response} from 'express'
+import { AuthRequest, Role } from "../../types";
 import { z } from "zod";
-import { throwForbiddenError, throwInternalServerError } from "../custom-error/customError";
-import authMiddleware from "../middleware/auth";
-const router = Router()
+import { throwForbiddenError, throwInternalServerError } from "../../custom-error/customError";
 
 const bodySchema = z.object({
     name: z.coerce.string(),
     username: z.coerce.string(),
-    password: z.coerce.string()
+    password: z.coerce.string(),
+    seniorMentorId: z.coerce.string()
 })
 
-
-const addSuper = async (req: AuthRequest, res: Response) => {
+const addMentor = async (req: AuthRequest, res: Response) => {
     if(req.role !== Role.admin) {
-        throwForbiddenError("You are not authorized to add a supervisor");
+        throwForbiddenError("You are not authorized to add a mentor");
         return;
     }
     const parsedData = bodySchema.safeParse(req.body);
@@ -24,18 +22,19 @@ const addSuper = async (req: AuthRequest, res: Response) => {
         throwForbiddenError("Wrong Inputs");
         return;
     }
-    const {username,password,name} = parsedData.data;
+    const {username,password,name,seniorMentorId} = parsedData.data;
     try {
-        await db.supervisor.create({
+        await db.groupMentor.create({
             data: {
                 username,
                 password,
-                name
+                name,
+                seniorMentorId
             }
         })
         res.json({
             success: true,
-            message: `Supervisor ${name} is added successfully`
+            message: `Group Mentor ${name} is added successfully`
         })
     } catch (error) {
         if(error instanceof Prisma.PrismaClientKnownRequestError) {
@@ -49,6 +48,4 @@ const addSuper = async (req: AuthRequest, res: Response) => {
     }
 }
 
-router.post('/',authMiddleware,  addSuper)
-
-export default router;
+export default addMentor;

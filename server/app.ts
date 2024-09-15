@@ -1,13 +1,7 @@
 import express from "express";
 import {
-    addMentorRouter,
-    addSeniorMentorRouter,
-    addStudentRouter,
-    addSupervisorRouter,
-    adminAuth,
     meRouter,
     studentRatingRouter,
-    utilRouter,
     supervisorDetailRouter,
     supervisorUtil,
     seniorMentorRouter
@@ -19,17 +13,19 @@ import errorHandler from "./middleware/errorHandler";
 const port = Secret.PORT;
 const app = express();
 import { config } from "dotenv";
+import loginRouter from "./router/Login";
+import AddRouter from "./router/Add";
+import utilRouter from "./router/Util";
+import adminRouter from "./router/Admin";
 config();
 
 app.use(express.json());
 
 app.use("/api/me", meRouter);
-app.use("/api/addstudent", addStudentRouter);
-app.use("/api/addmentor", addMentorRouter);
-app.use("/api/addseniormentor", addSeniorMentorRouter);
-app.use("/api/addsupervisor", addSupervisorRouter);
-app.use("/api/admin", adminAuth);
+app.use("/api/login", loginRouter);
+app.use("/api/add", AddRouter);
 app.use("/api/util", utilRouter);
+app.use("/api/admin", adminRouter);
 app.use("/api/studentrating", studentRatingRouter);
 app.use("/api/supervisordetail", supervisorDetailRouter);
 app.use("/api/supervisorUtil", supervisorUtil);

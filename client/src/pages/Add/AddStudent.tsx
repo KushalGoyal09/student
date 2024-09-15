@@ -105,7 +105,7 @@ const formSchema = z.object({
     }),
 });
 
-export default function StudentRegistrationForm() {
+export default function AddStudent() {
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     const form = useForm<z.infer<typeof formSchema>>({
