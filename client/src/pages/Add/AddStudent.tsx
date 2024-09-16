@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
@@ -103,10 +103,52 @@ const formSchema = z.object({
         message:
             "Please provide at least 10 characters about your expectations.",
     }),
+    groupMentorId: z.string(),
 });
+
+interface Response {
+    success: boolean;
+    data: {
+        name: string;
+        id: string;
+        username: string;
+    }[];
+}
+
+const fetchGroupMentors = async () => {
+    const { data } = await axios.get<Response>("/api/detail/mentors", {
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+    });
+    return data.data;
+};
 
 export default function AddStudent() {
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [mentors, setMentors] = useState<Response["data"]>([]);
+
+    useEffect(() => {
+        fetchGroupMentors()
+            .then((data) => {
+                setMentors(data);
+            })
+            .catch((error) => {
+                if (axios.isAxiosError(error)) {
+                    if (error.response?.data.message) {
+                        toast({
+                            title: "Error",
+                            description: error.response.data.message,
+                        });
+                        return;
+                    }
+                }
+                toast({
+                    title: "Error",
+                    description: "Something went wrong. Please try again.",
+                });
+            });
+    }, []);
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -127,6 +169,7 @@ export default function AddStudent() {
             previousNeetScore: "",
             studyPlatform: undefined,
             expectation: "",
+            groupMentorId: undefined,
         },
     });
 
@@ -158,6 +201,7 @@ export default function AddStudent() {
                     previousScore: data.previousNeetScore || "",
                     platform: data.studyPlatform,
                     expectation: data.expectation,
+                    groupMentorId: data.groupMentorId,
                 },
                 {
                     headers: {
@@ -273,7 +317,7 @@ export default function AddStudent() {
                                         <FormLabel>Father's Name</FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder="John Doe Sr."
+                                                placeholder="Father's name"
                                                 {...field}
                                             />
                                         </FormControl>
@@ -290,7 +334,7 @@ export default function AddStudent() {
                                         <FormLabel>Mother's Name</FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder="Jane Doe"
+                                                placeholder="Mother's Name"
                                                 {...field}
                                             />
                                         </FormControl>
@@ -652,6 +696,38 @@ export default function AddStudent() {
                                                 {...field}
                                             />
                                         </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="groupMentorId"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>
+                                            Assaigned Group Mentor
+                                        </FormLabel>
+                                        <Select
+                                            onValueChange={field.onChange}
+                                            defaultValue={field.value}
+                                        >
+                                            <FormControl>
+                                                <SelectTrigger>
+                                                    <SelectValue placeholder="Select Mentor" />
+                                                </SelectTrigger>
+                                            </FormControl>
+                                            <SelectContent>
+                                                {mentors.map((mentor) => (
+                                                    <SelectItem
+                                                        key={mentor.id}
+                                                        value={mentor.id}
+                                                    >
+                                                        {`${mentor.name} (${mentor.username})`}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
                                         <FormMessage />
                                     </FormItem>
                                 )}

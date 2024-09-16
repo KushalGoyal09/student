@@ -5,7 +5,6 @@ import { AuthRequest, Role } from "../../types";
 import { z } from "zod";
 import {
     throwForbiddenError,
-    throwInternalServerError,
 } from "../../custom-error/customError";
 
 const bodySchema = z.object({
@@ -25,6 +24,7 @@ const bodySchema = z.object({
     previousScore: z.string(),
     platform: z.string(),
     expectation: z.string(),
+    groupMentorId: z.coerce.string(),
 });
 
 const addStudent = async (req: AuthRequest, res: Response) => {
@@ -37,6 +37,7 @@ const addStudent = async (req: AuthRequest, res: Response) => {
         throwForbiddenError("Wrong Inputs");
         return;
     }
+    console.log(parsedData.data);
     await db.student.create({
         data: parsedData.data,
     });
