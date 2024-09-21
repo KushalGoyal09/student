@@ -4,49 +4,70 @@ import { Link } from "react-router-dom";
 import { Fragment } from "react/jsx-runtime";
 import { useRecoilValue } from "recoil";
 
+interface Links {
+    role: Array<Role | null>;
+    label: string;
+    path: string;
+}
+
 const Home = () => {
     const role = useRecoilValue(userAtom);
 
-    const links = [
+    const links: Links[] = [
         {
-            role: null,
+            role: [null],
             label: "Mentor Login",
             path: "/login/mentor",
         },
         {
-            role: null,
+            role: [null],
             label: "Supervisor Login",
             path: "/login/supervisor",
         },
         {
-            role: null,
+            role: [null],
             label: "Senior Mentor Login",
             path: "/login/senior-mentor",
         },
         {
-            role: null,
+            role: [null],
             label: "Admin Login",
             path: "/login/admin",
         },
         {
-            role: Role.admin,
+            role: [Role.admin],
             label: "Add Mentor",
             path: "/add/mentor",
         },
         {
-            role: Role.admin,
+            role: [Role.admin],
             label: "Add Senior Mentor",
             path: "/add/senior-mentor",
         },
         {
-            role: Role.admin,
+            role: [Role.admin],
             label: "Add Supervisor",
             path: "/add/supervisor",
         },
         {
-            role: Role.admin,
+            role: [Role.admin],
             label: "Add Student",
             path: "/add/student",
+        },
+        {
+            role: [Role.admin],
+            label: "See all supervisors",
+            path: "/supervisor",
+        },
+        {
+            role: [Role.supervisor, Role.admin],
+            label: "See all Senior Mentors",
+            path: "/seniorMentor",
+        },
+        {
+            role: [Role.supervisor, Role.admin, Role.seniorMentor],
+            label: "See all Mentors",
+            path: "/mentor",
         },
     ];
 
@@ -61,7 +82,7 @@ const Home = () => {
                     <ul className="space-y-2">
                         {links.map((link) => (
                             <Fragment key={link.path}>
-                                {link.role === role && (
+                                {link.role.includes(role) && (
                                     <li key={link.path}>
                                         <Link
                                             to={link.path}

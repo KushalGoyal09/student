@@ -1,6 +1,6 @@
 import {  tokenAtom, userAtom } from "@/recoil/userAtom";
 import { redirect } from "react-router-dom";
-import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 
 const Navbar = () => {
     const [role,setRole] = useRecoilState(userAtom);
