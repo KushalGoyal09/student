@@ -13,6 +13,8 @@ import { Label } from "@/components/ui/label";
 import { AlertCircle } from "lucide-react";
 import axios, { isAxiosError } from "axios";
 import { useNavigate } from "react-router-dom";
+import { useSetRecoilState } from "recoil";
+import { tokenAtom } from "@/recoil/userAtom";
 
 interface Response {
     success: boolean;
@@ -25,6 +27,7 @@ export default function MentorLoginPage() {
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
     const navigate = useNavigate();
+    const setToken = useSetRecoilState(tokenAtom);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -43,6 +46,7 @@ export default function MentorLoginPage() {
                 },
             );
             localStorage.setItem("token", data.token);
+            setToken(data.token);
             navigate("/");
         } catch (error) {
             if (isAxiosError(error)) {

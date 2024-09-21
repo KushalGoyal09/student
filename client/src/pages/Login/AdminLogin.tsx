@@ -14,6 +14,8 @@ import { Label } from "@/components/ui/label";
 import { AlertCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "@/hooks/use-toast";
+import { useSetRecoilState } from "recoil";
+import { tokenAtom } from "@/recoil/userAtom";
 
 interface Response {
     success: boolean;
@@ -26,6 +28,7 @@ export default function Component() {
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
     const navigate = useNavigate();
+    const setToken = useSetRecoilState(tokenAtom);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -40,6 +43,7 @@ export default function Component() {
                 password,
             });
             localStorage.setItem("token", data.token);
+            setToken(data.token);
             toast({
                 title: "Success",
                 description: data.message,

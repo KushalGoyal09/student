@@ -23,6 +23,8 @@ import SeniorMentorDetail from "./pages/Detail/SeniorMentor/SeniorMentorDetail";
 import SeniorMentorDetailMain from "./pages/Detail/SeniorMentor/SeniorMentorDetailMain";
 import MentorDetail from "./pages/Detail/GroupMentor/MentorDetail";
 import MentorDetailMain from "./pages/Detail/GroupMentor/MentorDetailMain";
+import NotFound from "./pages/NotFound";
+import { RecoilRoot } from "recoil";
 
 const App = () => {
     const router = createBrowserRouter([
@@ -128,17 +130,20 @@ const App = () => {
             children: [
                 {
                     path: ":Id",
-
                 },
             ],
+        },
+        {
+            path: "*",
+            element: <NotFound />,
         },
     ]);
 
     return (
-        <>
+        <RecoilRoot>
             <Toaster />
             <RouterProvider router={router} />
-        </>
+        </RecoilRoot>
     );
 };
 
