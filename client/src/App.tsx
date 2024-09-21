@@ -23,6 +23,7 @@ import SeniorMentorDetail from "./pages/Detail/SeniorMentor/SeniorMentorDetail";
 import SeniorMentorDetailMain from "./pages/Detail/SeniorMentor/SeniorMentorDetailMain";
 import MentorDetail from "./pages/Detail/GroupMentor/MentorDetail";
 import MentorDetailMain from "./pages/Detail/GroupMentor/MentorDetailMain";
+import StudentProfile from "./pages/Profile/StudentProfile";
 import NotFound from "./pages/NotFound";
 import { RecoilRoot } from "recoil";
 
@@ -126,10 +127,11 @@ const App = () => {
             ],
         },
         {
-            path: "/student",
+            path: "/profile",
             children: [
                 {
-                    path: ":Id",
+                    path: ":id",
+                    element: <StudentProfile />,
                 },
             ],
         },
