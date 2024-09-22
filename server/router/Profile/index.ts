@@ -9,5 +9,4 @@ ProfileRouter.post("/student", authMiddleware, studentProfile);
 ProfileRouter.post("/update/student", authMiddleware, updateStudentProfile);
 ProfileRouter.post("/update/status", authMiddleware, changeActiveStatus);
 
-
 export default ProfileRouter;

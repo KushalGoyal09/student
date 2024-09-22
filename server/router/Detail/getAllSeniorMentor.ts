@@ -26,23 +26,23 @@ const getAllSeniorMentor = async (req: AuthRequest, res: Response) => {
             success: true,
             data,
         });
-        return
+        return;
     }
-    if(req.role === Role.supervisor) {
+    if (req.role === Role.supervisor) {
         const userId = req.userId;
-        if(!userId) {
+        if (!userId) {
             throwUnauthorizedError("User not found");
             return;
         }
         const data = await db.seniorMentor.findMany({
             where: {
-                supervisorId: userId
+                supervisorId: userId,
             },
             select: {
                 id: true,
                 name: true,
                 username: true,
-            }
+            },
         });
         res.status(200).json({
             success: true,

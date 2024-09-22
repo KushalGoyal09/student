@@ -49,13 +49,12 @@ const getFeeData = async (req: AuthRequest, res: Response) => {
         ) || 0;
     const data = {
         ...student.Fees,
-        totalAmountPaid
-    }
+        totalAmountPaid,
+    };
     return res.status(200).json({
         success: true,
         data,
     });
-
 };
 
 export default getFeeData;

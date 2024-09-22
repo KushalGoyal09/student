@@ -32,7 +32,7 @@ const assaignMentor = async (req: AuthRequest, res: Response) => {
         console.log(error);
         return;
     }
-    
+
     return res.status(200).json({
         success: true,
         message: "Mentor assigned successfully",

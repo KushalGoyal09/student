@@ -34,28 +34,32 @@ export default function Component() {
             return;
         }
         try {
-            const {data} = await axios.post<Response>("/api/admin/changePassword", {
-                newPassword: password,
-            }, {
-                headers: {
-                    Authorization: `Bearer ${localStorage.getItem("token")}`,
-                }
-            });
+            const { data } = await axios.post<Response>(
+                "/api/admin/changePassword",
+                {
+                    newPassword: password,
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem("token")}`,
+                    },
+                },
+            );
             toast({
                 title: "Success",
                 description: data.message,
-            })
+            });
             navigate("/");
         } catch (error) {
-            if(isAxiosError(error)) {
-                if(error.response?.data.message) {
+            if (isAxiosError(error)) {
+                if (error.response?.data.message) {
                     setError(error.response.data.message);
                     return;
                 }
             }
             toast({
                 description: "Somthing is wrong",
-            })
+            });
             return;
         }
     };

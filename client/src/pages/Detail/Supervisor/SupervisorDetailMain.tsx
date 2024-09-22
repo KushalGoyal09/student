@@ -68,7 +68,11 @@ const SupervisorDetailMain = () => {
                                     <div
                                         key={index}
                                         className="flex items-center mb-2"
-                                        onClick={() => navigate(`/seniorMentor/${mentor.username}`)}
+                                        onClick={() =>
+                                            navigate(
+                                                `/seniorMentor/${mentor.username}`,
+                                            )
+                                        }
                                     >
                                         <User className="mr-2" />
                                         <span>

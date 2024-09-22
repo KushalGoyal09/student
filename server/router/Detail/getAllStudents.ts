@@ -135,7 +135,7 @@ const getAllStudents = async (req: AuthRequest, res: Response) => {
                 {
                     status: "desc",
                 },
-                {   
+                {
                     name: "asc",
                 },
             ],

@@ -70,7 +70,12 @@ const Home = () => {
             path: "/mentor",
         },
         {
-            role: [Role.seniorMentor, Role.admin, Role.supervisor, Role.groupMentor],
+            role: [
+                Role.seniorMentor,
+                Role.admin,
+                Role.supervisor,
+                Role.groupMentor,
+            ],
             label: "See all Students",
             path: "/students",
         },
@@ -82,18 +87,18 @@ const Home = () => {
         {
             role: [Role.admin],
             label: "Fees Data",
-            path: "/fee-details"
+            path: "/fee-details",
         },
         {
             role: [Role.admin],
             label: "Kit Distribution Data",
-            path: "kit-data"
+            path: "kit-data",
         },
         {
             role: [Role.admin],
             label: "Change Password",
             path: "/admin/change-password",
-        }, 
+        },
     ];
 
     return (

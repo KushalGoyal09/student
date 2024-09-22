@@ -14,7 +14,7 @@ import { AlertCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import axios, { isAxiosError } from "axios";
 import { useSetRecoilState } from "recoil";
-import { Role, tokenAtom, userAtom } from "@/recoil/userAtom"
+import { Role, tokenAtom, userAtom } from "@/recoil/userAtom";
 
 interface Response {
     success: boolean;
@@ -48,7 +48,7 @@ export default function MentorLoginPage() {
             );
             localStorage.setItem("token", data.token);
             setToken(data.token);
-            setRole(Role.seniorMentor)
+            setRole(Role.seniorMentor);
             navigate("/");
         } catch (error) {
             if (isAxiosError(error)) {

@@ -25,7 +25,7 @@ export default function SupervisorDetails() {
     >([]);
     const [loading, setLoading] = useState(true);
     const [selectedMentor, setSelectedMentor] = useState<string | undefined>(
-        undefined
+        undefined,
     );
 
     const navigate = useNavigate();
@@ -63,10 +63,15 @@ export default function SupervisorDetails() {
                         disabled={loading || !sm.length}
                     >
                         <option value="" disabled>
-                            {loading ? "Loading Mentors..." : "Choose a Mentors"}
+                            {loading
+                                ? "Loading Mentors..."
+                                : "Choose a Mentors"}
                         </option>
                         {sm.map((supervisor) => (
-                            <option key={supervisor.id} value={supervisor.username}>
+                            <option
+                                key={supervisor.id}
+                                value={supervisor.username}
+                            >
                                 {supervisor.name}
                             </option>
                         ))}

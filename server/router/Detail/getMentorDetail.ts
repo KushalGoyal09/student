@@ -39,11 +39,11 @@ const getMentorDetail = async (req: AuthRequest, res: Response) => {
                     id: true,
                     name: true,
                     whattsapNumber: true,
-                    fatherNumber:true,
+                    fatherNumber: true,
                     motherNumber: true,
                     platform: true,
                     previousScore: true,
-                }
+                },
             },
         },
     });

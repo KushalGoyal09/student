@@ -6,7 +6,7 @@ export enum Role {
     supervisor,
     seniorMentor,
     groupMentor,
-    user
+    user,
 }
 
 export interface AuthRequest<T = {}, P = {}, R = {}> extends Request<T, P, R> {

@@ -68,7 +68,11 @@ const SMDetailsMain = () => {
                                     <div
                                         key={index}
                                         className="flex items-center mb-2"
-                                        onClick={() => navigate(`/mentor/${mentor.username}`)}
+                                        onClick={() =>
+                                            navigate(
+                                                `/mentor/${mentor.username}`,
+                                            )
+                                        }
                                     >
                                         <User className="mr-2" />
                                         <span>

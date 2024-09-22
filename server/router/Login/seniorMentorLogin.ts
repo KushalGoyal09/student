@@ -1,7 +1,11 @@
-import { Response,Request } from "express";
+import { Response, Request } from "express";
 import { PrismaClient } from "prisma/prisma-client";
 import { z } from "zod";
-import { throwBadRequestError, throwForbiddenError, throwUnauthorizedError } from "../../custom-error/customError";
+import {
+    throwBadRequestError,
+    throwForbiddenError,
+    throwUnauthorizedError,
+} from "../../custom-error/customError";
 import { getToken } from "../../utils/auth";
 import { Role } from "../../types";
 const db = new PrismaClient();
@@ -24,7 +28,7 @@ const seniorMentorLogin = async (req: Request, res: Response) => {
         },
         select: {
             password: true,
-            id: true
+            id: true,
         },
     });
     if (!mentor) {
@@ -35,12 +39,12 @@ const seniorMentorLogin = async (req: Request, res: Response) => {
         throwUnauthorizedError("Password incorrect");
         return;
     }
-    const token = getToken(mentor.id, Role.seniorMentor)
+    const token = getToken(mentor.id, Role.seniorMentor);
     res.json({
         success: true,
         message: "Senior Mentor loged in successfully",
-        token
+        token,
     });
-}
+};
 
 export default seniorMentorLogin;

@@ -10,11 +10,13 @@ const prisma = new PrismaClient();
 
 const bodySchema = z.object({
     seniorMentorUsername: z.coerce.string(),
-})
+});
 
 const getSeniorMentorDetail = async (req: AuthRequest, res: Response) => {
     if (req.role !== Role.admin && req.role !== Role.supervisor) {
-        throwUnauthorizedError("You are not authorized to get all senior mentor");
+        throwUnauthorizedError(
+            "You are not authorized to get all senior mentor",
+        );
         return;
     }
     const parsedData = bodySchema.safeParse(req.body);

@@ -3,13 +3,13 @@ import {
     throwForbiddenError,
     throwUnauthorizedError,
 } from "../custom-error/customError";
-import { getUser} from "../utils/auth"
+import { getUser } from "../utils/auth";
 import { AuthRequest } from "../types";
 
 const authMiddleware = (
     req: AuthRequest,
     res: Response,
-    next: NextFunction
+    next: NextFunction,
 ) => {
     const authorizationHeader = req.headers.authorization;
 
@@ -31,7 +31,7 @@ const authMiddleware = (
             next();
             return;
         } else {
-            throwForbiddenError("Invalid Token")
+            throwForbiddenError("Invalid Token");
         }
     } catch (error) {
         throwForbiddenError("Invalid token");

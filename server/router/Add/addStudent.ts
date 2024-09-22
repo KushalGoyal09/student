@@ -3,9 +3,7 @@ const db = new PrismaClient();
 import { Response } from "express";
 import { AuthRequest, Role } from "../../types";
 import { z } from "zod";
-import {
-    throwForbiddenError,
-} from "../../custom-error/customError";
+import { throwForbiddenError } from "../../custom-error/customError";
 
 const bodySchema = z.object({
     name: z.string(),

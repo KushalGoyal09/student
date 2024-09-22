@@ -52,7 +52,7 @@ const FeeDetails = () => {
             }
         };
         fetchStudents();
-    },[]);
+    }, []);
 
     const toggleExpand = (id: string) => {
         setExpandedStudents((prev) => {
@@ -82,12 +82,12 @@ const FeeDetails = () => {
     };
 
     const formatPlan = (plan: number) => {
-        if(plan === 0) {
+        if (plan === 0) {
             return "Not Set";
         } else {
             return `${plan} Time`;
         }
-    }
+    };
 
     return (
         <div className="container mx-auto p-4 max-w-md">
@@ -135,7 +135,13 @@ const FeeDetails = () => {
                                         to={`/profile/${student.id}`}
                                         className="text-primary hover:underline"
                                     >
-                                        <Button variant={"default"} className="bg-slate-500"> View Profile </Button>
+                                        <Button
+                                            variant={"default"}
+                                            className="bg-slate-500"
+                                        >
+                                            {" "}
+                                            View Profile{" "}
+                                        </Button>
                                     </Link>
                                 </div>
                                 {student.Fees &&

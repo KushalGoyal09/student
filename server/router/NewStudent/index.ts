@@ -12,11 +12,11 @@ import getKitDispatchData from "./getKitDispatchData";
 import kitDispatched from "./kitDispatched";
 
 AdmissionRouter.post("/admission", admissionForm);
-AdmissionRouter.get("/students", authMiddleware,getAllNewStudents);
-AdmissionRouter.get("/fee-data",authMiddleware ,getStudentFeeData);
-AdmissionRouter.post("/fee-data",authMiddleware ,getFeeData);
-AdmissionRouter.put("/update-fee-details",authMiddleware ,feeChange);
-AdmissionRouter.post("/add-payment",authMiddleware ,addPayment);
+AdmissionRouter.get("/students", authMiddleware, getAllNewStudents);
+AdmissionRouter.get("/fee-data", authMiddleware, getStudentFeeData);
+AdmissionRouter.post("/fee-data", authMiddleware, getFeeData);
+AdmissionRouter.put("/update-fee-details", authMiddleware, feeChange);
+AdmissionRouter.post("/add-payment", authMiddleware, addPayment);
 AdmissionRouter.post("/assign-mentor", authMiddleware, assaignMentor);
 AdmissionRouter.get("/kit-data", authMiddleware, getKitDispatchData);
 AdmissionRouter.post("/kit-dispatch", authMiddleware, kitDispatched);

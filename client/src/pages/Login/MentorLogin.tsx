@@ -44,7 +44,7 @@ export default function MentorLoginPage() {
             });
             localStorage.setItem("token", data.token);
             setToken(data.token);
-            setRole(Role.groupMentor)
+            setRole(Role.groupMentor);
             navigate("/");
         } catch (error) {
             if (isAxiosError(error)) {
