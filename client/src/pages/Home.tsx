@@ -69,6 +69,31 @@ const Home = () => {
             label: "See all Mentors",
             path: "/mentor",
         },
+        {
+            role: [Role.seniorMentor, Role.admin, Role.supervisor, Role.groupMentor],
+            label: "See all Students",
+            path: "/students",
+        },
+        {
+            role: [Role.admin],
+            label: "See all new admissions",
+            path: "/new-admission",
+        },
+        {
+            role: [Role.admin],
+            label: "Fees Data",
+            path: "/fee-details"
+        },
+        {
+            role: [Role.admin],
+            label: "Kit Distribution Data",
+            path: "kit-data"
+        },
+        {
+            role: [Role.admin],
+            label: "Change Password",
+            path: "/admin/change-password",
+        }, 
     ];
 
     return (

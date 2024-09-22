@@ -1,11 +1,10 @@
 import { useState, useEffect } from "react";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
 import axios from "axios";
 import { toast } from "@/hooks/use-toast";
-import { Outlet, useNavigate } from "react-router-dom";
+import { useNavigate, Outlet } from "react-router-dom";
 
-const fetchSeniomMentors = async () => {
+const fetchSeniorMentors = async () => {
     try {
         const { data } = await axios.get("/api/detail/senior-mentors", {
             headers: {
@@ -25,45 +24,68 @@ export default function SupervisorDetails() {
         { id: number; name: string; username: string }[]
     >([]);
     const [loading, setLoading] = useState(true);
+    const [selectedMentor, setSelectedMentor] = useState<string | undefined>(
+        undefined,
+    );
+
+    const navigate = useNavigate();
 
     useEffect(() => {
-        fetchSeniomMentors().then((data) => {
+        fetchSeniorMentors().then((data) => {
             setSm(data);
             setLoading(false);
         });
     }, []);
 
-    const navigate = useNavigate();
+    const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        const selectedUsername = event.target.value;
+        setSelectedMentor(selectedUsername);
+        if (selectedUsername) {
+            navigate(`/seniorMentor/${selectedUsername}`);
+        }
+    };
 
     return (
-        <div className="flex flex-col md:flex-row h-screen bg-background">
-            <aside className="w-full md:w-64 p-4 border-r">
-                <h2 className="text-xl font-bold mb-4">Supervisors</h2>
-                <ScrollArea className="h-[calc(100vh-8rem)]">
-                    {loading && !sm.length
-                        ? Array(5)
-                              .fill(0)
-                              .map((_, i) => (
-                                  <Skeleton
-                                      key={i}
-                                      className="h-10 w-full mb-2"
-                                  />
-                              ))
-                        : sm.map((supervisor) => (
-                              <button
-                                  key={supervisor.id}
-                                  className={`w-full text-left p-2 rounded mb-2`}
-                                  onClick={() =>
-                                      navigate(`/seniorMentor/${supervisor.username}`)
-                                  }
-                              >
-                                  {supervisor.name}
-                              </button>
-                          ))}
-                </ScrollArea>
-            </aside>
-            <main className="flex-1 p-4 overflow-auto">
-                <Outlet/>
+        <div className="flex flex-col h-screen bg-background p-4">
+            <header className="w-full mb-4">
+                <label
+                    htmlFor="mentor-select"
+                    className="block text-sm font-medium text-gray-700 mb-2"
+                >
+                    Select a Senior Mentor
+                </label>
+                <div className="relative">
+                    <select
+                        id="mentor-select"
+                        value={selectedMentor}
+                        onChange={handleChange}
+                        className="block w-full p-2 border border-gray-300 rounded-md bg-white shadow-sm focus:ring-blue-500 focus:border-blue-500 text-sm"
+                        disabled={loading || !sm.length}
+                    >
+                        <option value="" disabled>
+                            {loading
+                                ? "Loading Senior Mentors..."
+                                : "Choose a Senior Mentor"}
+                        </option>
+                        {sm.map((supervisor) => (
+                            <option
+                                key={supervisor.id}
+                                value={supervisor.username}
+                            >
+                                {supervisor.name}
+                            </option>
+                        ))}
+                    </select>
+                    {loading && !sm.length && (
+                        <div className="absolute inset-0 bg-white opacity-50 flex items-center justify-center">
+                            <Skeleton className="h-10 w-full" />
+                        </div>
+                    )}
+                </div>
+            </header>
+
+            <main className="flex-1 overflow-auto">
+                <Outlet />
             </main>
         </div>
     );

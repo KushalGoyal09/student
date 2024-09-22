@@ -29,6 +29,7 @@ import { RecoilRoot } from "recoil";
 import NewAdmissions from "./pages/New/NewAdmissions";
 import FeeDetail from "./pages/New/FeeDetail";
 import KitDispatchPage from "./pages/New/KitDetails";
+import StudentList from "./pages/Detail/StudentList";
 
 const App = () => {
     const router = createBrowserRouter([
@@ -128,6 +129,10 @@ const App = () => {
                     element: <MentorDetailMain />,
                 },
             ],
+        },
+        {
+            path: "/students",
+            element: <StudentList />,
         },
         {
             path: "/profile",

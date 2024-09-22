@@ -16,8 +16,21 @@ const getAllStudents = async (req: AuthRequest, res: Response) => {
     }
     if (req.role === Role.admin) {
         const data = await db.student.findMany({
-            orderBy: {
-                name: "asc",
+            orderBy: [
+                {
+                    status: "desc",
+                },
+                {
+                    name: "asc",
+                },
+            ],
+            select: {
+                name: true,
+                whattsapNumber: true,
+                class: true,
+                status: true,
+                platform: true,
+                id: true,
             },
         });
         res.json({
@@ -39,7 +52,24 @@ const getAllStudents = async (req: AuthRequest, res: Response) => {
             select: {
                 GroupMentor: {
                     select: {
-                        Student: true,
+                        Student: {
+                            orderBy: [
+                                {
+                                    status: "desc",
+                                },
+                                {
+                                    name: "asc",
+                                },
+                            ],
+                            select: {
+                                name: true,
+                                whattsapNumber: true,
+                                class: true,
+                                status: true,
+                                platform: true,
+                                id: true,
+                            },
+                        },
                     },
                 },
             },
@@ -64,7 +94,24 @@ const getAllStudents = async (req: AuthRequest, res: Response) => {
                 seniorMentorId: userId,
             },
             select: {
-                Student: true,
+                Student: {
+                    orderBy: [
+                        {
+                            status: "desc",
+                        },
+                        {
+                            name: "asc",
+                        },
+                    ],
+                    select: {
+                        name: true,
+                        whattsapNumber: true,
+                        class: true,
+                        status: true,
+                        platform: true,
+                        id: true,
+                    },
+                },
             },
         });
         const data = groupMentors.flatMap((mentorGroup) => mentorGroup.Student);
@@ -84,8 +131,21 @@ const getAllStudents = async (req: AuthRequest, res: Response) => {
             where: {
                 groupMentorId: userId,
             },
-            orderBy: {
-                name: "asc",
+            orderBy: [
+                {
+                    status: "desc",
+                },
+                {   
+                    name: "asc",
+                },
+            ],
+            select: {
+                name: true,
+                whattsapNumber: true,
+                class: true,
+                status: true,
+                platform: true,
+                id: true,
             },
         });
         res.json({

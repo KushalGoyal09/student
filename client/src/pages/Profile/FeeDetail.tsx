@@ -195,7 +195,7 @@ export default function FeeManagement({ studentId }: Props) {
                     <div className="space-y-2">
                         <Label htmlFor="feePlan">Fee Plan</Label>
                         <Select
-                            value={feeData.feesPlan || ""}
+                            value={feeData.feesPlan?.toString() || ""}
                             onValueChange={(value) =>
                                 setFeeData({ ...feeData, feesPlan: value })
                             }
