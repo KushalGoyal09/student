@@ -29,6 +29,8 @@ import { useRecoilValue } from "recoil";
 import { Role, userAtom } from "@/recoil/userAtom";
 import axios from "axios";
 import { toast } from "@/hooks/use-toast";
+import AssignMentor from "./AssaignMentor";
+import FeeDetails from "./FeeDetail";
 
 interface Student {
     id: string;
@@ -49,7 +51,7 @@ interface Student {
     platform: string;
     expectation: string;
     createdAt: Date;
-    groupMentor: {
+    groupMentor?: {
         name: string;
         username: string;
     };
@@ -341,16 +343,27 @@ export default function Component() {
                                                 student.createdAt,
                                             ).toLocaleDateString()}
                                         />
-                                        <InfoCard
-                                            icon={User}
-                                            label="Group Mentor"
-                                            value={`${student.groupMentor.name} (${student.groupMentor.username})`}
-                                        />
+                                        {student.groupMentor && (
+                                            <InfoCard
+                                                icon={User}
+                                                label="Group Mentor"
+                                                value={`${student.groupMentor.name} (${student.groupMentor.username})`}
+                                            />
+                                        )}
                                     </div>
                                 </TabsContent>
                             </Tabs>
                         </CardContent>
                     </Card>
+                    {role === Role.admin && !student.groupMentor && (
+                        <AssignMentor
+                            studentId={student.id}
+                            currentMentor={student.groupMentor}
+                        />
+                    )}
+                    {role === Role.admin && (
+                        <FeeDetails studentId={student.id} />
+                    )}
                 </div>
             )}
         </>

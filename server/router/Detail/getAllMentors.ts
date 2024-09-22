@@ -78,6 +78,7 @@ const getAllGroupMentor = async (req: AuthRequest, res: Response) => {
         res.json({
             success: true,
             data,
+            
         });
         return;
     }

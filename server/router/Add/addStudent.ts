@@ -18,7 +18,7 @@ const bodySchema = z.object({
     fatherNumber: z.string(),
     language: z.string(),
     target: z.string(),
-    StudyHours: z.coerce.number().int(),
+    StudyHours: z.coerce.number(),
     class: z.string(),
     dropperStatus: z.string(),
     previousScore: z.string(),

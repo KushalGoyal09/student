@@ -26,6 +26,9 @@ import MentorDetailMain from "./pages/Detail/GroupMentor/MentorDetailMain";
 import StudentProfile from "./pages/Profile/StudentProfile";
 import NotFound from "./pages/NotFound";
 import { RecoilRoot } from "recoil";
+import NewAdmissions from "./pages/New/NewAdmissions";
+import FeeDetail from "./pages/New/FeeDetail";
+import KitDispatchPage from "./pages/New/KitDetails";
 
 const App = () => {
     const router = createBrowserRouter([
@@ -134,6 +137,18 @@ const App = () => {
                     element: <StudentProfile />,
                 },
             ],
+        },
+        {
+            path: "/new-admission",
+            element: <NewAdmissions />,
+        },
+        {
+            path: "/fee-details",
+            element: <FeeDetail />,
+        },
+        {
+            path: "/kit-data",
+            element: <KitDispatchPage />,
         },
         {
             path: "*",
