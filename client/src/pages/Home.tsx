@@ -97,7 +97,7 @@ const Home = () => {
         {
             role: [Role.admin],
             label: "Change Password",
-            path: "/admin/change-password",
+            path: "/admin/ChangePassword",
         },
     ];
 
