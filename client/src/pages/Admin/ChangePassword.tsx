@@ -35,7 +35,7 @@ export default function Component() {
         }
         try {
             const { data } = await axios.post<Response>(
-                "/api/admin/changePassword",
+                "/api/admin/change-password",
                 {
                     newPassword: password,
                 },
