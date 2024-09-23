@@ -40,6 +40,7 @@ model GroupMentor {
   seniorMentorId     String?
   RatingBySupervisor RatingBySupervisor[]
   RatingByStudent    RatingByStudent[]
+  Week               Week[]
 }
 
 model Student {
@@ -63,16 +64,48 @@ model Student {
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 
-  status         Boolean   @default(true)
-  dateOfDeactive DateTime?
-  Fees           Fees?
-  kitDispatched  Boolean   @default(false)
+  status            Boolean   @default(true)
+  dateOfDeactive    DateTime?
+  Fees              Fees?
+  kitDispatched     Boolean   @default(false)
   kitDispatchedDate DateTime?
 
   groupMentor GroupMentor? @relation(fields: [groupMentorId], references: [id])
 
   groupMentorId   String?
   RatingByStudent RatingByStudent[]
+}
+
+model Week {
+  id          String              @id @default(uuid())
+  week        Int
+  startDate   DateTime
+  endDate     DateTime
+  mentorId    String
+  GroupMentor GroupMentor         @relation(fields: [mentorId], references: [id])
+  students    StudentCallRecord[]
+}
+
+model StudentCallRecord {
+  id       String @id @default(uuid())
+  stuentId String
+  mentorId String
+  weekId   String
+  call     Call[]
+  Week     Week   @relation(fields: [weekId], references: [id])
+}
+
+model Call {
+  id        String            @id @default(uuid())
+  date      DateTime          @default(now())
+  student   StudentCallRecord @relation(fields: [studentId], references: [id])
+  studentId String
+}
+
+enum CallStatus {
+  Scheduled
+  Done
+  DOP
 }
 
 model Fees {

@@ -1,11 +1,11 @@
 import express from "express";
+import "dotenv/config";
 import "express-async-errors";
 import Secret from "./utils/secrets";
 import notFound from "./middleware/notFound";
 import errorHandler from "./middleware/errorHandler";
 const port = Secret.PORT;
 const app = express();
-import { config } from "dotenv";
 import loginRouter from "./router/Login";
 import addRouter from "./router/Add";
 import adminRouter from "./router/Admin";
@@ -13,7 +13,6 @@ import meRouter from "./router/Me/me";
 import detailRouter from "./router/Detail";
 import profileRouter from "./router/Profile";
 import admissionRouter from "./router/NewStudent";
-config();
 
 app.use(express.json());
 
