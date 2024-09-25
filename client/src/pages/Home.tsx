@@ -1,4 +1,3 @@
-import Navbar from "@/components/Navbar";
 import { Role, userAtom } from "@/recoil/userAtom";
 import { Link } from "react-router-dom";
 import { Fragment } from "react/jsx-runtime";
@@ -16,23 +15,8 @@ const Home = () => {
     const links: Links[] = [
         {
             role: [null],
-            label: "Mentor Login",
-            path: "/login/mentor",
-        },
-        {
-            role: [null],
-            label: "Supervisor Login",
-            path: "/login/supervisor",
-        },
-        {
-            role: [null],
-            label: "Senior Mentor Login",
-            path: "/login/senior-mentor",
-        },
-        {
-            role: [null],
-            label: "Admin Login",
-            path: "/login/admin",
+            label: "Login",
+            path: "/login",
         },
         {
             role: [Role.admin],
@@ -103,7 +87,6 @@ const Home = () => {
 
     return (
         <>
-            <Navbar />
             <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center">
                 <h1 className="text-4xl font-bold mb-8 text-gray-800">
                     Welcome to Our App

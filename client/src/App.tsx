@@ -1,12 +1,7 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { Toaster } from "@/components/ui/toaster";
 import Home from "./pages/Home";
-import {
-    MentorLogin,
-    SeniorMentorLogin,
-    AdminLogin,
-    SupervisorLogin,
-} from "./pages/Login";
+import Login from "./pages/Login/Login";
 import {
     AddMentor,
     AddSeniorMentor,
@@ -30,134 +25,124 @@ import NewAdmissions from "./pages/New/NewAdmissions";
 import FeeDetail from "./pages/New/FeeDetail";
 import KitDispatchPage from "./pages/New/KitDetails";
 import StudentList from "./pages/Detail/StudentList";
+import Layout from "./components/Layout";
 
 const App = () => {
     const router = createBrowserRouter([
         {
             path: "/",
-            element: <Home />,
-        },
-        {
-            path: "/login",
+            element: <Layout />,
             children: [
                 {
-                    path: "mentor",
-                    element: <MentorLogin />,
+                    path: "/",
+                    element: <Home />,
                 },
                 {
-                    path: "supervisor",
-                    element: <SupervisorLogin />,
+                    path: "/login",
+                    element: <Login />,
                 },
                 {
-                    path: "senior-mentor",
-                    element: <SeniorMentorLogin />,
+                    path: "/admin",
+                    children: [
+                        {
+                            path: "ChangePassword",
+                            element: <ChangePassword />,
+                        },
+                    ],
                 },
                 {
-                    path: "admin",
-                    element: <AdminLogin />,
+                    path: "/add",
+                    children: [
+                        {
+                            path: "mentor",
+                            element: <AddMentor />,
+                        },
+                        {
+                            path: "student",
+                            element: <AddStudent />,
+                        },
+                        {
+                            path: "supervisor",
+                            element: <AddSupervisor />,
+                        },
+                        {
+                            path: "senior-mentor",
+                            element: <AddSeniorMentor />,
+                        },
+                    ],
+                },
+                {
+                    path: "/admin/mentors",
+                    element: <Mentor />,
+                },
+                {
+                    path: "/target",
+                    element: <AddTarget />,
+                },
+                {
+                    path: "/mentor-rating",
+                    element: <MentorRatingPage />,
+                },
+                {
+                    path: "/supervisor",
+                    element: <SupervisorDetails />,
+                    children: [
+                        {
+                            path: ":username",
+                            element: <SupervisorDetailMain />,
+                        },
+                    ],
+                },
+                {
+                    path: "/seniorMentor",
+                    element: <SeniorMentorDetail />,
+                    children: [
+                        {
+                            path: ":username",
+                            element: <SeniorMentorDetailMain />,
+                        },
+                    ],
+                },
+                {
+                    path: "/mentor",
+                    element: <MentorDetail />,
+                    children: [
+                        {
+                            path: ":username",
+                            element: <MentorDetailMain />,
+                        },
+                    ],
+                },
+                {
+                    path: "/students",
+                    element: <StudentList />,
+                },
+                {
+                    path: "/profile",
+                    children: [
+                        {
+                            path: ":id",
+                            element: <StudentProfile />,
+                        },
+                    ],
+                },
+                {
+                    path: "/new-admission",
+                    element: <NewAdmissions />,
+                },
+                {
+                    path: "/fee-details",
+                    element: <FeeDetail />,
+                },
+                {
+                    path: "/kit-data",
+                    element: <KitDispatchPage />,
+                },
+                {
+                    path: "*",
+                    element: <NotFound />,
                 },
             ],
-        },
-        {
-            path: "/admin",
-            children: [
-                {
-                    path: "ChangePassword",
-                    element: <ChangePassword />,
-                },
-            ],
-        },
-        {
-            path: "/add",
-            children: [
-                {
-                    path: "mentor",
-                    element: <AddMentor />,
-                },
-                {
-                    path: "student",
-                    element: <AddStudent />,
-                },
-                {
-                    path: "supervisor",
-                    element: <AddSupervisor />,
-                },
-                {
-                    path: "senior-mentor",
-                    element: <AddSeniorMentor />,
-                },
-            ],
-        },
-        {
-            path: "/admin/mentors",
-            element: <Mentor />,
-        },
-        {
-            path: "/target",
-            element: <AddTarget />,
-        },
-        {
-            path: "/mentor-rating",
-            element: <MentorRatingPage />,
-        },
-        {
-            path: "/supervisor",
-            element: <SupervisorDetails />,
-            children: [
-                {
-                    path: ":username",
-                    element: <SupervisorDetailMain />,
-                },
-            ],
-        },
-        {
-            path: "/seniorMentor",
-            element: <SeniorMentorDetail />,
-            children: [
-                {
-                    path: ":username",
-                    element: <SeniorMentorDetailMain />,
-                },
-            ],
-        },
-        {
-            path: "/mentor",
-            element: <MentorDetail />,
-            children: [
-                {
-                    path: ":username",
-                    element: <MentorDetailMain />,
-                },
-            ],
-        },
-        {
-            path: "/students",
-            element: <StudentList />,
-        },
-        {
-            path: "/profile",
-            children: [
-                {
-                    path: ":id",
-                    element: <StudentProfile />,
-                },
-            ],
-        },
-        {
-            path: "/new-admission",
-            element: <NewAdmissions />,
-        },
-        {
-            path: "/fee-details",
-            element: <FeeDetail />,
-        },
-        {
-            path: "/kit-data",
-            element: <KitDispatchPage />,
-        },
-        {
-            path: "*",
-            element: <NotFound />,
         },
     ]);
 

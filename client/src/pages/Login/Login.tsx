@@ -11,8 +11,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { AlertCircle } from "lucide-react";
-import { useNavigate } from "react-router-dom";
 import axios, { isAxiosError } from "axios";
+import { useNavigate } from "react-router-dom";
 import { useSetRecoilState } from "recoil";
 import { Role, tokenAtom, userAtom } from "@/recoil/userAtom";
 
@@ -20,6 +20,7 @@ interface Response {
     success: boolean;
     message: string;
     token: string;
+    role: Role;
 }
 
 export default function MentorLoginPage() {
@@ -33,22 +34,19 @@ export default function MentorLoginPage() {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setError("");
-
         if (!username || !password) {
             setError("Please enter both username and password");
             return;
         }
         try {
-            const { data } = await axios.post<Response>(
-                "/api/login/senior-mentor",
-                {
-                    username,
-                    password,
-                },
-            );
+            const { data } = await axios.post<Response>("/api/login", {
+                username,
+                password,
+            });
             localStorage.setItem("token", data.token);
             setToken(data.token);
-            setRole(Role.seniorMentor);
+            //@ts-ignore
+            setRole(data.role);
             navigate("/");
         } catch (error) {
             if (isAxiosError(error)) {
@@ -66,10 +64,10 @@ export default function MentorLoginPage() {
             <Card className="w-full max-w-md">
                 <CardHeader className="space-y-1">
                     <CardTitle className="text-2xl font-bold text-center">
-                        Senior Mentor Login
+                        Login
                     </CardTitle>
                     <CardDescription className="text-center">
-                        Enter your credentials to access the mentor dashboard
+                        Enter your credentials to access the dashboard
                     </CardDescription>
                 </CardHeader>
                 <form onSubmit={handleSubmit}>
