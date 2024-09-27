@@ -16,10 +16,11 @@ import admissionRouter from "./router/NewStudent";
 import callRouter from "./router/Call";
 import testRouter from "./router/test";
 import syallabusRouter from "./router/Syallabus";
+import targetRouter from "./router/Target";
 
 app.use(express.json());
 
-app.use("/test", testRouter)
+app.use("/test", testRouter);
 app.use("/api/me", meRouter);
 app.use("/api/login", loginRouter);
 app.use("/api/add", addRouter);
@@ -29,6 +30,7 @@ app.use("/api/profile", profileRouter);
 app.use("/api/new", admissionRouter);
 app.use("/api/call", callRouter);
 app.use("/api/syllabus", syallabusRouter);
+app.use("/api/target", targetRouter);
 
 app.use(notFound);
 app.use(errorHandler);

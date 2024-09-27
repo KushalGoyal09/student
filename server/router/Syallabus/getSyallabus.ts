@@ -7,7 +7,6 @@ const getAllSyallabus = async (req: Request, res: Response) => {
     const chemistry = await db.chemistrySyallabus.findMany();
     const biology = await db.biologySyallabus.findMany();
     res.json({
-        success: true,
         physics,
         chemistry,
         biology,

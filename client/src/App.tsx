@@ -9,7 +9,7 @@ import {
     AddSupervisor,
 } from "./pages/Add";
 import Mentor from "./pages/Mentors";
-import AddTarget from "./pages/AddTarget";
+import Target from "./pages/AddTarget";
 import ChangePassword from "./pages/Admin/ChangePassword";
 import MentorRatingPage from "./pages/SupervisorRating";
 import SupervisorDetails from "./pages/Detail/Supervisor/SupervisorDetail";
@@ -79,7 +79,7 @@ const App = () => {
                 },
                 {
                     path: "/target",
-                    element: <AddTarget />,
+                    element: <Target />,
                 },
                 {
                     path: "/mentor-rating",

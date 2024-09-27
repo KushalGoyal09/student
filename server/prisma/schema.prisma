@@ -189,38 +189,68 @@ model Admin {
 }
 
 model PhysicsSyallabus {
-  id            Int      @id @default(autoincrement())
+  id            Int             @id @default(autoincrement())
   chapterName   String
-  Target        Target[]
-  createdAt     DateTime @default(now())
+  createdAt     DateTime        @default(now())
+  PhysicsTarget PhysicsTarget[]
 }
 
 model ChemistrySyallabus {
-  id            Int      @id @default(autoincrement())
-  chapterName   String
-  Target        Target[]
-  createdAt     DateTime @default(now())
+  id              Int               @id @default(autoincrement())
+  chapterName     String
+  createdAt       DateTime          @default(now())
+  ChemistryTarget ChemistryTarget[]
 }
 
 model BiologySyallabus {
-  id            Int      @id @default(autoincrement())
+  id            Int             @id @default(autoincrement())
   chapterName   String
-  Target        Target[]
-  createdAt     DateTime @default(now())
+  createdAt     DateTime        @default(now())
+  BiologyTarget BiologyTarget[]
 }
 
 model Target {
-  id        String  @id @default(uuid())
+  id        String          @id @default(uuid())
   studentId String
   mentorId  String
-  completed Boolean @default(false)
-  physics   Int
-  chemistry Int
-  biology   Int
+  completed Boolean         @default(false)
+  physics   PhysicsTarget   @relation(fields: [physicsTargetId], references: [id])
+  chemistry ChemistryTarget @relation(fields: [chemistryTargetId], references: [id])
+  biology   BiologyTarget   @relation(fields: [biologyTargetId], references: [id])
 
-  PhysicsChapter   PhysicsSyallabus   @relation(fields: [physics], references: [id])
-  ChemistryChapter ChemistrySyallabus @relation(fields: [chemistry], references: [id])
-  BiologyChapter   BiologySyallabus   @relation(fields: [biology], references: [id])
-  Mentor           GroupMentor        @relation(fields: [mentorId], references: [id])
-  Student          Student            @relation(fields: [studentId], references: [id])
+  Mentor            GroupMentor @relation(fields: [mentorId], references: [id])
+  Student           Student     @relation(fields: [studentId], references: [id])
+  physicsTargetId   String
+  chemistryTargetId String
+  biologyTargetId   String
+}
+
+model PhysicsTarget {
+  id             String           @id @default(uuid())
+  chapterId      Int
+  fromDate       String
+  toDate         String
+  lecturePerDay  Int
+  PhysicsChapter PhysicsSyallabus @relation(fields: [chapterId], references: [id])
+  Target         Target[]
+}
+
+model ChemistryTarget {
+  id               String             @id @default(uuid())
+  chapterId        Int
+  fromDate         String
+  toDate           String
+  lecturePerDay    Int
+  ChemistryChapter ChemistrySyallabus @relation(fields: [chapterId], references: [id])
+  Target           Target[]
+}
+
+model BiologyTarget {
+  id             String           @id @default(uuid())
+  chapterId      Int
+  fromDate       String
+  toDate         String
+  lecturePerDay  Int
+  BiologyChapter BiologySyallabus @relation(fields: [chapterId], references: [id])
+  Target         Target[]
 }

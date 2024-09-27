@@ -136,6 +136,7 @@ export default function AdminSyllabus() {
                                 placeholder={`Add new ${subject} chapter`}
                                 value={newChapter}
                                 onChange={handleInputChange}
+                                autoFocus
                             />
                             <Button onClick={() => addChapter(subject)}>
                                 Add

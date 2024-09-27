@@ -89,10 +89,25 @@ const Home = () => {
             path: "/call-records",
         },
         {
-            role: [Role.groupMentor, Role.seniorMentor, Role.supervisor, Role.admin],
+            role: [
+                Role.groupMentor,
+                Role.seniorMentor,
+                Role.supervisor,
+                Role.admin,
+            ],
             label: "See Syallabus",
             path: "/syallabus",
-        }
+        },
+        {
+            role: [
+                Role.admin,
+                Role.seniorMentor,
+                Role.supervisor,
+                Role.groupMentor,
+            ],
+            label: "Students Target",
+            path: "/target",
+        },
     ];
 
     return (

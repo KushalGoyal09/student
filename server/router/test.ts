@@ -6,12 +6,12 @@ async function main(req: Request, res: Response) {
     await db.student.createMany({
         data: [
             {
-                name: "John Doe",
+                name: "Kushal Goyal",
                 gender: "Male",
                 fatherName: "Michael Doe",
                 motherName: "Sarah Doe",
-                whattsapNumber: "1234567890",
-                callNumber: "0987654321",
+                whattsapNumber: "8307846578",
+                callNumber: "8307846578",
                 motherNumber: "1234509876",
                 fatherNumber: "0987612345",
                 language: "English",
@@ -25,11 +25,11 @@ async function main(req: Request, res: Response) {
                 groupMentorId: "876642ae-581a-4492-8995-c618a2940c06",
             },
             {
-                name: "Jane Smith",
+                name: "Prabhjot Kaur",
                 gender: "Female",
                 fatherName: "Robert Smith",
                 motherName: "Emily Smith",
-                whattsapNumber: "1231231231",
+                whattsapNumber: "9499114410",
                 callNumber: "3213213210",
                 motherNumber: "4564564567",
                 fatherNumber: "6546546543",
@@ -44,7 +44,7 @@ async function main(req: Request, res: Response) {
                 groupMentorId: "876642ae-581a-4492-8995-c618a2940c06",
             },
             {
-                name: "Alice Johnson",
+                name: "Ansh Gupta",
                 gender: "Female",
                 fatherName: "Paul Johnson",
                 motherName: "Anna Johnson",
@@ -63,7 +63,7 @@ async function main(req: Request, res: Response) {
                 groupMentorId: "876642ae-581a-4492-8995-c618a2940c06",
             },
             {
-                name: "David Brown",
+                name: "Krishna Singh",
                 gender: "Male",
                 fatherName: "George Brown",
                 motherName: "Laura Brown",
@@ -82,7 +82,7 @@ async function main(req: Request, res: Response) {
                 groupMentorId: "876642ae-581a-4492-8995-c618a2940c06",
             },
             {
-                name: "Olivia Wilson",
+                name: "Yashika Sharma",
                 gender: "Female",
                 fatherName: "Henry Wilson",
                 motherName: "Nancy Wilson",
