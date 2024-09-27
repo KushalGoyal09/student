@@ -146,6 +146,7 @@ const getAllStudents = async (req: AuthRequest, res: Response) => {
                 status: true,
                 platform: true,
                 id: true,
+                callNumber:true
             },
         });
         res.json({

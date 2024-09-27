@@ -83,6 +83,16 @@ const Home = () => {
             label: "Change Password",
             path: "/admin/ChangePassword",
         },
+        {
+            role: [Role.groupMentor],
+            label: "See call records",
+            path: "/call-records",
+        },
+        {
+            role: [Role.groupMentor, Role.seniorMentor, Role.supervisor, Role.admin],
+            label: "See Syallabus",
+            path: "/syallabus",
+        }
     ];
 
     return (

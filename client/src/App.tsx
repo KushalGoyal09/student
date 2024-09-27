@@ -26,6 +26,8 @@ import FeeDetail from "./pages/New/FeeDetail";
 import KitDispatchPage from "./pages/New/KitDetails";
 import StudentList from "./pages/Detail/StudentList";
 import Layout from "./components/Layout";
+import WeekPlanner from "./pages/CallRecord";
+import Syallabus from "./pages/Syallabus";
 
 const App = () => {
     const router = createBrowserRouter([
@@ -137,6 +139,14 @@ const App = () => {
                 {
                     path: "/kit-data",
                     element: <KitDispatchPage />,
+                },
+                {
+                    path: "/call-records",
+                    element: <WeekPlanner />,
+                },
+                {
+                    path: "/syallabus",
+                    element: <Syallabus/>
                 },
                 {
                     path: "*",

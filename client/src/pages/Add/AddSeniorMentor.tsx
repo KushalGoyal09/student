@@ -156,7 +156,7 @@ export default function AddSeniorMentor() {
                             </div>
                         </div>
                         <div className="space-y-2">
-                            <Label htmlFor="seniorMentor">Senior Mentor</Label>
+                            <Label htmlFor="seniorMentor">Supervisor</Label>
                             <Select
                                 value={formData.supervisorId}
                                 onValueChange={handleSelectChange}

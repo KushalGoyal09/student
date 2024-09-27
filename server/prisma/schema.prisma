@@ -41,6 +41,7 @@ model GroupMentor {
   RatingBySupervisor RatingBySupervisor[]
   RatingByStudent    RatingByStudent[]
   Week               Week[]
+  Target             Target[]
 }
 
 model Student {
@@ -72,40 +73,60 @@ model Student {
 
   groupMentor GroupMentor? @relation(fields: [groupMentorId], references: [id])
 
-  groupMentorId   String?
-  RatingByStudent RatingByStudent[]
+  groupMentorId     String?
+  RatingByStudent   RatingByStudent[]
+  StudentCallRecord StudentCallRecord[]
+  Target            Target[]
 }
 
 model Week {
   id          String              @id @default(uuid())
-  week        Int
-  startDate   DateTime
-  endDate     DateTime
+  startDate   String
+  endDate     String
   mentorId    String
   GroupMentor GroupMentor         @relation(fields: [mentorId], references: [id])
   students    StudentCallRecord[]
+
+  @@unique([startDate, mentorId])
 }
 
 model StudentCallRecord {
-  id       String @id @default(uuid())
-  stuentId String
-  mentorId String
-  weekId   String
-  call     Call[]
-  Week     Week   @relation(fields: [weekId], references: [id])
-}
-
-model Call {
-  id        String            @id @default(uuid())
-  date      DateTime          @default(now())
-  student   StudentCallRecord @relation(fields: [studentId], references: [id])
+  id        String  @id @default(uuid())
   studentId String
+  mentorId  String
+  weekId    String
+  call      Call[]
+  Week      Week    @relation(fields: [weekId], references: [id])
+  Student   Student @relation(fields: [studentId], references: [id])
+
+  @@unique([studentId, weekId])
 }
 
 enum CallStatus {
   Scheduled
   Done
-  DOP
+  DNP
+}
+
+model Call {
+  id              String            @id @default(uuid())
+  date            String
+  day             DaysOfWeek
+  callStatus      CallStatus
+  studentRecord   StudentCallRecord @relation(fields: [studentRecordId], references: [id])
+  studentRecordId String
+
+  @@unique([date, studentRecordId])
+}
+
+enum DaysOfWeek {
+  Monday
+  Tuesday
+  Wednesday
+  Thursday
+  Friday
+  Saturday
+  Sunday
 }
 
 model Fees {
@@ -165,4 +186,41 @@ model RatingByStudent {
 model Admin {
   username String @id @default("admin")
   password String @default("admin")
+}
+
+model PhysicsSyallabus {
+  id            Int      @id @default(autoincrement())
+  chapterName   String
+  Target        Target[]
+  createdAt     DateTime @default(now())
+}
+
+model ChemistrySyallabus {
+  id            Int      @id @default(autoincrement())
+  chapterName   String
+  Target        Target[]
+  createdAt     DateTime @default(now())
+}
+
+model BiologySyallabus {
+  id            Int      @id @default(autoincrement())
+  chapterName   String
+  Target        Target[]
+  createdAt     DateTime @default(now())
+}
+
+model Target {
+  id        String  @id @default(uuid())
+  studentId String
+  mentorId  String
+  completed Boolean @default(false)
+  physics   Int
+  chemistry Int
+  biology   Int
+
+  PhysicsChapter   PhysicsSyallabus   @relation(fields: [physics], references: [id])
+  ChemistryChapter ChemistrySyallabus @relation(fields: [chemistry], references: [id])
+  BiologyChapter   BiologySyallabus   @relation(fields: [biology], references: [id])
+  Mentor           GroupMentor        @relation(fields: [mentorId], references: [id])
+  Student          Student            @relation(fields: [studentId], references: [id])
 }
