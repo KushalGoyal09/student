@@ -24,9 +24,7 @@ export default function SupervisorDetails() {
         { id: number; name: string; username: string }[]
     >([]);
     const [loading, setLoading] = useState(true);
-    const [selectedMentor, setSelectedMentor] = useState<string | undefined>(
-        undefined,
-    );
+    const [selectedMentor, setSelectedMentor] = useState<string>("");
 
     const navigate = useNavigate();
 

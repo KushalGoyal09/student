@@ -2,7 +2,7 @@ import { PrismaClient } from "@prisma/client";
 import { Request, Response, Router } from "express";
 import { AuthRequest, Role } from "../../types";
 import { z } from "zod";
-import { endOfWeek, startOfWeek } from "date-fns";
+import { endOfWeek, format, startOfWeek } from "date-fns";
 
 const db = new PrismaClient();
 
@@ -16,9 +16,9 @@ const bodySchema = z.object({
         "Saturday",
         "Sunday",
     ]),
-    studentId: z.coerce.string(),
+    studentId: z.string(),
     status: z.enum(["Scheduled", "Done", "DNP", "Nothing"]),
-    date: z.coerce.string(),
+    date: z.string(),
 });
 
 const saveCallStatus = async (req: AuthRequest, res: Response) => {
@@ -30,12 +30,11 @@ const saveCallStatus = async (req: AuthRequest, res: Response) => {
             .send("You are not authorized to access this route");
     }
     const { day, studentId, status, date } = bodySchema.parse(req.body);
-    const weekStart = startOfWeek(date, { weekStartsOn: 1 })
-        .toISOString()
-        .split("T")[0];
-    const weekEnd = endOfWeek(date, { weekStartsOn: 1 })
-        .toISOString()
-        .split("T")[0];
+    const weekStart = format(
+        startOfWeek(date, { weekStartsOn: 1 }),
+        "yyyy-MM-dd",
+    );
+    const weekEnd = format(endOfWeek(date, { weekStartsOn: 1 }), "yyyy-MM-dd");
     if (status === "Nothing") {
         const week = await db.week.findUnique({
             where: {

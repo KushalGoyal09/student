@@ -14,6 +14,7 @@ import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2, Plus } from "lucide-react";
 import axios from "axios";
+import { format } from "date-fns";
 
 type Payment = {
     amount: number;
@@ -38,7 +39,7 @@ export default function FeeManagement({ studentId }: Props) {
     const [isUpdating, setIsUpdating] = useState(false);
     const [newPayment, setNewPayment] = useState<Payment>({
         amount: 0,
-        date: new Date().toISOString().split("T")[0],
+        date: format(new Date(), "yyyy-MM-dd"),
         mode: "UPI",
     });
     const { toast } = useToast();
@@ -95,7 +96,7 @@ export default function FeeManagement({ studentId }: Props) {
             });
             setNewPayment({
                 amount: 0,
-                date: new Date().toISOString().split("T")[0],
+                date: format(new Date(), "yyyy-MM-dd"),
                 mode: "UPI",
             });
         } catch (error) {

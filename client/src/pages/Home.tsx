@@ -1,6 +1,6 @@
 import { Role, userAtom } from "@/recoil/userAtom";
 import { Link } from "react-router-dom";
-import { Fragment } from "react/jsx-runtime";
+import { Fragment } from "react";
 import { useRecoilValue } from "recoil";
 
 interface Links {

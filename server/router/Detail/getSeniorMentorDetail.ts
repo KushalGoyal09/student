@@ -6,6 +6,7 @@ import {
     throwUnauthorizedError,
 } from "../../custom-error/customError";
 import { z } from "zod";
+import calculateSeniorMentorRating from "../../utils/calculateSeniorMentorRating";
 const prisma = new PrismaClient();
 
 const bodySchema = z.object({
@@ -45,9 +46,14 @@ const getSeniorMentorDetail = async (req: AuthRequest, res: Response) => {
         throwBadRequestError("Senior Mentor not found");
         return;
     }
+    const rating = await calculateSeniorMentorRating(data.id);
+    const response = {
+        ...data,
+        rating,
+    };
     res.json({
         success: true,
-        data,
+        data: response,
     });
 };
 

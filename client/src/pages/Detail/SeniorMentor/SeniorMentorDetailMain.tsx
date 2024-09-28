@@ -10,6 +10,7 @@ const fetchSMDetails = async (
     id: string;
     name: string;
     username: string;
+    rating: number;
     GroupMentor: {
         id: string;
         name: string;
@@ -35,6 +36,7 @@ const SMDetailsMain = () => {
         id: string;
         name: string;
         username: string;
+        rating: number;
         GroupMentor: {
             id: string;
             name: string;
@@ -55,9 +57,20 @@ const SMDetailsMain = () => {
         <>
             {supervisorDetails && (
                 <div className="space-y-4">
-                    <h1 className="text-2xl font-bold">
+                    <h1 className="text-3xl font-bold text-gray-800">
                         {supervisorDetails.name}
                     </h1>
+                    <div className="flex justify-between items-center mt-2 p-4 bg-gray-100 rounded-lg shadow-md">
+                        <span className="text-lg font-medium text-gray-600">
+                            <span className="text-gray-500">Username:</span>{" "}
+                            {supervisorDetails.username}
+                        </span>
+                        <span className="text-lg font-medium text-gray-600">
+                            <span className="text-yellow-500">⭐</span>{" "}
+                            {supervisorDetails.rating}
+                        </span>
+                    </div>
+
                     <Card>
                         <CardHeader>
                             <CardTitle>Group Mentors</CardTitle>

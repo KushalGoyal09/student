@@ -125,9 +125,10 @@ export default function CallRecord() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const weekStart = startOfWeek(currentWeek, { weekStartsOn: 1 })
-                    .toISOString()
-                    .split("T")[0];
+                const weekStart = format(
+                    startOfWeek(currentWeek, { weekStartsOn: 1 }),
+                    "yyyy-MM-dd",
+                );
                 const weekData = await fetchWeekData(weekStart);
                 setCallStatuses(weekData);
             } catch (error) {
@@ -284,8 +285,9 @@ export default function CallRecord() {
                                             key={day}
                                             className="flex flex-col items-center"
                                         >
-                                            <div className="text-xs font-medium mb-1">
-                                                {`${day} (${getDate(index)})`}
+                                            <div className="text-xs font-medium mb-1 text-center">
+                                                {day} <br />
+                                                {getDate(index)}
                                             </div>
                                             <Select
                                                 value={getCallStatus(

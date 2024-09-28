@@ -6,7 +6,11 @@ import {
     throwUnauthorizedError,
 } from "../../custom-error/customError";
 import { z } from "zod";
-const prisma = new PrismaClient();
+import calculateMentorRating from "../../utils/calculateMentorRating";
+import getWeekRecordForMentor from "../../utils/getWeekData";
+import { startOfWeek } from "date-fns";
+import { format } from "date-fns";
+const db = new PrismaClient();
 
 const bodySchema = z.object({
     groupMentorUsername: z.coerce.string(),
@@ -26,7 +30,7 @@ const getMentorDetail = async (req: AuthRequest, res: Response) => {
         throwBadRequestError("Invalid data");
         return;
     }
-    const data = await prisma.groupMentor.findUnique({
+    const data = await db.groupMentor.findUnique({
         where: {
             username: parsedData.data.groupMentorUsername,
         },
@@ -36,24 +40,36 @@ const getMentorDetail = async (req: AuthRequest, res: Response) => {
             id: true,
             Student: {
                 select: {
-                    id: true,
                     name: true,
                     whattsapNumber: true,
-                    fatherNumber: true,
-                    motherNumber: true,
+                    class: true,
+                    status: true,
                     platform: true,
-                    previousScore: true,
+                    id: true,
+                    callNumber: true,
                 },
             },
+            seniorMentorId: true,
         },
     });
-    if (!data) {
+    if (!data || !data.seniorMentorId) {
         throwBadRequestError("Senior Mentor not found");
         return;
     }
+    const weekStart = format(
+        startOfWeek(new Date(), { weekStartsOn: 1 }),
+        "yyyy-MM-dd",
+    );
+    const weekData = await getWeekRecordForMentor(data.id, weekStart);
+    const rating = await calculateMentorRating(data.id, data.seniorMentorId);
+    const response = {
+        ...data,
+        ...rating,
+        weekData,
+    };
     res.json({
         success: true,
-        data,
+        data: response,
     });
 };
 

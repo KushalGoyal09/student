@@ -37,7 +37,7 @@ const StudentCallUpdates = ({ studentId }: StudentCallUpdatesProps) => {
     }, [currentWeek]);
 
     const fetchCallUpdates = async () => {
-        const weekStart = startOfWeek(currentWeek, { weekStartsOn: 0 });
+        const weekStart = startOfWeek(currentWeek, { weekStartsOn: 1 });
         try {
             const response = await fetch("/api/call/student", {
                 method: "POST",
