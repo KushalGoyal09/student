@@ -10,14 +10,11 @@ const bodySchema = z.object({
 
 const getWeekRecord = async (req: AuthRequest, res: Response) => {
     const role = req.role;
-    if (role !== Role.groupMentor) {
+    const mentorId = req.userId;
+    if (role !== Role.groupMentor || !mentorId) {
         return res
             .status(403)
             .send("You are not authorized to access this route.");
-    }
-    const mentorId = req.userId;
-    if (!mentorId) {
-        return res.status(401).send("Unauthorized");
     }
     const parsedData = bodySchema.safeParse(req.body);
     if (!parsedData.success) {
@@ -32,8 +29,6 @@ const getWeekRecord = async (req: AuthRequest, res: Response) => {
             },
         },
         select: {
-            startDate: true,
-            endDate: true,
             students: {
                 select: {
                     studentId: true,
@@ -47,10 +42,9 @@ const getWeekRecord = async (req: AuthRequest, res: Response) => {
             },
         },
     });
-    res.status(200).json({
-        data,
-        isWeek: data !== null,
+    return res.status(200).json({
         success: true,
+        data: data,
     });
 };
 

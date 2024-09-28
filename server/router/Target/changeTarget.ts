@@ -15,7 +15,13 @@ const bodySchema = z.object({
 const toggleTarget = async (req: AuthRequest, res: Response) => {
     const role = req.role;
     const userId = req.userId;
-    if (role !== Role.groupMentor || !userId) {
+    if (
+        (req.role !== Role.groupMentor &&
+            req.role !== Role.admin &&
+            req.role !== Role.seniorMentor &&
+            req.role !== Role.supervisor) ||
+        !userId
+    ) {
         throwUnauthorizedError("You are not authorized to toggle target");
         return;
     }

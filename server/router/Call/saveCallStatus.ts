@@ -23,20 +23,13 @@ const bodySchema = z.object({
 
 const saveCallStatus = async (req: AuthRequest, res: Response) => {
     const role = req.role;
-    if (role !== Role.groupMentor) {
+    const mentorId = req.userId;
+    if (role !== Role.groupMentor || !mentorId) {
         return res
             .status(403)
             .send("You are not authorized to access this route");
     }
-    const mentorId = req.userId;
-    if (!mentorId) {
-        return res.status(401).send("Unauthorized");
-    }
-    const parsedData = bodySchema.safeParse(req.body);
-    if (!parsedData.success) {
-        return res.status(400).send("Invalid data");
-    }
-    const { day, studentId, status, date } = parsedData.data;
+    const { day, studentId, status, date } = bodySchema.parse(req.body);
     const weekStart = startOfWeek(date, { weekStartsOn: 1 })
         .toISOString()
         .split("T")[0];
@@ -44,7 +37,42 @@ const saveCallStatus = async (req: AuthRequest, res: Response) => {
         .toISOString()
         .split("T")[0];
     if (status === "Nothing") {
-        
+        const week = await db.week.findUnique({
+            where: {
+                startDate_mentorId: {
+                    mentorId,
+                    startDate: weekStart,
+                },
+            },
+        });
+        if (!week) {
+            return res.status(400).json({
+                success: false,
+                message: "No week found",
+            });
+        }
+        const studentCallRecord = await db.studentCallRecord.findUnique({
+            where: {
+                studentId_weekId: {
+                    studentId,
+                    weekId: week.id,
+                },
+            },
+        });
+        if (!studentCallRecord) {
+            return res.status(400).json({
+                success: false,
+                message: "No student call record found",
+            });
+        }
+        await db.call.delete({
+            where: {
+                date_studentRecordId: {
+                    date,
+                    studentRecordId: studentCallRecord.id,
+                },
+            },
+        });
         return res.status(200).json({
             success: true,
             message: "Call status deleted successfully",
@@ -86,9 +114,9 @@ const saveCallStatus = async (req: AuthRequest, res: Response) => {
     });
     await db.call.upsert({
         where: {
-            date_studentId: {
+            date_studentRecordId: {
                 date,
-                studentId,
+                studentRecordId: studentCallRecord.id,
             },
         },
         update: {
@@ -97,7 +125,7 @@ const saveCallStatus = async (req: AuthRequest, res: Response) => {
         create: {
             callStatus: status,
             day,
-            studentId:studentCallRecord.id,
+            studentRecordId: studentCallRecord.id,
             date,
         },
     });

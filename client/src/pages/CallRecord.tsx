@@ -19,30 +19,21 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { endOfWeek, startOfWeek, addDays, format } from "date-fns";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import { toast } from "@/hooks/use-toast";
 
-enum CallStatusEnum {
-    Scheduled = "Scheduled",
-    Done = "Done",
-    DNP = "DNP",
-    Nothing = "Nothing",
-}
-
-interface ApiStudent {
-    studentId: string;
-    call: {
-        date: Date;
-        callStatus: CallStatusEnum;
-    }[];
-}
+type CallStatus = "Scheduled" | "Done" | "DNP" | "Nothing";
 
 interface ApiResponse {
     data: {
-        startDate: string;
-        endDate: string;
-        students: ApiStudent[];
+        students: {
+            studentId: string;
+            call: {
+                date: string;
+                callStatus: CallStatus;
+            }[];
+        }[];
     } | null;
     success: boolean;
-    isWeek: boolean;
 }
 
 interface Student {
@@ -62,7 +53,17 @@ const fetchWeekData = async (weekStart: string) => {
             },
         },
     );
-    return data.data;
+    const map = new Map<string, CallStatus>();
+    if (!data.data) {
+        return map;
+    }
+    data.data.students.forEach((student) => {
+        student.call.forEach((call) => {
+            const key = `${student.studentId}-${call.date}`;
+            map.set(key, call.callStatus);
+        });
+    });
+    return map;
 };
 
 const fetchStudentsData = async () => {
@@ -80,7 +81,7 @@ const fetchStudentsData = async () => {
 const saveCallStatus = async (
     studentId: string,
     day: string,
-    status: CallStatusEnum,
+    status: CallStatus,
     date: string,
 ) => {
     await axios.post(
@@ -94,12 +95,12 @@ const saveCallStatus = async (
     );
 };
 
-export default function WeekPlanner() {
+export default function CallRecord() {
     const [currentWeek, setCurrentWeek] = useState<Date>(new Date());
     const [students, setStudents] = useState<Student[]>([]);
-    const [callStatuses, setCallStatuses] = useState<
-        Record<string, Record<string, CallStatusEnum>>
-    >({});
+    const [callStatuses, setCallStatuses] = useState<Map<string, CallStatus>>(
+        new Map<string, CallStatus>(),
+    );
     const weekDays = [
         "Monday",
         "Tuesday",
@@ -111,48 +112,30 @@ export default function WeekPlanner() {
     ];
 
     useEffect(() => {
-        fetchStudentsData().then((data) => setStudents(data));
+        fetchStudentsData()
+            .then((data) => setStudents(data))
+            .catch(() => {
+                toast({
+                    title: "Error",
+                    description: "Failed to fetch students data",
+                });
+            });
     }, []);
 
     useEffect(() => {
         const fetchData = async () => {
-            const weekStart = startOfWeek(currentWeek, { weekStartsOn: 1 })
-                .toISOString()
-                .split("T")[0];
-            const weekData = await fetchWeekData(weekStart);
-            setCallStatuses(() => ({}));
-            if (weekData) {
-                const callStatusData: Record<
-                    string,
-                    Record<string, CallStatusEnum>
-                > = {};
-                students.forEach((student) => {
-                    const calls =
-                        weekData.students.find(
-                            (s) => s.studentId === student.id,
-                        )?.call || [];
-                    callStatusData[student.id] = weekDays.reduce(
-                        (acc, day, index) => {
-                            const callDate = format(
-                                addDays(weekStart, index),
-                                "yyyy-MM-dd",
-                            );
-                            const callOnDay = calls.find(
-                                (call) =>
-                                    format(
-                                        new Date(call.date),
-                                        "yyyy-MM-dd",
-                                    ) === callDate,
-                            );
-                            acc[day] = callOnDay
-                                ? callOnDay.callStatus
-                                : CallStatusEnum.Nothing;
-                            return acc;
-                        },
-                        {} as Record<string, CallStatusEnum>,
-                    );
+            try {
+                const weekStart = startOfWeek(currentWeek, { weekStartsOn: 1 })
+                    .toISOString()
+                    .split("T")[0];
+                const weekData = await fetchWeekData(weekStart);
+                setCallStatuses(weekData);
+            } catch (error) {
+                toast({
+                    title: "Error",
+                    description: "Failed to fetch week data",
                 });
-                setCallStatuses(callStatusData);
+                return;
             }
         };
         if (students.length > 0) {
@@ -179,28 +162,28 @@ export default function WeekPlanner() {
     const handleStatusChange = async (
         studentId: string,
         day: string,
-        status: CallStatusEnum,
+        status: CallStatus,
     ) => {
         const weekStart = startOfWeek(currentWeek, { weekStartsOn: 1 });
         const dayIndex = weekDays.indexOf(day);
         const date = format(addDays(weekStart, dayIndex), "yyyy-MM-dd");
-
-        setCallStatuses((prev) => ({
-            ...prev,
-            [studentId]: { ...prev[studentId], [day]: status },
-        }));
+        setCallStatuses((prev) => {
+            const newMap = new Map(prev);
+            newMap.set(`${studentId}-${date}`, status);
+            return newMap;
+        });
         await saveCallStatus(studentId, day, status, date);
     };
 
-    const getStatusColor = (status: CallStatusEnum) => {
+    const getStatusColor = (status: CallStatus) => {
         switch (status) {
-            case CallStatusEnum.Scheduled:
+            case "Scheduled":
                 return "bg-blue-100 text-blue-800";
-            case CallStatusEnum.Done:
+            case "Done":
                 return "bg-green-100 text-green-800";
-            case CallStatusEnum.DNP:
+            case "DNP":
                 return "bg-red-100 text-red-800";
-            case CallStatusEnum.Nothing:
+            case "Nothing":
             default:
                 return "bg-gray-100 text-gray-800";
         }
@@ -210,6 +193,20 @@ export default function WeekPlanner() {
         const weekStart = startOfWeek(currentWeek, { weekStartsOn: 1 });
         const weekEnd = endOfWeek(currentWeek, { weekStartsOn: 1 });
         return `${weekStart.toLocaleDateString()} - ${weekEnd.toLocaleDateString()}`;
+    };
+
+    const getDate = (dayIndex: number) => {
+        const weekStart = startOfWeek(currentWeek, { weekStartsOn: 1 });
+        const date = format(addDays(weekStart, dayIndex), "yyyy-MM-dd");
+        return date;
+    };
+
+    const getCallStatus = (studentId: string, date: string): CallStatus => {
+        const status = callStatuses.get(`${studentId}-${date}`);
+        if (status) {
+            return status;
+        }
+        return "Nothing";
     };
 
     return (
@@ -282,22 +279,21 @@ export default function WeekPlanner() {
                                 }}
                             >
                                 <div className="inline-flex space-x-4 pb-4">
-                                    {weekDays.map((day) => (
+                                    {weekDays.map((day, index) => (
                                         <div
                                             key={day}
                                             className="flex flex-col items-center"
                                         >
                                             <div className="text-xs font-medium mb-1">
-                                                {day}
+                                                {`${day} (${getDate(index)})`}
                                             </div>
                                             <Select
-                                                value={
-                                                    callStatuses[student.id]?.[
-                                                        day
-                                                    ] || CallStatusEnum.Nothing
-                                                }
+                                                value={getCallStatus(
+                                                    student.id,
+                                                    getDate(index),
+                                                )}
                                                 onValueChange={(
-                                                    value: CallStatusEnum,
+                                                    value: CallStatus,
                                                 ) =>
                                                     handleStatusChange(
                                                         student.id,
@@ -307,42 +303,25 @@ export default function WeekPlanner() {
                                                 }
                                             >
                                                 <SelectTrigger
-                                                    className={`w-[90px] ${getStatusColor(
-                                                        callStatuses[
-                                                            student.id
-                                                        ]?.[day] ||
-                                                            CallStatusEnum.Nothing,
-                                                    )}`}
+                                                    className={`w-[90px] ${getStatusColor(getCallStatus(student.id, getDate(index)))}`}
                                                 >
                                                     <SelectValue />
                                                 </SelectTrigger>
                                                 <SelectContent>
                                                     <SelectItem
-                                                        value={
-                                                            CallStatusEnum.Nothing
-                                                        }
+                                                        value={"Nothing"}
                                                     >
                                                         Nothing
                                                     </SelectItem>
                                                     <SelectItem
-                                                        value={
-                                                            CallStatusEnum.Scheduled
-                                                        }
+                                                        value={"Scheduled"}
                                                     >
                                                         Scheduled
                                                     </SelectItem>
-                                                    <SelectItem
-                                                        value={
-                                                            CallStatusEnum.Done
-                                                        }
-                                                    >
+                                                    <SelectItem value={"Done"}>
                                                         Done
                                                     </SelectItem>
-                                                    <SelectItem
-                                                        value={
-                                                            CallStatusEnum.DNP
-                                                        }
-                                                    >
+                                                    <SelectItem value={"DNP"}>
                                                         DNP
                                                     </SelectItem>
                                                 </SelectContent>

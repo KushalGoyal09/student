@@ -31,6 +31,7 @@ import axios from "axios";
 import { toast } from "@/hooks/use-toast";
 import AssignMentor from "./AssaignMentor";
 import FeeDetails from "./FeeDetail";
+import TargetComponent from "./Target";
 
 interface Student {
     id: string;
@@ -364,6 +365,7 @@ export default function Component() {
                     {role === Role.admin && (
                         <FeeDetails studentId={student.id} />
                     )}
+                    <TargetComponent student={student} />
                 </div>
             )}
         </>
