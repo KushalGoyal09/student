@@ -21,7 +21,6 @@ model SeniorMentor {
   name        String
   username    String        @unique
   password    String
-  rating      Float         @default(0)
   GroupMentor GroupMentor[]
 
   supervisor   Supervisor? @relation(fields: [supervisorId], references: [id])
@@ -33,7 +32,6 @@ model GroupMentor {
   name     String
   username String    @unique
   password String
-  rating   Float     @default(0)
   Student  Student[]
 
   seniorMentor       SeniorMentor?        @relation(fields: [seniorMentorId], references: [id])
@@ -165,6 +163,8 @@ model RatingBySupervisor {
 
   supervisorId  String
   groupMentorId String
+
+  @@unique([supervisorId, groupMentorId])
 }
 
 model RatingByStudent {
@@ -179,8 +179,10 @@ model RatingByStudent {
   studentId     String
   groupMentorId String
 
-  student     Student     @relation(fields: [studentId], references: [whattsapNumber])
+  student     Student     @relation(fields: [studentId], references: [id])
   groupMentor GroupMentor @relation(fields: [groupMentorId], references: [id])
+
+  @@unique([studentId, groupMentorId])
 }
 
 model Admin {

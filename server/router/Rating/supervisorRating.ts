@@ -3,7 +3,10 @@ import { PrismaClient } from "@prisma/client";
 const db = new PrismaClient();
 import { z } from "zod";
 import { AuthRequest, Role } from "../../types";
-import { throwUnauthorizedError } from "../../custom-error/customError";
+import {
+    throwBadRequestError,
+    throwUnauthorizedError,
+} from "../../custom-error/customError";
 
 const bodySchema = z.object({
     groupMentorId: z.coerce.string(),
@@ -17,32 +20,32 @@ const bodySchema = z.object({
 });
 
 const supervisorRating = async (req: AuthRequest, res: Response) => {
-    if (req.role !== Role.supervisor) {
-        throwUnauthorizedError("You are not allowed to do this operation");
-        return;
-    }
     const userId = req.userId;
-    if (!userId) {
+    if (req.role !== Role.supervisor || !userId) {
         throwUnauthorizedError("You are not allowed to do this operation");
         return;
     }
-
     const parsedData = bodySchema.safeParse(req.body);
     if (parsedData.success === false) {
-        res.json({
-            success: false,
-            message: "Wrong Inputs",
-        });
+        throwBadRequestError("Wrong Inputs");
         return;
     }
-
-    await db.ratingBySupervisor.create({
-        data: {
+    await db.ratingBySupervisor.upsert({
+        where: {
+            supervisorId_groupMentorId: {
+                groupMentorId: parsedData.data.groupMentorId,
+                supervisorId: userId,
+            },
+        },
+        create: {
             ...parsedData.data,
             supervisorId: userId,
         },
+        update: {
+            ...parsedData.data,
+        },
     });
-    res.json({
+    res.status(200).json({
         success: true,
         message: "Rating is added successfully",
     });

@@ -28,7 +28,6 @@ const studentRating = async (req: Request, res: Response) => {
         calling,
         seriousness,
         exceptation,
-        email,
         phoneNumber,
     } = parsedData.data;
     const student = await db.student.findUnique({
@@ -54,8 +53,14 @@ const studentRating = async (req: Request, res: Response) => {
         });
         return;
     }
-    await db.ratingByStudent.create({
-        data: {
+    await db.ratingByStudent.upsert({
+        where: {
+            studentId_groupMentorId: {
+                studentId: student.id,
+                groupMentorId: student.groupMentorId,
+            },
+        },
+        create: {
             bonding,
             targetAssaigningAndChecking,
             calling,
@@ -63,6 +68,13 @@ const studentRating = async (req: Request, res: Response) => {
             exceptation,
             studentId: student.id,
             groupMentorId: student.groupMentorId,
+        },
+        update: {
+            bonding,
+            targetAssaigningAndChecking,
+            calling,
+            seriousness,
+            exceptation,
         },
     });
     res.json({

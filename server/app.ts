@@ -17,6 +17,7 @@ import callRouter from "./router/Call";
 import testRouter from "./router/test";
 import syallabusRouter from "./router/Syallabus";
 import targetRouter from "./router/Target";
+import ratingRouter from "./router/Rating";
 
 app.use(express.json());
 
@@ -31,6 +32,7 @@ app.use("/api/new", admissionRouter);
 app.use("/api/call", callRouter);
 app.use("/api/syllabus", syallabusRouter);
 app.use("/api/target", targetRouter);
+app.use("/api/rating", ratingRouter);
 
 app.use(notFound);
 app.use(errorHandler);

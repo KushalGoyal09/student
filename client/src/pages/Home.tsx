@@ -103,6 +103,11 @@ const Home = () => {
             label: "Students Target",
             path: "/target",
         },
+        {
+            role: [Role.supervisor],
+            label: "Rate Mentor Performance",
+            path: "/rating",
+        },
     ];
 
     return (

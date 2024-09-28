@@ -8,7 +8,6 @@ import {
     AddStudent,
     AddSupervisor,
 } from "./pages/Add";
-import Mentor from "./pages/Mentors";
 import Target from "./pages/AddTarget";
 import ChangePassword from "./pages/Admin/ChangePassword";
 import MentorRatingPage from "./pages/SupervisorRating";
@@ -74,15 +73,11 @@ const App = () => {
                     ],
                 },
                 {
-                    path: "/admin/mentors",
-                    element: <Mentor />,
-                },
-                {
                     path: "/target",
                     element: <Target />,
                 },
                 {
-                    path: "/mentor-rating",
+                    path: "/rating",
                     element: <MentorRatingPage />,
                 },
                 {
