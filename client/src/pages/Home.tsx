@@ -99,12 +99,7 @@ const Home = () => {
             path: "/syallabus",
         },
         {
-            role: [
-                Role.admin,
-                Role.seniorMentor,
-                Role.supervisor,
-                Role.groupMentor,
-            ],
+            role: [Role.groupMentor],
             label: "Students Target",
             path: "/target",
         },

@@ -146,7 +146,7 @@ const App = () => {
                 },
                 {
                     path: "/syallabus",
-                    element: <Syallabus/>
+                    element: <Syallabus />,
                 },
                 {
                     path: "*",

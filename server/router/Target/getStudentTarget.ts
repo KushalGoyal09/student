@@ -100,5 +100,4 @@ const getStudentTarget = async (req: AuthRequest, res: Response) => {
     });
 };
 
-
 export default getStudentTarget;

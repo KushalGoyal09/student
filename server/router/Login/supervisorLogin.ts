@@ -1,7 +1,5 @@
 import { PrismaClient } from "prisma/prisma-client";
-import {
-    throwUnauthorizedError,
-} from "../../custom-error/customError";
+import { throwUnauthorizedError } from "../../custom-error/customError";
 import { getToken } from "../../utils/auth";
 import { Role } from "../../types";
 const db = new PrismaClient();

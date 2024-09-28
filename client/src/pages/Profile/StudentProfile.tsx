@@ -32,6 +32,7 @@ import { toast } from "@/hooks/use-toast";
 import AssignMentor from "./AssaignMentor";
 import FeeDetails from "./FeeDetail";
 import TargetComponent from "./Target";
+import StudentCallUpdates from "./Call";
 
 interface Student {
     id: string;
@@ -366,6 +367,7 @@ export default function Component() {
                         <FeeDetails studentId={student.id} />
                     )}
                     <TargetComponent student={student} />
+                    <StudentCallUpdates studentId={student.id} />
                 </div>
             )}
         </>
