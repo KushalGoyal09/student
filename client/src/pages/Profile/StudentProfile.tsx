@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Switch } from "@/components/ui/switch";
 import {
     Edit,
     User,
@@ -48,6 +49,7 @@ interface Student {
     target: string;
     StudyHours: number;
     class: string;
+    status: boolean;
     dropperStatus: string;
     previousScore: string;
     platform: string;
@@ -127,9 +129,62 @@ export default function Component() {
                 <div className="min-h-screen bg-gray-100 p-4 sm:p-6 lg:p-8">
                     <Card className="w-full max-w-6xl mx-auto">
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                            <CardTitle className="text-3xl font-bold">
+                            <CardTitle className={`text-xl font-bold ${!student.status && "text-red-500"}`}>
                                 Student Profile
                             </CardTitle>
+                            <div className="flex items-center space-x-2">
+                                <Label
+                                    htmlFor="active"
+                                    className="flex items-center space-x-2"
+                                >
+                                    <span>Active</span>
+                                    <Switch
+                                        id="active"
+                                        checked={student.status}
+                                        onCheckedChange={(e) => {
+                                            const status = e;
+                                            axios
+                                                .post(
+                                                    "/api/profile/update/status",
+                                                    {
+                                                        studentId: student.id,
+                                                        date: new Date(),
+                                                        status,
+                                                    },
+                                                    {
+                                                        headers: {
+                                                            Authorization: `Bearer ${localStorage.getItem(
+                                                                "token",
+                                                            )}`,
+                                                        },
+                                                    },
+                                                )
+                                                .then(() => {
+                                                    setStudent((prev) =>
+                                                        prev
+                                                            ? {
+                                                                  ...prev,
+                                                                  status,
+                                                              }
+                                                            : null,
+                                                    );
+                                                    toast({
+                                                        title: "Success",
+                                                        description:
+                                                            `Active status updated to ${status}`,
+                                                    });
+                                                })
+                                                .catch(() => {
+                                                    toast({
+                                                        title: "Error",
+                                                        description:
+                                                            "Failed to update active status",
+                                                    });
+                                                });
+                                        }}
+                                    />
+                                </Label>
+                            </div>
                             {role === Role.admin && (
                                 <Dialog
                                     open={isEditing}
@@ -237,7 +292,6 @@ export default function Component() {
                                     </TabsTrigger>
                                 </TabsList>
 
-                                {/* Personal Info */}
                                 <TabsContent value="personal" className="mt-4">
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                         <InfoCard
@@ -268,7 +322,6 @@ export default function Component() {
                                     </div>
                                 </TabsContent>
 
-                                {/* Contact Info */}
                                 <TabsContent value="contact" className="mt-4">
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                         <InfoCard
@@ -294,7 +347,6 @@ export default function Component() {
                                     </div>
                                 </TabsContent>
 
-                                {/* Academic Info */}
                                 <TabsContent value="academic" className="mt-4">
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                         <InfoCard
@@ -325,7 +377,6 @@ export default function Component() {
                                     </div>
                                 </TabsContent>
 
-                                {/* Other Info */}
                                 <TabsContent value="other" className="mt-4">
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                         <InfoCard

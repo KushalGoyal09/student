@@ -1,30 +1,44 @@
-import { AuthRequest } from "../../types";
+import { AuthRequest, Role } from "../../types";
 import { PrismaClient } from "@prisma/client";
 import { z } from "zod";
 import { Response } from "express";
+import { throwBadRequestError, throwUnauthorizedError } from "../../custom-error/customError";
 const db = new PrismaClient();
 
 const bodySchema = z.object({
-    studentId: z.coerce.string(),
+    studentId: z.string(),
     date: z.coerce.date(),
+    status: z.coerce.boolean(),
 });
 
 const changeActiveStatus = async (req: AuthRequest, res: Response) => {
+    if (
+        req.role !== Role.admin &&
+        req.role !== Role.supervisor &&
+        req.role !== Role.seniorMentor &&
+        req.role !== Role.groupMentor
+    ) {
+        throwUnauthorizedError(
+            "You are not authorized to change active status",
+        );
+    }
     const parsedData = bodySchema.safeParse(req.body);
     if (!parsedData.success) {
-        return res.status(400).json({ error: "Invalid input" });
+        throwBadRequestError(parsedData.error.errors[0].message);
+        return;
     }
-    const { studentId, date } = parsedData.data;
+    const { studentId, date, status } = parsedData.data;
     await db.student.update({
         where: {
             id: studentId,
         },
         data: {
-            status: false,
+            status,
             dateOfDeactive: date,
         },
     });
     return res.status(200).json({
+        success: true,
         message: "Active status updated",
     });
 };

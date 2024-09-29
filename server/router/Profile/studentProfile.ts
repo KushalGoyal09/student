@@ -54,6 +54,7 @@ const studentProfile = async (req: AuthRequest, res: Response) => {
             previousScore: true,
             platform: true,
             expectation: true,
+            status: true,
             createdAt: true,
             groupMentor: {
                 select: {
