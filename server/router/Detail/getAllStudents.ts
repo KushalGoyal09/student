@@ -16,6 +16,11 @@ const getAllStudents = async (req: AuthRequest, res: Response) => {
     }
     if (req.role === Role.admin) {
         const data = await db.student.findMany({
+            where: {
+                groupMentorId: {
+                    not: null,
+                },
+            },
             orderBy: [
                 {
                     status: "desc",
@@ -53,6 +58,11 @@ const getAllStudents = async (req: AuthRequest, res: Response) => {
                 GroupMentor: {
                     select: {
                         Student: {
+                            where: {
+                                groupMentorId: {
+                                    not: null,
+                                },
+                            },
                             orderBy: [
                                 {
                                     status: "desc",
@@ -95,6 +105,11 @@ const getAllStudents = async (req: AuthRequest, res: Response) => {
             },
             select: {
                 Student: {
+                    where: {
+                        groupMentorId: {
+                            not: null,
+                        },
+                    },
                     orderBy: [
                         {
                             status: "desc",

@@ -11,11 +11,17 @@ const calculateSeniorMentorRating = async (seniorMentorId: string) => {
             id: true,
         },
     });
+    if (groupMentors.length === 0) {
+        return 0;
+    }
     let total = 0;
-    groupMentors.forEach(async (groupMentor) => {
-        total += (await calculateMentorRating(groupMentor.id, seniorMentorId))
-            .overallRating;
-    });
+    const mentorRatings = await Promise.all(
+        groupMentors.map(async (groupMentor) => {
+            const mentorRating = await calculateMentorRating(groupMentor.id);
+            return mentorRating.overallRating;
+        }),
+    );
+    total = mentorRatings.reduce((acc, rating) => acc + rating, 0);
     const seniorMentorRating = total / groupMentors.length;
     return seniorMentorRating;
 };

@@ -7,6 +7,28 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model User {
+  id         String       @id @default(uuid())
+  name       String
+  username   String       @unique
+  password   String
+  permission Permission[] @default([])
+}
+
+enum Permission {
+  Seesyallabus
+  UpdateSyallabus
+  AddSupervisor
+  AddSeniorMentor
+  AddGroupMentor
+  SeeAllSupervisor
+  SeeAllSeniorMentor
+  SeeAllGroupMentor
+  FeeManagement
+  KitDispatch
+  AssaignMentor
+}
+
 model Supervisor {
   id                 String               @id @default(uuid())
   name               String

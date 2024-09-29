@@ -3,14 +3,10 @@ const db = new PrismaClient();
 
 const calculateMentorRating = async (
     groupMentorId: string,
-    supervisorId: string,
 ) => {
-    const mentorRatingBySupervisor = await db.ratingBySupervisor.findUnique({
+    const mentorRatingBySupervisor = await db.ratingBySupervisor.findFirst({
         where: {
-            supervisorId_groupMentorId: {
-                groupMentorId,
-                supervisorId,
-            },
+            groupMentorId
         },
         select: {
             status: true,

@@ -49,10 +49,9 @@ const getMentorDetail = async (req: AuthRequest, res: Response) => {
                     callNumber: true,
                 },
             },
-            seniorMentorId: true,
         },
     });
-    if (!data || !data.seniorMentorId) {
+    if (!data) {
         throwBadRequestError("Senior Mentor not found");
         return;
     }
@@ -61,7 +60,7 @@ const getMentorDetail = async (req: AuthRequest, res: Response) => {
         "yyyy-MM-dd",
     );
     const weekData = await getWeekRecordForMentor(data.id, weekStart);
-    const rating = await calculateMentorRating(data.id, data.seniorMentorId);
+    const rating = await calculateMentorRating(data.id);
     const response = {
         ...data,
         ...rating,
