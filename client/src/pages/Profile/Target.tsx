@@ -332,7 +332,7 @@ export default function TargetComponent({ student }: Props) {
     }
 
     return (
-        <Card className="w-full mt-6">
+        <Card className="w-full mt-6 max-w-6xl mx-auto">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-2xl font-bold">Targets</CardTitle>
                 {(role === Role.groupMentor ||

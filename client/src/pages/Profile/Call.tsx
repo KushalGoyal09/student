@@ -84,7 +84,7 @@ const StudentCallUpdates = ({ studentId }: StudentCallUpdatesProps) => {
     const weekEnd = endOfWeek(currentWeek, { weekStartsOn: 1 });
 
     return (
-        <Card className="w-full max-w-md mx-auto">
+        <Card className="w-full mt-6 max-w-6xl mx-auto">
             <CardHeader>
                 <CardTitle className="text-xl font-bold">
                     Call Updates

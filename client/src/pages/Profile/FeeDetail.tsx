@@ -174,7 +174,7 @@ export default function FeeManagement({ studentId }: Props) {
     }
 
     return (
-        <Card className="w-full mt-6">
+        <Card className="w-full mt-6 max-w-6xl mx-auto">
             <CardHeader>
                 <CardTitle className="text-2xl font-bold">
                     Fee Management

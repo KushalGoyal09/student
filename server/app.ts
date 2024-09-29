@@ -14,14 +14,12 @@ import detailRouter from "./router/Detail";
 import profileRouter from "./router/Profile";
 import admissionRouter from "./router/NewStudent";
 import callRouter from "./router/Call";
-import testRouter from "./router/test";
 import syallabusRouter from "./router/Syallabus";
 import targetRouter from "./router/Target";
 import ratingRouter from "./router/Rating";
 
 app.use(express.json());
 
-app.use("/test", testRouter);
 app.use("/api/me", meRouter);
 app.use("/api/login", loginRouter);
 app.use("/api/add", addRouter);
