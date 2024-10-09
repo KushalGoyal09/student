@@ -1,13 +1,5 @@
 import { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-    Dialog,
-    DialogContent,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-} from "@/components/ui/dialog";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
 import { FeeStructureForm } from "./FeeStructureForm";
@@ -99,7 +91,7 @@ export default function StudentFeeManagement({
 }: StudentFeeManagementProps) {
     const [feeData, setFeeData] = useState<FeeData | null>(null);
     const [isLoading, setIsLoading] = useState(true);
-    const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+    // const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
     const { toast } = useToast();
 
     useEffect(() => {
@@ -227,9 +219,7 @@ export default function StudentFeeManagement({
         }
     };
 
-    const getMentorshipPlanColor = (
-        mentorshipPlan: MentorshipPlan,
-    ) => {
+    const getMentorshipPlanColor = (mentorshipPlan: MentorshipPlan) => {
         switch (mentorshipPlan) {
             case "Elite":
                 return "text-yellow-500";
@@ -241,7 +231,6 @@ export default function StudentFeeManagement({
                 return "text-gray-500";
         }
     };
-
 
     if (isLoading) {
         return (
@@ -296,26 +285,44 @@ export default function StudentFeeManagement({
             <CardContent className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                     <div>
-                        <p className="text-sm font-medium">Total Amount <span className="text-green-400 font-bold" >Paid</span> </p>
+                        <p className="text-sm font-medium">
+                            Total Amount{" "}
+                            <span className="text-green-400 font-bold">
+                                Paid
+                            </span>{" "}
+                        </p>
                         <p className="text-2xl font-bold">
                             ₹{feeData.totalAmountPaid}
                         </p>
                     </div>
                     <div>
-                        <p className="text-sm font-medium">Total Amount <span className="text-red-400 font-bold" >Due</span> </p>
+                        <p className="text-sm font-medium">
+                            Total Amount{" "}
+                            <span className="text-red-400 font-bold">Due</span>{" "}
+                        </p>
                         <p className="text-2xl font-bold">
                             ₹{feeData.totalAmountDue}
                         </p>
                     </div>
                     <div>
                         <p className="text-sm font-medium">Fee Plan</p>
-                        <p className={`text-xl font-bold ` + getFeePlanColor(feeData.feesPlan)}>
+                        <p
+                            className={
+                                `text-xl font-bold ` +
+                                getFeePlanColor(feeData.feesPlan)
+                            }
+                        >
                             {feeData.feesPlan} installment(s)
                         </p>
                     </div>
                     <div>
                         <p className="text-sm font-medium">Mentorship Plan</p>
-                        <p className={"text-xl font-bold " + getMentorshipPlanColor(feeData.mentorshipPlan)}>
+                        <p
+                            className={
+                                "text-xl font-bold " +
+                                getMentorshipPlanColor(feeData.mentorshipPlan)
+                            }
+                        >
                             {feeData.mentorshipPlan}
                         </p>
                     </div>

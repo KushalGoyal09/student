@@ -25,7 +25,6 @@ import FeeDetail from "./pages/New/FeeDetail";
 import KitDispatchPage from "./pages/New/KitDetails";
 import StudentList from "./pages/Detail/StudentList";
 import Layout from "./components/Layout";
-import WeekPlanner from "./pages/CallRecord";
 import Syallabus from "./pages/Syallabus";
 import MentorFeedback from "./pages/MentorFeedbacks";
 import MentorPage from "./pages/MentorPage";
@@ -36,8 +35,6 @@ import Juniors from "./pages/Juniors";
 import StudentProfile from "./pages/Profile/StudentProfile";
 import CallRecord from "./pages/CallRecord2";
 import MentorSalaryManagement from "./pages/MentorSalary";
-import MentorSalaryManagement2 from "./pages/MentorSalary2";
-import FeeDetailPage from "./pages/Profile/Fee";
 import RoleManagement from "./pages/RoleManagement";
 
 const App = () => {

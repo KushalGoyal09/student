@@ -3,9 +3,6 @@ import {
     CalendarIcon,
     ChevronLeftIcon,
     ChevronRightIcon,
-    PhoneIcon,
-    UserIcon,
-    MessageCircleIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -15,10 +12,8 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { endOfWeek, startOfWeek, addDays, format } from "date-fns";
 import axios from "axios";
-import { Link } from "react-router-dom";
 import { toast } from "@/hooks/use-toast";
 import DetailedDailySummary from "./DailyCallRecord";
 

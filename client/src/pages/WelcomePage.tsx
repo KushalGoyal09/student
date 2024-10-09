@@ -30,7 +30,6 @@ const MovingLine = ({ line }: { line: Line }) => (
 
 export default function WelcomeComponent() {
     const [lines, setLines] = useState<Line[]>([]);
-    const [isHovered, setIsHovered] = useState(false);
     const containerRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
@@ -130,11 +129,7 @@ export default function WelcomeComponent() {
                     whileTap={{ scale: 0.95 }}
                 >
                     <Link to="/login">
-                        <Button
-                            className="bg-blue-500 text-white px-8 py-3 rounded-full text-lg font-semibold hover:bg-blue-600 transition-all duration-300 shadow-md hover:shadow-lg"
-                            onMouseEnter={() => setIsHovered(true)}
-                            onMouseLeave={() => setIsHovered(false)}
-                        >
+                        <Button className="bg-blue-500 text-white px-8 py-3 rounded-full text-lg font-semibold hover:bg-blue-600 transition-all duration-300 shadow-md hover:shadow-lg">
                             Login
                         </Button>
                     </Link>

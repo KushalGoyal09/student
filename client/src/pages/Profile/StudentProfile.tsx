@@ -3,12 +3,10 @@ import { Info, Users, DollarSign, Target, PhoneCall } from "lucide-react";
 import { Role, userAtom } from "@/recoil/userAtom";
 import { useRecoilValue } from "recoil";
 import CallRecord from "./Call";
-import TargetComponent from "./Target";
-import FeeDetails from "./FeeDetail";
+// import TargetComponent from "./Target";
 import InfoComponent from "./Info";
 import AssignMentor from "./AssaignMentor";
 import { useParams } from "react-router-dom";
-import FeeDetailPage from "./Fee";
 import Fee from "./Fee/Fee";
 
 type TabType = "Info" | "AssignMentor" | "FeeDetail" | "Target" | "Calling";

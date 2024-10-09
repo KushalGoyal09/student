@@ -3,7 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useRecoilValue } from "recoil";
 import newStudents from "@/recoil/newStudents";
-import { Phone, Calendar, Eye } from "lucide-react";
+import { Phone, Calendar } from "lucide-react";
 
 interface Student {
     id: string;

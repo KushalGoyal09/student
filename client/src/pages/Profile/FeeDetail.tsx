@@ -40,7 +40,7 @@ type Props = {
 const feeStructure = {
     Elite: { one: 12990, two: [7500, 7500], three: [5500, 5500, 3990] },
     Pro: { one: 13999, two: [7500, 7500], three: [5500, 5500, 5000] },
-    Max: { one: 24999, two: [15000, 15000] }
+    Max: { one: 24999, two: [15000, 15000] },
 };
 
 export default function FeeManagement({ studentId }: Props) {
@@ -53,9 +53,14 @@ export default function FeeManagement({ studentId }: Props) {
     const handleAddPayment = () => {
         if (feeData && feeData.feesPlan && feeData.mentorshipPlan) {
             const plan = feeStructure[feeData.mentorshipPlan];
-            const amount = feeData.feesPlan === 1 ? plan.one : 
-                           feeData.feesPlan === 2 ? plan.two[0] : 
-                           plan.three[0];
+            // @ts-ignore
+            const amount =
+                feeData.feesPlan === 1
+                    ? plan.one
+                    : feeData.feesPlan === 2
+                      ? plan.two[0]
+                      : //@ts-ignore
+                        plan.three[0];
             setNewPayment({
                 date: new Date(),
                 mode: "UPI",
@@ -128,7 +133,7 @@ export default function FeeManagement({ studentId }: Props) {
     const handleUpdateFee = async ({
         allClear,
         feePlan,
-        mentorshipPlan
+        mentorshipPlan,
     }: {
         allClear?: boolean;
         feePlan?: number | null;
@@ -143,7 +148,7 @@ export default function FeeManagement({ studentId }: Props) {
         if (feePlan === undefined) {
             feePlan = feeData.feesPlan;
         }
-        if(mentorshipPlan === undefined) {
+        if (mentorshipPlan === undefined) {
             mentorshipPlan = feeData.mentorshipPlan;
         }
         try {
@@ -356,9 +361,19 @@ export default function FeeManagement({ studentId }: Props) {
                                                     type="number"
                                                     value={payment.amount}
                                                     onChange={(e) => {
-                                                        const newPayments = [...feeData.payments];
-                                                        newPayments[index].amount = Number(e.target.value);
-                                                        setFeeData({ ...feeData, payments: newPayments });
+                                                        const newPayments = [
+                                                            ...feeData.payments,
+                                                        ];
+                                                        newPayments[
+                                                            index
+                                                        ].amount = Number(
+                                                            e.target.value,
+                                                        );
+                                                        setFeeData({
+                                                            ...feeData,
+                                                            payments:
+                                                                newPayments,
+                                                        });
                                                     }}
                                                     className="w-24"
                                                 />
@@ -375,16 +390,32 @@ export default function FeeManagement({ studentId }: Props) {
                                             {editingPayment === index ? (
                                                 <Input
                                                     type="date"
-                                                    value={format(new Date(payment.date), "yyyy-MM-dd")}
+                                                    value={format(
+                                                        new Date(payment.date),
+                                                        "yyyy-MM-dd",
+                                                    )}
                                                     onChange={(e) => {
-                                                        const newPayments = [...feeData.payments];
-                                                        newPayments[index].date = new Date(e.target.value);
-                                                        setFeeData({ ...feeData, payments: newPayments });
+                                                        const newPayments = [
+                                                            ...feeData.payments,
+                                                        ];
+                                                        newPayments[
+                                                            index
+                                                        ].date = new Date(
+                                                            e.target.value,
+                                                        );
+                                                        setFeeData({
+                                                            ...feeData,
+                                                            payments:
+                                                                newPayments,
+                                                        });
                                                     }}
                                                 />
                                             ) : (
                                                 <span className="text-lg font-bold text-blue-600">
-                                                    {format(new Date(payment.date), "dd MMM yyyy")}
+                                                    {format(
+                                                        new Date(payment.date),
+                                                        "dd MMM yyyy",
+                                                    )}
                                                 </span>
                                             )}
                                         </div>
@@ -397,9 +428,17 @@ export default function FeeManagement({ studentId }: Props) {
                                                     type="text"
                                                     value={payment.mode || ""}
                                                     onChange={(e) => {
-                                                        const newPayments = [...feeData.payments];
-                                                        newPayments[index].mode = e.target.value;
-                                                        setFeeData({ ...feeData, payments: newPayments });
+                                                        const newPayments = [
+                                                            ...feeData.payments,
+                                                        ];
+                                                        newPayments[
+                                                            index
+                                                        ].mode = e.target.value;
+                                                        setFeeData({
+                                                            ...feeData,
+                                                            payments:
+                                                                newPayments,
+                                                        });
                                                     }}
                                                 />
                                             ) : (
@@ -411,15 +450,36 @@ export default function FeeManagement({ studentId }: Props) {
                                         <div>
                                             {editingPayment === index ? (
                                                 <>
-                                                    <Button onClick={() => handleSavePayment(index)} size="sm" className="mr-2">
+                                                    <Button
+                                                        onClick={() =>
+                                                            handleSavePayment(
+                                                                index,
+                                                            )
+                                                        }
+                                                        size="sm"
+                                                        className="mr-2"
+                                                    >
                                                         <Check className="w-4 h-4" />
                                                     </Button>
-                                                    <Button onClick={() => setEditingPayment(null)} size="sm"   variant="outline">
+                                                    <Button
+                                                        onClick={() =>
+                                                            setEditingPayment(
+                                                                null,
+                                                            )
+                                                        }
+                                                        size="sm"
+                                                        variant="outline"
+                                                    >
                                                         <X className="w-4 h-4" />
                                                     </Button>
                                                 </>
                                             ) : (
-                                                <Button onClick={() => handleEditPayment(index)} size="sm">
+                                                <Button
+                                                    onClick={() =>
+                                                        handleEditPayment(index)
+                                                    }
+                                                    size="sm"
+                                                >
                                                     <Edit2 className="w-4 h-4" />
                                                 </Button>
                                             )}
@@ -434,11 +494,12 @@ export default function FeeManagement({ studentId }: Props) {
                                                 <span className="text-red-600">
                                                     {getDueDays(
                                                         feeData.payments[
-                                                            feeData.payments.length - 1
+                                                            feeData.payments
+                                                                .length - 1
                                                         ].date,
                                                     )}
-                                                </span>
-                                                {" "}days
+                                                </span>{" "}
+                                                days
                                             </p>
                                         </div>
                                     )}
