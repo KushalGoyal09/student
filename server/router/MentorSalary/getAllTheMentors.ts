@@ -6,36 +6,43 @@ import calculateMentorRating from "../../utils/calculateMentorRating";
 const db = new PrismaClient();
 
 interface MentorResponse {
-    success: boolean
+    success: boolean;
     data: {
-        id: string,
-        username: string,
-        name: string,
-        studentCount: number,
-        overallRating: number
-    }[]
+        id: string;
+        username: string;
+        name: string;
+        studentCount: number;
+        overallRating: number;
+    }[];
 }
 
-const getAllTheMentors = async (req: AuthRequest, res: Response<MentorResponse>) => {
+const getAllTheMentors = async (
+    req: AuthRequest,
+    res: Response<MentorResponse>,
+) => {
     const role = req.role;
-    if(role !== Role.admin) {
-        throwUnauthorizedError("You are not authorized to access this resource");
+    if (role !== Role.admin) {
+        throwUnauthorizedError(
+            "You are not authorized to access this resource",
+        );
         return;
     }
     const mentors = await db.groupMentor.findMany({
         select: {
             id: true,
             username: true,
-            name:   true,
-            Student:true,
-        }
+            name: true,
+            Student: true,
+        },
     });
-    const rating = await Promise.all(mentors.map(async (mentor) => {
-        return {
-            ...mentor,
-            ...await calculateMentorRating(mentor.id)
-        }
-    }));
+    const rating = await Promise.all(
+        mentors.map(async (mentor) => {
+            return {
+                ...mentor,
+                ...(await calculateMentorRating(mentor.id)),
+            };
+        }),
+    );
 
     const data = rating.map((mentor) => {
         return {
@@ -43,13 +50,13 @@ const getAllTheMentors = async (req: AuthRequest, res: Response<MentorResponse>)
             username: mentor.username,
             name: mentor.name,
             studentCount: mentor.Student.length,
-            overallRating: mentor.overallRating
-        }
-    })
+            overallRating: mentor.overallRating,
+        };
+    });
     res.json({
         success: true,
-        data
-    })
-}
+        data,
+    });
+};
 
 export default getAllTheMentors;

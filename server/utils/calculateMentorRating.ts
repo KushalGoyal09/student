@@ -1,12 +1,10 @@
 import { PrismaClient } from "prisma/prisma-client";
 const db = new PrismaClient();
 
-const calculateMentorRating = async (
-    groupMentorId: string,
-) => {
+const calculateMentorRating = async (groupMentorId: string) => {
     const mentorRatingBySupervisor = await db.ratingBySupervisor.findFirst({
         where: {
-            groupMentorId
+            groupMentorId,
         },
         select: {
             status: true,

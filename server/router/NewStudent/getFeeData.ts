@@ -61,7 +61,7 @@ const getFeeData = async (req: AuthRequest, res: Response<FeeDataResponse>) => {
                 },
                 orderBy: {
                     date: "asc",
-                }
+                },
             },
         },
     });

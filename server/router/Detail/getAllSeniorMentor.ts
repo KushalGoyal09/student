@@ -23,15 +23,17 @@ const getAllSeniorMentor = async (req: AuthRequest, res: Response) => {
                 name: "asc",
             },
         });
-        const response = await Promise.all(data.map(async (item) => {
-            return {
-                ...item,
-                rating: await calculateSeniorMentorRating(item.id),
-            };
-        }));
+        const response = await Promise.all(
+            data.map(async (item) => {
+                return {
+                    ...item,
+                    rating: await calculateSeniorMentorRating(item.id),
+                };
+            }),
+        );
         res.status(200).json({
             success: true,
-            data:response,
+            data: response,
         });
         return;
     }
@@ -51,15 +53,17 @@ const getAllSeniorMentor = async (req: AuthRequest, res: Response) => {
                 username: true,
             },
         });
-        const response = await Promise.all(data.map(async (item) => {
-            return {
-                ...item,
-                rating: await calculateSeniorMentorRating(item.id),
-            };
-        }));
+        const response = await Promise.all(
+            data.map(async (item) => {
+                return {
+                    ...item,
+                    rating: await calculateSeniorMentorRating(item.id),
+                };
+            }),
+        );
         res.status(200).json({
             success: true,
-            data:response,
+            data: response,
         });
     }
 };

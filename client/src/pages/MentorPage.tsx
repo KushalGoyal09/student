@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import {Plus, CircleCheck} from 'lucide-react'
+import { Plus, CircleCheck } from "lucide-react";
 
 export default function MentorPage() {
     return (
@@ -13,7 +13,7 @@ export default function MentorPage() {
                     <div className="bg-purple-600 rounded-lg p-4">
                         <span className="block bg-purple-700 text-white text-xl font-bold py-3 px-2 rounded-lg mb-4">
                             <span className="flex items-center">
-                                <CircleCheck className="w-6 h-6 mr-2"/>
+                                <CircleCheck className="w-6 h-6 mr-2" />
                                 EXISTING MENTORS
                             </span>
                         </span>
@@ -42,7 +42,7 @@ export default function MentorPage() {
                     <div className="bg-blue-600 rounded-lg p-4">
                         <span className="block bg-blue-700 text-white text-xl font-bold py-3 px-4 rounded-lg mb-4">
                             <span className="flex items-center">
-                                <Plus className="w-6 h-6 mr-2"/>
+                                <Plus className="w-6 h-6 mr-2" />
                                 ADD NEW MENTOR
                             </span>
                         </span>

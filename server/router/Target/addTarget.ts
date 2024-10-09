@@ -28,73 +28,72 @@ const bodySchema = z.object({
 });
 
 const addTarget = async (req: AuthRequest, res: Response) => {
-    const userId = req.userId;
-    if (
-        (req.role !== Role.groupMentor &&
-            req.role !== Role.admin &&
-            req.role !== Role.seniorMentor &&
-            req.role !== Role.supervisor) ||
-        !userId
-    ) {
-        throwUnauthorizedError("You are not authorized to add target");
-        return;
-    }
-    const { studentId, physics, chemistry, biology } = bodySchema.parse(
-        req.body,
-    );
-    const student = await db.student.findUnique({
-        where: {
-            id: studentId,
-        },
-        select: {
-            groupMentorId: true,
-        },
-    });
-    if (!student || !student.groupMentorId) {
-        res.status(400).json({
-            success: false,
-            message: "Student not found",
-        });
-        return;
-    }
-    const physicsTarget = await db.physicsTarget.create({
-        data: {
-            chapterId: physics.chapterId,
-            fromDate: physics.fromDate,
-            toDate: physics.toDate,
-            lecturePerDay: physics.lecturePerDay,
-        },
-    });
-    const chemistryTarget = await db.chemistryTarget.create({
-        data: {
-            chapterId: chemistry.chapterId,
-            fromDate: chemistry.fromDate,
-            toDate: chemistry.toDate,
-            lecturePerDay: chemistry.lecturePerDay,
-        },
-    });
+    // const userId = req.userId;
+    // if (
+    //     (req.role !== Role.groupMentor &&
+    //         req.role !== Role.admin &&
+    //         req.role !== Role.seniorMentor &&
+    //         req.role !== Role.supervisor) ||
+    //     !userId
+    // ) {
+    //     throwUnauthorizedError("You are not authorized to add target");
+    //     return;
+    // }
+    // const { studentId, physics, chemistry, biology } = bodySchema.parse(
+    //     req.body,
+    // );
+    // const student = await db.student.findUnique({
+    //     where: {
+    //         id: studentId,
+    //     },
+    //     select: {
+    //         groupMentorId: true,
+    //     },
+    // });
+    // if (!student || !student.groupMentorId) {
+    //     res.status(400).json({
+    //         success: false,
+    //         message: "Student not found",
+    //     });
+    //     return;
+    // }
+    // const physicsTarget = await db.physicsTarget.create({
+    //     data: {
+    //         chapterId: physics.chapterId,
+    //         fromDate: physics.fromDate,
+    //         toDate: physics.toDate,
+    //         lecturePerDay: physics.lecturePerDay,
+    //     },
+    // });
+    // const chemistryTarget = await db.chemistryTarget.create({
+    //     data: {
+    //         chapterId: chemistry.chapterId,
+    //         fromDate: chemistry.fromDate,
+    //         toDate: chemistry.toDate,
+    //         lecturePerDay: chemistry.lecturePerDay,
+    //     },
+    // });
 
-    const biologyTarget = await db.biologyTarget.create({
-        data: {
-            chapterId: biology.chapterId,
-            fromDate: biology.fromDate,
-            toDate: biology.toDate,
-            lecturePerDay: biology.lecturePerDay,
-        },
-    });
-    const target = await db.target.create({
-        data: {
-            studentId,
-            mentorId: student.groupMentorId,
-            physicsTargetId: physicsTarget.id,
-            chemistryTargetId: chemistryTarget.id,
-            biologyTargetId: biologyTarget.id,
-        },
-    });
+    // const biologyTarget = await db.biologyTarget.create({
+    //     data: {
+    //         chapterId: biology.chapterId,
+    //         fromDate: biology.fromDate,
+    //         toDate: biology.toDate,
+    //         lecturePerDay: biology.lecturePerDay,
+    //     },
+    // });
+    // const target = await db.target.create({
+    //     data: {
+    //         studentId,
+    //         mentorId: student.groupMentorId,
+    //         physicsTargetId: physicsTarget.id,
+    //         chemistryTargetId: chemistryTarget.id,
+    //         biologyTargetId: biologyTarget.id,
+    //     },
+    // });
     res.json({
         success: true,
         message: "Target added successfully",
-        target,
     });
 };
 

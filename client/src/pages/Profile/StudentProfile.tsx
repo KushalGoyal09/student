@@ -98,7 +98,7 @@ export default function StudentProfile() {
             case "FeeDetail":
                 // return <FeeDetails studentId={id} />;
                 // return <FeeDetailPage studentId={id} />
-                return <Fee studentId={id} />
+                return <Fee studentId={id} />;
             // case "Target":
             //     return <TargetComponent studentId={id}  />
             case "Calling":

@@ -13,7 +13,7 @@ const bodySchema = z.object({
     username: z.string(),
     password: z.string(),
     seniorMentorId: z.string(),
-    whattsapLink: z.string()
+    whattsapLink: z.string(),
 });
 
 const addMentor = async (req: AuthRequest, res: Response) => {
@@ -26,7 +26,8 @@ const addMentor = async (req: AuthRequest, res: Response) => {
         throwForbiddenError("Wrong Inputs");
         return;
     }
-    const { username, password, name, seniorMentorId, whattsapLink } = parsedData.data;
+    const { username, password, name, seniorMentorId, whattsapLink } =
+        parsedData.data;
     try {
         await db.groupMentor.create({
             data: {
@@ -34,7 +35,7 @@ const addMentor = async (req: AuthRequest, res: Response) => {
                 password,
                 name,
                 seniorMentorId,
-                whattsapLink
+                whattsapLink,
             },
         });
         res.json({

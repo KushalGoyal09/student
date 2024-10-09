@@ -211,7 +211,6 @@ export default function StylizedTickets() {
                                             ? "Pause"
                                             : "Play"}
                                     </Button>
-                                    
                                 </div>
                             )}
                             <Button

@@ -27,7 +27,7 @@ export default function AddMentor() {
         username: "",
         password: "",
         seniorMentorId: "",
-        whattsapLink: ""
+        whattsapLink: "",
     });
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
@@ -79,7 +79,7 @@ export default function AddMentor() {
                 username: "",
                 password: "",
                 seniorMentorId: "",
-                whattsapLink: ""
+                whattsapLink: "",
             });
             setSuccess(data.message);
         } catch (error) {
@@ -154,7 +154,9 @@ export default function AddMentor() {
                             </div>
                         </div>
                         <div className="space-y-2">
-                            <Label htmlFor="whattsapLink">Whattsap Group Link</Label>
+                            <Label htmlFor="whattsapLink">
+                                Whattsap Group Link
+                            </Label>
                             <div className="relative">
                                 <Input
                                     id="whattsapLink"

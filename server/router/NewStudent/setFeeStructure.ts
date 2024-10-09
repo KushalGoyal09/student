@@ -29,7 +29,7 @@ const setFeeStructure = async (req: AuthRequest, res: Response) => {
     const { studentId, feesPlan, mentorshipPlan, payments } = parsedData.data;
     await db.fees.upsert({
         where: {
-            studentId
+            studentId,
         },
         create: {
             studentId,
@@ -50,7 +50,7 @@ const setFeeStructure = async (req: AuthRequest, res: Response) => {
                 },
             },
         },
-    })
+    });
     return res.status(200).json({ success: true });
 };
 

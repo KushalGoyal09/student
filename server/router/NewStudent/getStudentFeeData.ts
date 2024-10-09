@@ -27,7 +27,7 @@ const getStudentFeeData = async (req: AuthRequest, res: Response) => {
                         },
                         orderBy: {
                             date: "asc",
-                        }
+                        },
                     },
                 },
             },
@@ -39,13 +39,16 @@ const getStudentFeeData = async (req: AuthRequest, res: Response) => {
     const data = students.map((student) => {
         const totalAmountPaid =
             student.Fees?.payments.reduce(
-                (sum, payment) => payment.cleared ? sum + payment.amount : sum,
+                (sum, payment) =>
+                    payment.cleared ? sum + payment.amount : sum,
                 0,
             ) || 0;
-        const totalAmountDue = student.Fees?.payments.reduce(
-            (sum, payment) => !payment.cleared ? sum + payment.amount : sum,
-            0,
-        ) || 0;
+        const totalAmountDue =
+            student.Fees?.payments.reduce(
+                (sum, payment) =>
+                    !payment.cleared ? sum + payment.amount : sum,
+                0,
+            ) || 0;
 
         return {
             ...student,
@@ -56,7 +59,10 @@ const getStudentFeeData = async (req: AuthRequest, res: Response) => {
     return res.status(200).json({
         success: true,
         data,
-        totalAmountDue: data.reduce((sum, student) => sum + student.totalAmountDue, 0),
+        totalAmountDue: data.reduce(
+            (sum, student) => sum + student.totalAmountDue,
+            0,
+        ),
     });
 };
 

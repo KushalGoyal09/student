@@ -70,7 +70,7 @@ export default function Component() {
                 <CardHeader>
                     <CardTitle className="text-2xl">Change Password</CardTitle>
                     <CardDescription>
-                        Enter a strong new password 
+                        Enter a strong new password
                     </CardDescription>
                 </CardHeader>
                 <form onSubmit={handleSubmit}>

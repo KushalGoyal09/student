@@ -7,7 +7,7 @@ import {
     Ticket,
     FileText,
     HandCoins,
-    UserRoundPen
+    UserRoundPen,
 } from "lucide-react";
 
 export default function AdminPanel() {
@@ -42,9 +42,13 @@ export default function AdminPanel() {
                         {
                             title: "FEE",
                             icon: <DollarSign className="h-8 w-8" />,
-                            path: "/fee-details"
+                            path: "/fee-details",
                         },
-                        { title: "KIT", icon: <Package className="h-8 w-8" /> , path: "/kit-data"},
+                        {
+                            title: "KIT",
+                            icon: <Package className="h-8 w-8" />,
+                            path: "/kit-data",
+                        },
                         {
                             title: "TICKETS",
                             icon: <Ticket className="h-8 w-8" />,
@@ -52,7 +56,7 @@ export default function AdminPanel() {
                         },
                         {
                             title: "SYLLABUS",
-                            icon: <FileText className="h-8 w-8"/>,
+                            icon: <FileText className="h-8 w-8" />,
                             path: "/syllabus",
                         },
                         {
@@ -63,15 +67,15 @@ export default function AdminPanel() {
                         {
                             title: "MANAGE ROLES",
                             icon: <UserRoundPen className="h-8 w-8" />,
-                            path: "/role"
-                        }
+                            path: "/role",
+                        },
                     ].map((item, index) => (
                         <button
                             key={index}
                             className="flex flex-col items-center justify-center bg-pcb/90 text-white rounded-lg p-4 hover:bg-pcb transition-colors"
                             onClick={() => navigate(item.path)}
                         >
-                            {item.icon} 
+                            {item.icon}
                             <span className="mt-2 font-semibold">
                                 {item.title}
                             </span>
@@ -87,7 +91,7 @@ export default function AdminPanel() {
                         Change password
                     </Link>
                 </div>
-            </div>  
+            </div>
         </div>
     );
 }

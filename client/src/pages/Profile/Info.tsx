@@ -71,11 +71,11 @@ export default function Info({ id }: { id: string }) {
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem("token")}`,
                 },
-            }
+            },
         );
         return data.student;
     }, [id]);
-    
+
     useEffect(() => {
         fetchStudent()
             .then((data) => {
@@ -89,7 +89,7 @@ export default function Info({ id }: { id: string }) {
                 });
             });
     }, [fetchStudent, id]);
-    
+
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         setEditedStudent((prev) => (prev ? { ...prev, [name]: value } : null));
