@@ -11,6 +11,7 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { AlertCircle } from "lucide-react";
 import axios from "axios";
+import { Input } from "@/components/ui/input";
 
 type Mentor = {
     id: string;
@@ -26,6 +27,7 @@ type Props = {
 const AssignMentor = ({ studentId, currentMentor }: Props) => {
     const [mentors, setMentors] = useState<Mentor[]>([]);
     const [selectedMentor, setSelectedMentor] = useState<string>("");
+    const [groupLink, setGroupLink] = useState<string>("");
     const [isLoading, setIsLoading] = useState(false);
     const { toast } = useToast();
 
@@ -40,7 +42,6 @@ const AssignMentor = ({ studentId, currentMentor }: Props) => {
                 });
                 setMentors(data.data);
             } catch (error) {
-                console.error("Failed to fetch mentors:", error);
                 toast({
                     title: "Error",
                     description: "Failed to load mentors. Please try again.",
@@ -71,6 +72,7 @@ const AssignMentor = ({ studentId, currentMentor }: Props) => {
                 {
                     studentId,
                     mentorId: selectedMentor,
+                    whattsapGroupLink: groupLink,
                 },
                 {
                     headers: {
@@ -94,7 +96,7 @@ const AssignMentor = ({ studentId, currentMentor }: Props) => {
     };
 
     return (
-        <Card className="w-full mt-6">
+        <Card className="w-full mt-6 max-w-6xl mx-auto">
             <CardHeader>
                 <CardTitle className="text-2xl font-bold">
                     Assign Mentor
@@ -139,6 +141,16 @@ const AssignMentor = ({ studentId, currentMentor }: Props) => {
                                 ))}
                             </SelectContent>
                         </Select>
+                        <label
+                            htmlFor="groupLink"
+                            className="text-sm font-medium text-gray-700"
+                        >
+                            Whattsap Group Link
+                        </label>
+                        <Input
+                            value={groupLink}
+                            onChange={(e) => setGroupLink(e.target.value)}
+                        />
                     </div>
                     <Button
                         type="submit"

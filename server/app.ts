@@ -17,8 +17,11 @@ import callRouter from "./router/Call";
 import syallabusRouter from "./router/Syallabus";
 import targetRouter from "./router/Target";
 import ratingRouter from "./router/Rating";
+import ticketRouter from "./router/Ticket";
+import slaryRouter from "./router/MentorSalary";
 
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 app.use("/api/me", meRouter);
 app.use("/api/login", loginRouter);
@@ -31,6 +34,8 @@ app.use("/api/call", callRouter);
 app.use("/api/syllabus", syallabusRouter);
 app.use("/api/target", targetRouter);
 app.use("/api/rating", ratingRouter);
+app.use("/api/ticket", ticketRouter);
+app.use("/api/salary", slaryRouter);
 
 app.use(notFound);
 app.use(errorHandler);

@@ -9,10 +9,11 @@ import {
 } from "../../custom-error/customError";
 
 const bodySchema = z.object({
-    name: z.coerce.string(),
-    username: z.coerce.string(),
-    password: z.coerce.string(),
-    seniorMentorId: z.coerce.string(),
+    name: z.string(),
+    username: z.string(),
+    password: z.string(),
+    seniorMentorId: z.string(),
+    whattsapLink: z.string()
 });
 
 const addMentor = async (req: AuthRequest, res: Response) => {
@@ -25,7 +26,7 @@ const addMentor = async (req: AuthRequest, res: Response) => {
         throwForbiddenError("Wrong Inputs");
         return;
     }
-    const { username, password, name, seniorMentorId } = parsedData.data;
+    const { username, password, name, seniorMentorId, whattsapLink } = parsedData.data;
     try {
         await db.groupMentor.create({
             data: {
@@ -33,6 +34,7 @@ const addMentor = async (req: AuthRequest, res: Response) => {
                 password,
                 name,
                 seniorMentorId,
+                whattsapLink
             },
         });
         res.json({

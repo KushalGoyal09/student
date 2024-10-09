@@ -39,6 +39,7 @@ const studentProfile = async (req: AuthRequest, res: Response) => {
         select: {
             id: true,
             name: true,
+            dateOfDeactive: true,
             gender: true,
             fatherName: true,
             motherName: true,

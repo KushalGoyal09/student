@@ -3,6 +3,7 @@ const db = new PrismaClient();
 import { Response } from "express";
 import { AuthRequest, Role } from "../../types";
 import { throwUnauthorizedError } from "../../custom-error/customError";
+import calculateSeniorMentorRating from "../../utils/calculateSeniorMentorRating";
 
 const getAllSeniorMentor = async (req: AuthRequest, res: Response) => {
     if (req.role !== Role.admin && req.role !== Role.supervisor) {
@@ -22,9 +23,15 @@ const getAllSeniorMentor = async (req: AuthRequest, res: Response) => {
                 name: "asc",
             },
         });
+        const response = await Promise.all(data.map(async (item) => {
+            return {
+                ...item,
+                rating: await calculateSeniorMentorRating(item.id),
+            };
+        }));
         res.status(200).json({
             success: true,
-            data,
+            data:response,
         });
         return;
     }
@@ -44,9 +51,15 @@ const getAllSeniorMentor = async (req: AuthRequest, res: Response) => {
                 username: true,
             },
         });
+        const response = await Promise.all(data.map(async (item) => {
+            return {
+                ...item,
+                rating: await calculateSeniorMentorRating(item.id),
+            };
+        }));
         res.status(200).json({
             success: true,
-            data,
+            data:response,
         });
     }
 };

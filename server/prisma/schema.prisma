@@ -16,14 +16,7 @@ model User {
 }
 
 enum Permission {
-  Seesyallabus
   UpdateSyallabus
-  AddSupervisor
-  AddSeniorMentor
-  AddGroupMentor
-  SeeAllSupervisor
-  SeeAllSeniorMentor
-  SeeAllGroupMentor
   FeeManagement
   KitDispatch
   AssaignMentor
@@ -50,18 +43,18 @@ model SeniorMentor {
 }
 
 model GroupMentor {
-  id       String    @id @default(uuid())
-  name     String
-  username String    @unique
-  password String
-  Student  Student[]
+  id           String    @id @default(uuid())
+  name         String
+  username     String    @unique
+  password     String
+  whattsapLink String?
+  Student      Student[]
 
   seniorMentor       SeniorMentor?        @relation(fields: [seniorMentorId], references: [id])
   seniorMentorId     String?
   RatingBySupervisor RatingBySupervisor[]
   RatingByStudent    RatingByStudent[]
   Week               Week[]
-  Target             Target[]
 }
 
 model Student {
@@ -91,7 +84,8 @@ model Student {
   kitDispatched     Boolean   @default(false)
   kitDispatchedDate DateTime?
 
-  groupMentor GroupMentor? @relation(fields: [groupMentorId], references: [id])
+  groupMentor       GroupMentor? @relation(fields: [groupMentorId], references: [id])
+  whattsapGroupLink String?
 
   groupMentorId     String?
   RatingByStudent   RatingByStudent[]
@@ -150,22 +144,30 @@ enum DaysOfWeek {
 }
 
 model Fees {
-  id       String    @id @default(uuid())
-  feesPlan Int       @default(1)
-  allClear Boolean   @default(false)
-  payments Payment[]
+  id             String         @id @default(uuid())
+  feesPlan       Int            @default(1)
+  allClear       Boolean        @default(false)
+  mentorshipPlan MentorshipPlan @default(Elite)
+  payments       Payment[]
 
   student Student @relation(fields: [studentId], references: [id])
 
   studentId String @unique
 }
 
+enum MentorshipPlan {
+  Elite
+  Pro
+  Max
+}
+
 model Payment {
-  id     String   @id @default(uuid())
-  amount Int
-  date   DateTime @default(now())
-  mode   String?
-  fees   Fees     @relation(fields: [feesId], references: [id])
+  id      String  @id @default(uuid())
+  amount  Int
+  date    String
+  mode    String?
+  cleared Boolean @default(false)
+  fees    Fees    @relation(fields: [feesId], references: [id])
 
   feesId String
 }
@@ -236,14 +238,13 @@ model BiologySyallabus {
 model Target {
   id        String          @id @default(uuid())
   studentId String
-  mentorId  String
   completed Boolean         @default(false)
+  date      String
   physics   PhysicsTarget   @relation(fields: [physicsTargetId], references: [id])
   chemistry ChemistryTarget @relation(fields: [chemistryTargetId], references: [id])
   biology   BiologyTarget   @relation(fields: [biologyTargetId], references: [id])
 
-  Mentor            GroupMentor @relation(fields: [mentorId], references: [id])
-  Student           Student     @relation(fields: [studentId], references: [id])
+  Student           Student @relation(fields: [studentId], references: [id])
   physicsTargetId   String
   chemistryTargetId String
   biologyTargetId   String
@@ -252,9 +253,6 @@ model Target {
 model PhysicsTarget {
   id             String           @id @default(uuid())
   chapterId      Int
-  fromDate       String
-  toDate         String
-  lecturePerDay  Int
   PhysicsChapter PhysicsSyallabus @relation(fields: [chapterId], references: [id])
   Target         Target[]
 }
@@ -262,9 +260,6 @@ model PhysicsTarget {
 model ChemistryTarget {
   id               String             @id @default(uuid())
   chapterId        Int
-  fromDate         String
-  toDate           String
-  lecturePerDay    Int
   ChemistryChapter ChemistrySyallabus @relation(fields: [chapterId], references: [id])
   Target           Target[]
 }
@@ -272,9 +267,50 @@ model ChemistryTarget {
 model BiologyTarget {
   id             String           @id @default(uuid())
   chapterId      Int
-  fromDate       String
-  toDate         String
-  lecturePerDay  Int
   BiologyChapter BiologySyallabus @relation(fields: [chapterId], references: [id])
   Target         Target[]
+}
+
+model Ticket {
+  id              String   @id @default(uuid())
+  subject         String
+  explaination    String?
+  audioFile       String?
+  status          Boolean  @default(false)
+  craetedByUserId String
+  createdByRole   Role
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+enum Role {
+  Supervisor
+  SeniorMentor
+  GroupMentor
+}
+
+model MentorSalary {
+  id            String  @id @default(uuid())
+  Role          Role
+  userId        String
+  month         Month
+  year          Int
+  basePay       Int
+  perStudentPay Int
+  paid          Boolean @default(false)
+}
+
+enum Month {
+  January
+  February
+  March
+  April
+  May
+  June
+  July
+  August
+  September
+  October
+  November
+  December
 }

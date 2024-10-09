@@ -41,9 +41,10 @@ const getMentorDetail = async (req: AuthRequest, res: Response) => {
             Student: {
                 select: {
                     name: true,
-                    whattsapNumber: true,
                     class: true,
                     status: true,
+                    whattsapGroupLink: true,
+                    whattsapNumber: true,
                     platform: true,
                     id: true,
                     callNumber: true,

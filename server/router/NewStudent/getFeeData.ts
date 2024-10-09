@@ -2,58 +2,92 @@ import { AuthRequest, Role } from "../../types";
 import { Response } from "express";
 import { PrismaClient } from "@prisma/client";
 import { z } from "zod";
-import { throwNotFoundError } from "../../custom-error/customError";
+import {
+    throwNotFoundError,
+    throwUnauthorizedError,
+} from "../../custom-error/customError";
 const db = new PrismaClient();
 
 const bodySchema = z.object({
-    studentId: z.coerce.string(),
+    studentId: z.string(),
 });
 
-const getFeeData = async (req: AuthRequest, res: Response) => {
+type Payment = {
+    id: string;
+    amount: number;
+    date: string;
+    mode: string | null;
+    cleared: boolean;
+};
+
+type MentorshipPlan = "Elite" | "Pro" | "Max";
+
+type FeeData = {
+    totalAmountPaid: number;
+    totalAmountDue: number;
+    feesPlan: number;
+    allClear: boolean;
+    mentorshipPlan: MentorshipPlan;
+    payments: Payment[];
+};
+
+type FeeDataResponse = {
+    success: true;
+    data: FeeData | null;
+};
+
+const getFeeData = async (req: AuthRequest, res: Response<FeeDataResponse>) => {
     const role = req.role;
     if (role !== Role.admin) {
-        return res.status(401).json({ error: "Unauthorized" });
+        throwUnauthorizedError("You are not authorized to perform this action");
+        return;
     }
-    const parsedData = bodySchema.safeParse(req.body);
-    if (!parsedData.success) {
-        return res.status(400).json({ error: "Invalid data" });
-    }
-    const student = await db.student.findUnique({
+    const { studentId } = bodySchema.parse(req.body);
+    const fee = await db.fees.findUnique({
         where: {
-            id: parsedData.data.studentId,
+            studentId,
         },
         select: {
-            Fees: {
+            allClear: true,
+            feesPlan: true,
+            mentorshipPlan: true,
+            payments: {
                 select: {
-                    allClear: true,
-                    feesPlan: true,
-                    payments: {
-                        select: {
-                            amount: true,
-                            date: true,
-                            mode: true,
-                        },
-                    },
+                    id: true,
+                    amount: true,
+                    date: true,
+                    mode: true,
+                    cleared: true,
                 },
+                orderBy: {
+                    date: "asc",
+                }
             },
         },
     });
-    if (!student) {
-        throwNotFoundError("Student not found");
+    if (!fee) {
+        res.json({
+            success: true,
+            data: null,
+        });
         return;
     }
-    const totalAmountPaid =
-        student.Fees?.payments.reduce(
-            (sum, payment) => sum + payment.amount,
-            0,
-        ) || 0;
-    const data = {
-        ...student.Fees,
-        totalAmountPaid,
-    };
+    const totalAmountPaid = fee.payments.reduce(
+        (sum, payment) => (payment.cleared ? sum + payment.amount : sum),
+        0,
+    );
+    const totalAmountDue = fee.payments.reduce(
+        (sum, payment) => (!payment.cleared ? sum + payment.amount : sum),
+        0,
+    );
+
     return res.status(200).json({
         success: true,
-        data,
+        data: {
+            ...fee,
+            totalAmountPaid,
+            totalAmountDue,
+        },
     });
 };
 

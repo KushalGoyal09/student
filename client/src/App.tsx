@@ -17,7 +17,7 @@ import SeniorMentorDetail from "./pages/Detail/SeniorMentor/SeniorMentorDetail";
 import SeniorMentorDetailMain from "./pages/Detail/SeniorMentor/SeniorMentorDetailMain";
 import MentorDetail from "./pages/Detail/GroupMentor/MentorDetail";
 import MentorDetailMain from "./pages/Detail/GroupMentor/MentorDetailMain";
-import StudentProfile from "./pages/Profile/StudentProfile";
+import Temp from "./pages/Profile/Temp";
 import NotFound from "./pages/NotFound";
 import { RecoilRoot } from "recoil";
 import NewAdmissions from "./pages/New/NewAdmissions";
@@ -27,6 +27,18 @@ import StudentList from "./pages/Detail/StudentList";
 import Layout from "./components/Layout";
 import WeekPlanner from "./pages/CallRecord";
 import Syallabus from "./pages/Syallabus";
+import MentorFeedback from "./pages/MentorFeedbacks";
+import MentorPage from "./pages/MentorPage";
+import AdminPanel from "./pages/AdminPanel";
+import CreateComplaintTicket from "./pages/CreateTicket";
+import ComplaintTickets from "./pages/SeeAllTickets";
+import Juniors from "./pages/Juniors";
+import StudentProfile from "./pages/Profile/StudentProfile";
+import CallRecord from "./pages/CallRecord2";
+import MentorSalaryManagement from "./pages/MentorSalary";
+import MentorSalaryManagement2 from "./pages/MentorSalary2";
+import FeeDetailPage from "./pages/Profile/Fee";
+import RoleManagement from "./pages/RoleManagement";
 
 const App = () => {
     const router = createBrowserRouter([
@@ -43,13 +55,8 @@ const App = () => {
                     element: <Login />,
                 },
                 {
-                    path: "/admin",
-                    children: [
-                        {
-                            path: "ChangePassword",
-                            element: <ChangePassword />,
-                        },
-                    ],
+                    path: "/change-password",
+                    element: <ChangePassword />,
                 },
                 {
                     path: "/add",
@@ -81,6 +88,10 @@ const App = () => {
                     element: <MentorRatingPage />,
                 },
                 {
+                    path: "mentor-feedback",
+                    element: <MentorFeedback />,
+                },
+                {
                     path: "/supervisor",
                     element: <SupervisorDetails />,
                     children: [
@@ -103,12 +114,20 @@ const App = () => {
                 {
                     path: "/mentor",
                     element: <MentorDetail />,
-                    children: [
-                        {
-                            path: ":username",
-                            element: <MentorDetailMain />,
-                        },
-                    ],
+                    // children: [
+                    //     {
+                    //         path: ":username",
+                    //         element: <MentorDetailMain />,
+                    //     },
+                    // ],
+                },
+                {
+                    path: "/mentor/:username",
+                    element: <MentorDetailMain />,
+                },
+                {
+                    path: "/AdminPanel",
+                    element: <AdminPanel />,
                 },
                 {
                     path: "/students",
@@ -137,11 +156,40 @@ const App = () => {
                 },
                 {
                     path: "/call-records",
-                    element: <WeekPlanner />,
+                    // element: <WeekPlanner />,
+                    element: <CallRecord />,
                 },
                 {
-                    path: "/syallabus",
+                    path: "/syllabus",
                     element: <Syallabus />,
+                },
+                {
+                    path: "admin/mentor",
+                    element: <MentorPage />,
+                },
+                {
+                    path: "ticket/create",
+                    element: <CreateComplaintTicket />,
+                },
+                {
+                    path: "tickets",
+                    element: <ComplaintTickets />,
+                },
+                {
+                    path: "juniors",
+                    element: <Juniors />,
+                },
+                {
+                    path: "/tab/:id",
+                    element: <Temp />,
+                },
+                {
+                    path: "/salary",
+                    element: <MentorSalaryManagement />,
+                },
+                {
+                    path: "/role",
+                    element: <RoleManagement />,
                 },
                 {
                     path: "*",

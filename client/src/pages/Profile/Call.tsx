@@ -69,14 +69,14 @@ const StudentCallUpdates = ({ studentId }: StudentCallUpdatesProps) => {
     const getStatusColor = (status: CallStatus) => {
         switch (status) {
             case "Scheduled":
-                return "bg-blue-100 text-blue-800";
+                return "bg-blue-300 text-blue-800";
             case "Done":
-                return "bg-green-100 text-green-800";
+                return "bg-green-300 text-green-800";
             case "DNP":
-                return "bg-red-100 text-red-800";
+                return "bg-red-300 text-red-800";
             case "Nothing":
             default:
-                return "bg-gray-100 text-gray-800";
+                return "bg-gray-300 text-gray-800";
         }
     };
 

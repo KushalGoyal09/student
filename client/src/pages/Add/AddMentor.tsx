@@ -27,6 +27,7 @@ export default function AddMentor() {
         username: "",
         password: "",
         seniorMentorId: "",
+        whattsapLink: ""
     });
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
@@ -78,6 +79,7 @@ export default function AddMentor() {
                 username: "",
                 password: "",
                 seniorMentorId: "",
+                whattsapLink: ""
             });
             setSuccess(data.message);
         } catch (error) {
@@ -149,6 +151,18 @@ export default function AddMentor() {
                                         <EyeIcon className="h-4 w-4" />
                                     )}
                                 </Button>
+                            </div>
+                        </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="whattsapLink">Whattsap Group Link</Label>
+                            <div className="relative">
+                                <Input
+                                    id="whattsapLink"
+                                    name="whattsapLink"
+                                    value={formData.whattsapLink}
+                                    onChange={handleInputChange}
+                                    required
+                                />
                             </div>
                         </div>
                         <div className="space-y-2">

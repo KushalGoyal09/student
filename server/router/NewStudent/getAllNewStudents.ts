@@ -17,6 +17,9 @@ const getAllNewStudents = async (req: AuthRequest, res: Response) => {
             createdAt: true,
             id: true,
             callNumber: true,
+            platform: true,
+            dropperStatus: true,
+            previousScore: true,
         },
     });
     return res.status(200).json({

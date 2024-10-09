@@ -65,12 +65,12 @@ export default function Component() {
     };
 
     return (
-        <div className="flex items-center justify-center min-h-screen bg-gray-100">
+        <div className="flex items-center justify-center py-10 bg-gray-100">
             <Card className="w-full max-w-md">
                 <CardHeader>
-                    <CardTitle className="text-2xl">Admin Login</CardTitle>
+                    <CardTitle className="text-2xl">Change Password</CardTitle>
                     <CardDescription>
-                        Enter your credentials to access the admin panel
+                        Enter a strong new password 
                     </CardDescription>
                 </CardHeader>
                 <form onSubmit={handleSubmit}>

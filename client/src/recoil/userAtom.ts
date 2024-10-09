@@ -13,6 +13,12 @@ export enum Role {
 interface Response {
     success: boolean;
     role: Role;
+    name: string;
+}
+
+interface User {
+    role: Role;
+    name: string;
 }
 
 export const tokenAtom = atom({
@@ -20,7 +26,7 @@ export const tokenAtom = atom({
     default: localStorage.getItem("token"),
 });
 
-export const userAtom = atom({
+export const userAtom = atom<Role | null>({
     key: "userAtom",
     default: selector({
         key: "userAtom/default",
@@ -29,20 +35,51 @@ export const userAtom = atom({
             if (!tokenValue) {
                 return null;
             }
-            try {
-                const { data } = await axios.get<Response>("/api/me", {
-                    headers: {
-                        Authorization: `Bearer ${tokenValue}`,
-                    },
-                });
-                if (data.role) {
-                    return data.role;
-                } else {
-                    return null;
-                }
-            } catch (error) {
+            const user = await fetchUser(tokenValue);
+            if (user) {
+                return user.role;
+            } else {
                 return null;
             }
         },
     }),
 });
+
+export const nameAtom = atom<string | null>({
+    key: "nameAtom",
+    default: selector({
+        key: "nameAtom/default",
+        get: async ({ get }) => {
+            const tokenValue = get(tokenAtom);
+            if (!tokenValue) {
+                return null;
+            }
+            const user = await fetchUser(tokenValue);
+            if (user) {
+                return user.name;
+            } else {
+                return null;
+            }
+        },
+    }),
+});
+
+const fetchUser = async (token: string): Promise<User | null> => {
+    try {
+        const { data } = await axios.get<Response>("/api/me", {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+        if (data.role) {
+            return {
+                role: data.role,
+                name: data.name,
+            };
+        } else {
+            return null;
+        }
+    } catch (error) {
+        return null;
+    }
+};

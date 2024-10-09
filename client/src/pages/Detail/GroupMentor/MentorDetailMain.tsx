@@ -8,6 +8,7 @@ interface Student {
     id: string;
     name: string;
     status: boolean;
+    whattsapGroupLink: string | null;
     whattsapNumber: string;
     callNumber: string;
     class: string;
@@ -184,13 +185,24 @@ export default function Component() {
                                         <Phone className="w-4 h-4 mr-1" />
                                         Call
                                     </a>
-                                    <a
-                                        href={`https://wa.me/${student.whattsapNumber}`}
-                                        className="flex items-center text-green-600"
-                                    >
-                                        <MessageCircle className="w-4 h-4 mr-1" />
-                                        WhatsApp
-                                    </a>
+                                    {!student.whattsapGroupLink && (
+                                        <a
+                                            href={`https://wa.me/${student.whattsapNumber}`}
+                                            className="flex items-center text-green-600"
+                                        >
+                                            <MessageCircle className="w-4 h-4 mr-1" />
+                                            WhatsApp
+                                        </a>
+                                    )}
+                                    {student.whattsapGroupLink && (
+                                        <a
+                                            href={student.whattsapGroupLink}
+                                            className="flex items-center text-green-600"
+                                        >
+                                            <MessageCircle className="w-4 h-4 mr-1" />
+                                            WhatsApp Group
+                                        </a>
+                                    )}
                                 </div>
                             </div>
                         ))}
@@ -208,7 +220,7 @@ export default function Component() {
                                     {daysOfWeek.map((day, index) => (
                                         <th
                                             key={day}
-                                            className="border p-2 bg-gray-100 text-center"
+                                            className={`border p-2 ${getDate(index) === format(new Date(), "yyyy-MM-dd") ? "bg-pcb" : " bg-gray-100"} text-center`}
                                         >
                                             {day} <br />
                                             {getDate(index)}

@@ -1,90 +1,147 @@
-import { useState, useEffect } from "react";
-import { Skeleton } from "@/components/ui/skeleton";
-import axios from "axios";
-import { toast } from "@/hooks/use-toast";
-import { useNavigate, Outlet } from "react-router-dom";
+import { useState, useEffect } from "react"
+import { useNavigate } from "react-router-dom"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Skeleton } from "@/components/ui/skeleton"
+import { ChevronDown, ChevronUp, User, Check, Star } from "lucide-react"
+import axios from "axios"
+import { toast } from "@/hooks/use-toast"
 
-const fetchSeniorMentors = async () => {
-    try {
-        const { data } = await axios.get("/api/detail/senior-mentors", {
-            headers: {
-                Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-        });
-        return data.data;
-    } catch (error) {
-        toast({
-            description: "Something went wrong",
-        });
-    }
-};
+interface GroupMentor {
+  id: string
+  name: string
+  username: string
+}
 
-export default function SupervisorDetails() {
-    const [sm, setSm] = useState<
-        { id: number; name: string; username: string }[]
-    >([]);
-    const [loading, setLoading] = useState(true);
-    const [selectedMentor, setSelectedMentor] = useState<string>("");
+interface SeniorMentor {
+  id: string
+  name: string
+  username: string
+  rating: number
+  GroupMentor: GroupMentor[]
+}
 
-    const navigate = useNavigate();
+const fetchSeniorMentors = async (): Promise<SeniorMentor[]> => {
+  try {
+    const { data } = await axios.get("/api/detail/senior-mentors", {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    })
+    return data.data
+  } catch (error) {
+    toast({
+      description: "Something went wrong fetching senior mentors",
+    })
+    return []
+  }
+}
 
-    useEffect(() => {
-        fetchSeniorMentors().then((data) => {
-            setSm(data);
-            setLoading(false);
-        });
-    }, []);
+const fetchSMDetails = async (username: string): Promise<SeniorMentor> => {
+  try {
+    const { data } = await axios.post(
+      "/api/detail/senior-mentor-detail",
+      {
+        seniorMentorUsername: username,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      }
+    )
+    return data.data
+  } catch (error) {
+    toast({
+      description: "Something went wrong fetching senior mentor details",
+    })
+    throw error
+  }
+}
 
-    const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-        const selectedUsername = event.target.value;
-        setSelectedMentor(selectedUsername);
-        if (selectedUsername) {
-            navigate(`/seniorMentor/${selectedUsername}`);
+export default function SeniorMentorHierarchy() {
+  const [seniorMentors, setSeniorMentors] = useState<SeniorMentor[]>([])
+  const [loading, setLoading] = useState(true)
+  const [expandedSeniorMentors, setExpandedSeniorMentors] = useState<Set<string>>(new Set())
+  const router = useNavigate()
+
+  useEffect(() => {
+    fetchSeniorMentors().then((data) => {
+      setSeniorMentors(data)
+      setLoading(false)
+    })
+  }, [])
+
+  const toggleSeniorMentor = async (username: string) => {
+    const newExpandedSeniorMentors = new Set(expandedSeniorMentors)
+    if (newExpandedSeniorMentors.has(username)) {
+      newExpandedSeniorMentors.delete(username)
+    } else {
+      newExpandedSeniorMentors.add(username)
+      const seniorMentorIndex = seniorMentors.findIndex((sm) => sm.username === username)
+      if (seniorMentorIndex !== -1 && !seniorMentors[seniorMentorIndex].GroupMentor) {
+        try {
+          const details = await fetchSMDetails(username)
+          setSeniorMentors((prev) =>
+            prev.map((sm) => (sm.username === username ? { ...sm, GroupMentor: details.GroupMentor } : sm))
+          )
+        } catch (error) {
+          newExpandedSeniorMentors.delete(username)
         }
-    };
+      }
+    }
+    setExpandedSeniorMentors(newExpandedSeniorMentors)
+  }
 
-    return (
-        <div className="flex flex-col h-screen bg-background p-4">
-            <header className="w-full mb-4">
-                <label
-                    htmlFor="mentor-select"
-                    className="block text-sm font-medium text-gray-700 mb-2"
-                >
-                    Select a Senior Mentor
-                </label>
-                <div className="relative">
-                    <select
-                        id="mentor-select"
-                        value={selectedMentor}
-                        onChange={handleChange}
-                        className="block w-full p-2 border border-gray-300 rounded-md bg-white shadow-sm focus:ring-blue-500 focus:border-blue-500 text-sm"
-                        disabled={loading || !sm.length}
+  const handleGroupMentorClick = (username: string) => {
+    router(`/mentor/${username}`)
+  }
+
+  return (
+    <Card className="w-full max-w-3xl mx-auto font-sans">
+      <CardHeader className="bg-pcb text-white rounded-t-xl">
+        <CardTitle className="flex items-center text-2xl">
+          <Check className="mr-2" />
+          SENIOR MENTORS
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="bg-pink-100 p-4 rounded-b-xl">
+        {loading ? (
+          <Skeleton className="h-40 w-full" />
+        ) : (
+          seniorMentors.map((seniorMentor) => (
+            <div key={seniorMentor.id} className="mb-4">
+              <button
+                className="w-full bg-pcb text-white p-3 rounded-xl flex items-center justify-between transition-colors focus:outline-none focus:ring-2 focus:ring-opacity-50"
+                onClick={() => toggleSeniorMentor(seniorMentor.username)}
+              >
+                <span className="flex items-center text-lg">
+                  <User className="mr-2" />
+                  {seniorMentor.name}
+                </span>
+                <span className="flex items-center">
+                  <Star className="mr-1 text-yellow-300" />
+                  {seniorMentor.rating.toPrecision(2)}
+                  {expandedSeniorMentors.has(seniorMentor.username) ? <ChevronUp className="ml-2" /> : <ChevronDown className="ml-2" />}
+                </span>
+              </button>
+              {expandedSeniorMentors.has(seniorMentor.username) && seniorMentor.GroupMentor && (
+                <div className="mt-2 ml-4">
+                  {seniorMentor.GroupMentor.map((groupMentor) => (
+                    <button
+                      key={groupMentor.id}
+                      className="flex items-center text-pcb/80 mb-1 p-2 rounded-md w-full text-left transition-colors focus:outline-none focus:ring-2"
+                      onClick={() => handleGroupMentorClick(groupMentor.username)}
                     >
-                        <option value="" disabled>
-                            {loading
-                                ? "Loading Senior Mentors..."
-                                : "Choose a Senior Mentor"}
-                        </option>
-                        {sm.map((supervisor) => (
-                            <option
-                                key={supervisor.id}
-                                value={supervisor.username}
-                            >
-                                {supervisor.name}
-                            </option>
-                        ))}
-                    </select>
-                    {loading && !sm.length && (
-                        <div className="absolute inset-0 bg-white opacity-50 flex items-center justify-center">
-                            <Skeleton className="h-10 w-full" />
-                        </div>
-                    )}
+                      <User className="mr-2" />
+                      <span>{groupMentor.name}</span>
+                    </button>
+                  ))}
                 </div>
-            </header>
-
-            <main className="flex-1 overflow-auto">
-                <Outlet />
-            </main>
-        </div>
-    );
+              )}
+            </div>
+          ))
+        )}
+      </CardContent>
+    </Card>
+  )
 }

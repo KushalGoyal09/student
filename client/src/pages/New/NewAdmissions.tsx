@@ -1,84 +1,67 @@
-import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useNavigate } from "react-router-dom";
+import { Card, CardContent } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import axios from "axios";
+import { useRecoilValue } from "recoil";
+import newStudents from "@/recoil/newStudents";
+import { Phone, Calendar, Eye } from "lucide-react";
 
 interface Student {
     id: string;
     name: string;
     callNumber: string;
-    createdAt: string;
+    dropperStatus: string;
+    previousScore: string;
+    platform: string;
+    createdAt: Date;
 }
 
-const NewAdmissions = () => {
-    const [students, setStudents] = useState<Student[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
-
-    useEffect(() => {
-        const fetchStudents = async () => {
-            try {
-                const { data } = await axios.get("/api/new/students", {
-                    headers: {
-                        Authorization: `Bearer ${localStorage.getItem("token")}`,
-                    },
-                });
-                setStudents(data.data);
-            } catch (error) {
-                setError("Error fetching students. Please try again later.");
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchStudents();
-    }, []);
-
-    if (loading) {
-        return (
-            <div className="flex justify-center items-center h-screen">
-                Loading...
-            </div>
-        );
-    }
-
-    if (error) {
-        return <div className="text-red-500 text-center p-4">{error}</div>;
-    }
+export default function NewAdmissions() {
+    const students: Student[] = useRecoilValue(newStudents);
+    const navigate = useNavigate();
 
     return (
-        <div className="container mx-auto p-4 max-w-md">
-            <h1 className="text-2xl font-bold mb-4 text-center">
-                Student List
+        <div className="container mx-auto p-4 sm:p-6 md:p-8">
+            <h1 className="text-2xl font-bold mb-6 text-center">
+                New Admissions
             </h1>
-            <ScrollArea className="h-[calc(100vh-120px)]">
-                <div className="space-y-4">
+            <ScrollArea className="h-[calc(100vh-160px)]">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                     {students.map((student) => (
                         <Card
                             key={student.id}
-                            className="hover:shadow-md transition-shadow"
+                            className="hover:shadow-lg transition-shadow duration-300"
+                            onClick={() => navigate(`/profile/${student.id}`)}
                         >
-                            <CardHeader>
-                                <CardTitle className="text-lg">
+                            <CardContent className="p-4">
+                                <h2 className="font-semibold text-lg mb-2">
                                     {student.name}
-                                </CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                                <p className="text-sm text-muted-foreground">
-                                    Call Number: {student.callNumber}
-                                </p>
-                                <p className="text-sm text-muted-foreground">
-                                    Created:{" "}
-                                    {new Date(
-                                        student.createdAt,
-                                    ).toLocaleDateString()}
-                                </p>
-                                <Link
-                                    to={`/profile/${student.id}`}
-                                    className="mt-2 inline-block text-sm text-primary hover:underline"
-                                >
-                                    View Profile
-                                </Link>
+                                </h2>
+                                <div className="grid grid-cols-1 gap-2 text-sm">
+                                    <div className="flex items-center">
+                                        <Phone className="h-4 w-4 mr-2 text-muted-foreground" />
+                                        <span>{student.callNumber}</span>
+                                    </div>
+                                    <div className="flex items-center">
+                                        <Calendar className="h-4 w-4 mr-2 text-muted-foreground" />
+                                        <span>
+                                            {new Date(
+                                                student.createdAt,
+                                            ).toLocaleDateString()}
+                                        </span>
+                                    </div>
+                                    <div>
+                                        <strong>Dropper Status:</strong>{" "}
+                                        {student.dropperStatus}
+                                    </div>
+                                    <div>
+                                        <strong>Previous Score:</strong>{" "}
+                                        {student.previousScore}
+                                    </div>
+                                    <div>
+                                        <strong>Platform:</strong>{" "}
+                                        {student.platform}
+                                    </div>
+                                </div>
                             </CardContent>
                         </Card>
                     ))}
@@ -86,6 +69,4 @@ const NewAdmissions = () => {
             </ScrollArea>
         </div>
     );
-};
-
-export default NewAdmissions;
+}
