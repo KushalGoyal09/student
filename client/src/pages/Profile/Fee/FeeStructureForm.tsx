@@ -60,7 +60,7 @@ export function FeeStructureForm({
         if (!initialData) {
             //@ts-ignore
             const defaultPayments = defaultFeeStructure[mentorshipPlan][
-                feePlan
+                feePlan  //@ts-ignore
             ].map((amount, index) => ({
                 id: `payment-${index + 1}`,
                 amount,
