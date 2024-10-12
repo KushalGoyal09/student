@@ -57,6 +57,7 @@ const studentProfile = async (req: AuthRequest, res: Response) => {
             expectation: true,
             status: true,
             createdAt: true,
+            whattsapGroupLink: true,
             groupMentor: {
                 select: {
                     name: true,

@@ -21,6 +21,7 @@ const bodySchema = z.object({
     dropperStatus: z.string(),
     previousScore: z.string(),
     platform: z.string(),
+    whattsapGroupLink: z.string().optional(),
 });
 
 const updateStudentProfile = async (req: AuthRequest, res: Response) => {

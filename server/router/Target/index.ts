@@ -1,14 +1,16 @@
 import { Router } from "express";
-import addTarget from "./addTarget";
 import getTargets from "./getTarget";
-import toggleTarget from "./changeTarget";
+import markComplete from "./markComplete";
 import authMiddleware from "../../middleware/auth";
-import getStudentTarget from "./getStudentTarget";
+import setTarget from "./setTarget";
+import getUncompletedTarget from "./getUncompletedTarget";
+import deleteTarget from "./deleteTarget";
 const targetRouter = Router();
 
-targetRouter.post("/create", authMiddleware, addTarget);
-targetRouter.get("/get", authMiddleware, getTargets);
-targetRouter.post("/toggle", authMiddleware, toggleTarget);
-targetRouter.post("/student", authMiddleware, getStudentTarget);
+targetRouter.post("/setTarget", authMiddleware, setTarget);
+targetRouter.post("/get", authMiddleware, getTargets);
+targetRouter.post("/get-incomplete", authMiddleware, getUncompletedTarget);
+targetRouter.post("/delete", authMiddleware, deleteTarget);
+targetRouter.post("/complete", authMiddleware, markComplete);
 
 export default targetRouter;

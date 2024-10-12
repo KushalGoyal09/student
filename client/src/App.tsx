@@ -8,7 +8,7 @@ import {
     AddStudent,
     AddSupervisor,
 } from "./pages/Add";
-import Target from "./pages/AddTarget";
+import Target from "./pages/Target/Target";
 import ChangePassword from "./pages/Admin/ChangePassword";
 import MentorRatingPage from "./pages/SupervisorRating";
 import SupervisorDetails from "./pages/Detail/Supervisor/SupervisorDetail";
@@ -36,6 +36,7 @@ import StudentProfile from "./pages/Profile/StudentProfile";
 import CallRecord from "./pages/CallRecord2";
 import MentorSalaryManagement from "./pages/MentorSalary";
 import RoleManagement from "./pages/RoleManagement";
+import OverallSyllabus from "./pages/OverallSyallabus";
 
 const App = () => {
     const router = createBrowserRouter([
@@ -187,6 +188,9 @@ const App = () => {
                 {
                     path: "/role",
                     element: <RoleManagement />,
+                },{
+                    path: "/overall",
+                    element: <OverallSyllabus/>
                 },
                 {
                     path: "*",

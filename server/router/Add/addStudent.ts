@@ -22,7 +22,6 @@ const bodySchema = z.object({
     previousScore: z.string(),
     platform: z.string(),
     expectation: z.string(),
-    groupMentorId: z.coerce.string(),
 });
 
 const addStudent = async (req: AuthRequest, res: Response) => {

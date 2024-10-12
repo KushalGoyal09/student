@@ -51,13 +51,14 @@ interface Student {
     dateOfDeactive?: Date;
     expectation: string;
     createdAt: Date;
+    whattsapGroupLink: string | null;
     groupMentor?: {
         name: string;
         username: string;
     };
 }
 
-export default function Info({ id }: { id: string }) {
+export default function EnhancedStudentProfile({ id }: { id: string }) {
     const [isEditing, setIsEditing] = useState(false);
     const [student, setStudent] = useState<Student | null>(null);
     const [editedStudent, setEditedStudent] = useState<Student | null>(null);
@@ -100,7 +101,6 @@ export default function Info({ id }: { id: string }) {
         if (!editedStudent) return;
 
         try {
-            console.log(editedStudent);
             await axios.post("/api/profile/update/student", editedStudent, {
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -120,73 +120,71 @@ export default function Info({ id }: { id: string }) {
         }
     };
 
+    const handleStatusChange = async (status: boolean) => {
+        if (!student) return;
+
+        try {
+            await axios.post(
+                "/api/profile/update/status",
+                {
+                    studentId: student.id,
+                    date: new Date(),
+                    status,
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem("token")}`,
+                    },
+                },
+            );
+            setStudent((prev) =>
+                prev
+                    ? {
+                          ...prev,
+                          status,
+                          dateOfDeactive:
+                              status === false ? new Date() : undefined,
+                      }
+                    : null,
+            );
+            toast({
+                title: "Success",
+                description: `Active status updated to ${status}`,
+            });
+        } catch (error) {
+            toast({
+                title: "Error",
+                description: "Failed to update active status",
+            });
+        }
+    };
+
+    if (!student) return null;
+
     return (
-        <>
-            {student && (
-                <Card className="w-full max-w-6xl mx-auto">
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+        <div className="min-h-screen bg-gradient-to-br from-pcb/10 to-pcb/30 p-4 md:p-8">
+            <Card className="w-full max-w-4xl mx-auto shadow-lg">
+                <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between space-y-2 sm:space-y-0 pb-6 border-b">
+                    <div>
                         <CardTitle
-                            className={`text-xl font-bold ${!student.status && "text-red-500"}`}
+                            className={`text-2xl font-bold ${!student.status ? "text-red-500" : "text-pcb"}`}
                         >
-                            Student Profile
+                            {student.name}
                         </CardTitle>
-                        <div className="flex items-center space-x-2">
-                            <Label
-                                htmlFor="active"
-                                className="flex items-center space-x-2"
-                            >
-                                <span>Active</span>
-                                <Switch
-                                    id="active"
-                                    checked={student.status}
-                                    onCheckedChange={(e) => {
-                                        const status = e;
-                                        axios
-                                            .post(
-                                                "/api/profile/update/status",
-                                                {
-                                                    studentId: student.id,
-                                                    date: new Date(),
-                                                    status,
-                                                },
-                                                {
-                                                    headers: {
-                                                        Authorization: `Bearer ${localStorage.getItem(
-                                                            "token",
-                                                        )}`,
-                                                    },
-                                                },
-                                            )
-                                            .then(() => {
-                                                setStudent((prev) =>
-                                                    prev
-                                                        ? {
-                                                              ...prev,
-                                                              status,
-                                                              dateOfDeactive:
-                                                                  status ===
-                                                                  false
-                                                                      ? new Date()
-                                                                      : undefined,
-                                                          }
-                                                        : null,
-                                                );
-                                                toast({
-                                                    title: "Success",
-                                                    description: `Active status updated to ${status}`,
-                                                });
-                                            })
-                                            .catch(() => {
-                                                toast({
-                                                    title: "Error",
-                                                    description:
-                                                        "Failed to update active status",
-                                                });
-                                            });
-                                    }}
-                                />
-                            </Label>
-                        </div>
+                        <p className="text-sm text-gray-500">
+                            Student ID: {student.id}
+                        </p>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                        <Switch
+                            id="active"
+                            checked={student.status}
+                            onCheckedChange={handleStatusChange}
+                            className="data-[state=checked]:bg-pcb"
+                        />
+                        <Label htmlFor="active" className="text-sm font-medium">
+                            {student.status ? "Active" : "Inactive"}
+                        </Label>
                         {role === Role.admin && (
                             <Dialog
                                 open={isEditing}
@@ -196,7 +194,7 @@ export default function Info({ id }: { id: string }) {
                                     <Button
                                         variant="outline"
                                         size="icon"
-                                        onClick={() => setIsEditing(true)}
+                                        className="ml-2"
                                     >
                                         <Edit className="h-4 w-4" />
                                         <span className="sr-only">
@@ -267,152 +265,173 @@ export default function Info({ id }: { id: string }) {
                                 </DialogContent>
                             </Dialog>
                         )}
-                    </CardHeader>
-                    <CardContent>
-                        {student.dateOfDeactive && (
-                            <div className="bg-red-100 border border-red-200 text-red-900 p-2 rounded-md mb-4">
-                                <p>
-                                    This student was deactivated on{" "}
-                                    {new Date(
-                                        student.dateOfDeactive,
-                                    ).toLocaleDateString()}
-                                </p>
+                    </div>
+                </CardHeader>
+                <CardContent className="pt-6">
+                    {student.dateOfDeactive && (
+                        <div className="bg-red-100 border border-red-200 text-red-900 p-4 rounded-md mb-6">
+                            <p className="text-sm">
+                                This student was deactivated on{" "}
+                                {new Date(
+                                    student.dateOfDeactive,
+                                ).toLocaleDateString()}
+                            </p>
+                        </div>
+                    )}
+                    <Tabs defaultValue="personal" className="w-full">
+                        <TabsList className="grid w-full grid-cols-2 lg:grid-cols-4 mb-6">
+                            <TabsTrigger
+                                value="personal"
+                                className="data-[state=active]:bg-pcb data-[state=active]:text-white"
+                            >
+                                Personal
+                            </TabsTrigger>
+                            <TabsTrigger
+                                value="contact"
+                                className="data-[state=active]:bg-pcb data-[state=active]:text-white"
+                            >
+                                Contact
+                            </TabsTrigger>
+                            <TabsTrigger
+                                value="academic"
+                                className="data-[state=active]:bg-pcb data-[state=active]:text-white"
+                            >
+                                Academic
+                            </TabsTrigger>
+                            <TabsTrigger
+                                value="other"
+                                className="data-[state=active]:bg-pcb data-[state=active]:text-white"
+                            >
+                                Other
+                            </TabsTrigger>
+                        </TabsList>
+
+                        <TabsContent value="personal">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <InfoCard
+                                    icon={User}
+                                    label="Name"
+                                    value={student.name}
+                                />
+                                <InfoCard
+                                    icon={User}
+                                    label="Gender"
+                                    value={student.gender}
+                                />
+                                <InfoCard
+                                    icon={User}
+                                    label="Father's Name"
+                                    value={student.fatherName}
+                                />
+                                <InfoCard
+                                    icon={User}
+                                    label="Mother's Name"
+                                    value={student.motherName}
+                                />
+                                <InfoCard
+                                    icon={Book}
+                                    label="Language"
+                                    value={student.language}
+                                />
                             </div>
-                        )}
-                        <Tabs defaultValue="personal" className="w-full">
-                            <TabsList className="grid w-full grid-cols-2 lg:grid-cols-4 mb-10">
-                                <TabsTrigger value="personal">
-                                    Personal Info
-                                </TabsTrigger>
-                                <TabsTrigger value="contact">
-                                    Contact Info
-                                </TabsTrigger>
-                                <TabsTrigger value="academic">
-                                    Academic Info
-                                </TabsTrigger>
-                                <TabsTrigger value="other">
-                                    Other Info
-                                </TabsTrigger>
-                            </TabsList>
+                        </TabsContent>
 
-                            <TabsContent value="personal" className="mt-8">
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <TabsContent value="contact">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <InfoCard
+                                    icon={Phone}
+                                    label="WhatsApp Group"
+                                    value={
+                                        student.whattsapGroupLink ||
+                                        "Not available"
+                                    }
+                                    link
+                                />
+                                <InfoCard
+                                    icon={Phone}
+                                    label="WhatsApp"
+                                    value={student.whattsapNumber}
+                                />
+                                <InfoCard
+                                    icon={Phone}
+                                    label="Call Number"
+                                    value={student.callNumber}
+                                />
+                                <InfoCard
+                                    icon={Phone}
+                                    label="Mother's Number"
+                                    value={student.motherNumber}
+                                />
+                                <InfoCard
+                                    icon={Phone}
+                                    label="Father's Number"
+                                    value={student.fatherNumber}
+                                />
+                            </div>
+                        </TabsContent>
+
+                        <TabsContent value="academic">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <InfoCard
+                                    icon={Target}
+                                    label="Target"
+                                    value={student.target}
+                                />
+                                <InfoCard
+                                    icon={Clock}
+                                    label="Study Hours"
+                                    value={student.StudyHours.toString()}
+                                />
+                                <InfoCard
+                                    icon={School}
+                                    label="Class"
+                                    value={student.class}
+                                />
+                                <InfoCard
+                                    icon={Award}
+                                    label="Previous Score"
+                                    value={student.previousScore}
+                                />
+                                <InfoCard
+                                    icon={Monitor}
+                                    label="Platform"
+                                    value={student.platform}
+                                />
+                            </div>
+                        </TabsContent>
+
+                        <TabsContent value="other">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <InfoCard
+                                    icon={FileText}
+                                    label="Dropper Status"
+                                    value={student.dropperStatus}
+                                />
+                                <InfoCard
+                                    icon={FileText}
+                                    label="Expectation"
+                                    value={student.expectation}
+                                />
+                                <InfoCard
+                                    icon={Clock}
+                                    label="Created At"
+                                    value={new Date(
+                                        student.createdAt,
+                                    ).toLocaleDateString()}
+                                />
+                                {student.groupMentor && (
                                     <InfoCard
                                         icon={User}
-                                        label="Name"
-                                        value={student.name}
+                                        label="Group Mentor"
+                                        value={`${student.groupMentor.name} (${student.groupMentor.username})`}
                                     />
-                                    <InfoCard
-                                        icon={User}
-                                        label="Gender"
-                                        value={student.gender}
-                                    />
-                                    <InfoCard
-                                        icon={User}
-                                        label="Father's Name"
-                                        value={student.fatherName}
-                                    />
-                                    <InfoCard
-                                        icon={User}
-                                        label="Mother's Name"
-                                        value={student.motherName}
-                                    />
-                                    <InfoCard
-                                        icon={Book}
-                                        label="Language"
-                                        value={student.language}
-                                    />
-                                </div>
-                            </TabsContent>
-
-                            <TabsContent value="contact" className="mt-8">
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <InfoCard
-                                        icon={Phone}
-                                        label="WhatsApp Number"
-                                        value={student.whattsapNumber}
-                                    />
-                                    <InfoCard
-                                        icon={Phone}
-                                        label="Call Number"
-                                        value={student.callNumber}
-                                    />
-                                    <InfoCard
-                                        icon={Phone}
-                                        label="Mother's Number"
-                                        value={student.motherNumber}
-                                    />
-                                    <InfoCard
-                                        icon={Phone}
-                                        label="Father's Number"
-                                        value={student.fatherNumber}
-                                    />
-                                </div>
-                            </TabsContent>
-
-                            <TabsContent value="academic" className="mt-8">
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <InfoCard
-                                        icon={Target}
-                                        label="Target"
-                                        value={student.target}
-                                    />
-                                    <InfoCard
-                                        icon={Clock}
-                                        label="Study Hours"
-                                        value={student.StudyHours.toString()}
-                                    />
-                                    <InfoCard
-                                        icon={School}
-                                        label="Class"
-                                        value={student.class}
-                                    />
-                                    <InfoCard
-                                        icon={Award}
-                                        label="Previous Score"
-                                        value={student.previousScore}
-                                    />
-                                    <InfoCard
-                                        icon={Monitor}
-                                        label="Platform"
-                                        value={student.platform}
-                                    />
-                                </div>
-                            </TabsContent>
-
-                            <TabsContent value="other" className="mt-8">
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <InfoCard
-                                        icon={FileText}
-                                        label="Dropper Status"
-                                        value={student.dropperStatus}
-                                    />
-                                    <InfoCard
-                                        icon={FileText}
-                                        label="Expectation"
-                                        value={student.expectation}
-                                    />
-                                    <InfoCard
-                                        icon={Clock}
-                                        label="Created At"
-                                        value={new Date(
-                                            student.createdAt,
-                                        ).toLocaleDateString()}
-                                    />
-                                    {student.groupMentor && (
-                                        <InfoCard
-                                            icon={User}
-                                            label="Group Mentor"
-                                            value={`${student.groupMentor.name} (${student.groupMentor.username})`}
-                                        />
-                                    )}
-                                </div>
-                            </TabsContent>
-                        </Tabs>
-                    </CardContent>
-                </Card>
-            )}
-        </>
+                                )}
+                            </div>
+                        </TabsContent>
+                    </Tabs>
+                </CardContent>
+            </Card>
+        </div>
     );
 }
 
@@ -420,17 +439,31 @@ function InfoCard({
     icon: Icon,
     label,
     value,
+    link = false,
 }: {
     icon: any;
     label: string;
     value: string;
+    link?: boolean;
 }) {
+    const handleOpen = () => {
+        window.open(value, "_blank");
+    };
+
     return (
-        <div className="flex items-center space-x-2">
-            <Icon className="h-5 w-5 text-gray-500" />
+        <div className="flex items-center space-x-3 p-4 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200">
+            <div className="bg-pcb/10 p-3 rounded-full">
+                <Icon className="h-6 w-6 text-pcb" />
+            </div>
             <div>
                 <p className="text-sm font-medium text-gray-500">{label}</p>
-                <p className="text-lg font-semibold text-gray-900">{value}</p>
+                <p
+                    className={`text-lg font-semibold ${link ? "text-blue-500" : "text-gray-900"}`}
+                    onClick={handleOpen}
+                >
+                    {" "}
+                    {link ? "Group" : value}{" "}
+                </p>
             </div>
         </div>
     );

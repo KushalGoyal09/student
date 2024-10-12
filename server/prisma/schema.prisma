@@ -7,14 +7,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id         String       @id @default(uuid())
-  name       String
-  username   String       @unique
-  password   String
-  permission Permission[] @default([])
-}
-
 enum Permission {
   UpdateSyallabus
   FeeManagement
@@ -29,6 +21,7 @@ model Supervisor {
   password           String
   SeniorMentor       SeniorMentor[]
   RatingBySupervisor RatingBySupervisor[]
+  permissions        Permission[]
 }
 
 model SeniorMentor {
@@ -91,6 +84,58 @@ model Student {
   RatingByStudent   RatingByStudent[]
   StudentCallRecord StudentCallRecord[]
   Target            Target[]
+
+  physicsVisionBoard   PhysicsVisionBoard[]
+  ChemistryVisionBoard ChemistryVisionBoard[]
+  BiologyVisionBoard   BiologyVisionBoard[]
+}
+
+model PhysicsVisionBoard {
+  id                 String           @id @default(uuid())
+  chapter            PhysicsSyallabus @relation(fields: [physicsSyallabusId], references: [id])
+  notes              Boolean
+  leacture           Boolean
+  ncert              Boolean
+  QP                 Boolean
+  revision           Boolean
+  viva               Boolean
+  Student            Student          @relation(fields: [studentId], references: [id])
+  studentId          String
+  physicsSyallabusId Int
+
+  @@unique([studentId, physicsSyallabusId])
+}
+
+model ChemistryVisionBoard {
+  id                 String             @id @default(uuid())
+  chapter            ChemistrySyallabus @relation(fields: [chemistrySyallabusId], references: [id])
+  notes              Boolean
+  leacture           Boolean
+  ncert              Boolean
+  QP                 Boolean
+  revision           Boolean
+  viva               Boolean
+  Student            Student            @relation(fields: [studentId], references: [id])
+  studentId          String
+  chemistrySyallabusId Int
+
+  @@unique([studentId, chemistrySyallabusId])
+}
+
+model BiologyVisionBoard {
+  id                 String           @id @default(uuid())
+  chapter            BiologySyallabus @relation(fields: [biologySyallabusId], references: [id])
+  notes              Boolean
+  leacture           Boolean
+  ncert              Boolean
+  QP                 Boolean
+  revision           Boolean
+  viva               Boolean
+  Student            Student          @relation(fields: [studentId], references: [id])
+  studentId          String
+  biologySyallabusId Int
+
+  @@unique([studentId, biologySyallabusId])
 }
 
 model Week {
@@ -215,60 +260,72 @@ model Admin {
 }
 
 model PhysicsSyallabus {
-  id            Int             @id @default(autoincrement())
-  chapterName   String
-  createdAt     DateTime        @default(now())
-  PhysicsTarget PhysicsTarget[]
+  id                 Int                  @id @default(autoincrement())
+  chapterName        String
+  createdAt          DateTime             @default(now())
+  PhysicsTarget      PhysicsTarget[]
+  PhysicsVisionBoard PhysicsVisionBoard[]
 }
 
 model ChemistrySyallabus {
-  id              Int               @id @default(autoincrement())
-  chapterName     String
-  createdAt       DateTime          @default(now())
-  ChemistryTarget ChemistryTarget[]
+  id                   Int                    @id @default(autoincrement())
+  chapterName          String
+  createdAt            DateTime               @default(now())
+  ChemistryTarget      ChemistryTarget[]
+  ChemistryVisionBoard ChemistryVisionBoard[]
 }
 
 model BiologySyallabus {
-  id            Int             @id @default(autoincrement())
-  chapterName   String
-  createdAt     DateTime        @default(now())
-  BiologyTarget BiologyTarget[]
+  id                 Int                  @id @default(autoincrement())
+  chapterName        String
+  createdAt          DateTime             @default(now())
+  BiologyTarget      BiologyTarget[]
+  BiologyVisionBoard BiologyVisionBoard[]
 }
 
 model Target {
-  id        String          @id @default(uuid())
-  studentId String
-  completed Boolean         @default(false)
-  date      String
-  physics   PhysicsTarget   @relation(fields: [physicsTargetId], references: [id])
-  chemistry ChemistryTarget @relation(fields: [chemistryTargetId], references: [id])
-  biology   BiologyTarget   @relation(fields: [biologyTargetId], references: [id])
+  id         String            @id @default(uuid())
+  studentId  String
+  completed  Boolean           @default(false)
+  date       String
+  targetType TargetType
+  physics    PhysicsTarget[]
+  chemistry  ChemistryTarget[]
+  biology    BiologyTarget[]
 
-  Student           Student @relation(fields: [studentId], references: [id])
-  physicsTargetId   String
-  chemistryTargetId String
-  biologyTargetId   String
+  Student Student @relation(fields: [studentId], references: [id])
+
+  @@unique([studentId, date, targetType])
+}
+
+enum TargetType {
+  Regular
+  Revision
+  Extra
 }
 
 model PhysicsTarget {
   id             String           @id @default(uuid())
   chapterId      Int
   PhysicsChapter PhysicsSyallabus @relation(fields: [chapterId], references: [id])
-  Target         Target[]
+  Target         Target?          @relation(fields: [targetId], references: [id])
+  targetId       String?
 }
 
 model ChemistryTarget {
   id               String             @id @default(uuid())
   chapterId        Int
   ChemistryChapter ChemistrySyallabus @relation(fields: [chapterId], references: [id])
-  Target           Target[]
+  Target           Target?            @relation(fields: [targetId], references: [id])
+  targetId         String?
 }
 
 model BiologyTarget {
   id             String           @id @default(uuid())
   chapterId      Int
   BiologyChapter BiologySyallabus @relation(fields: [chapterId], references: [id])
-  Target         Target[]
+  Target         Target?          @relation(fields: [targetId], references: [id])
+  targetId       String?
 }
 
 model Ticket {

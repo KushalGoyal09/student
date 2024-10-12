@@ -3,13 +3,14 @@ import { Info, Users, DollarSign, Target, PhoneCall } from "lucide-react";
 import { Role, userAtom } from "@/recoil/userAtom";
 import { useRecoilValue } from "recoil";
 import CallRecord from "./Call";
-// import TargetComponent from "./Target";
+import TargetComponent from "./Target";
 import InfoComponent from "./Info";
 import AssignMentor from "./AssaignMentor";
 import { useParams } from "react-router-dom";
 import Fee from "./Fee/Fee";
+import VisionBoardComponent from "./VisionBoard";
 
-type TabType = "Info" | "AssignMentor" | "FeeDetail" | "Target" | "Calling";
+type TabType = "Info" | "AssignMentor" | "FeeDetail" | "Target" | "Calling" | "Vision Board";
 
 const tabConfig: {
     [key in TabType]: {
@@ -58,6 +59,16 @@ const tabConfig: {
             Role.supervisor,
         ],
     },
+    "Vision Board": {
+        icon: <PhoneCall className="w-5 h-5" />,
+        label: "Vision Board",
+        role: [
+            Role.admin,
+            Role.groupMentor,
+            Role.seniorMentor,
+            Role.supervisor,
+        ],
+    }
 };
 
 export default function StudentProfile() {
@@ -96,13 +107,13 @@ export default function StudentProfile() {
             case "AssignMentor":
                 return <AssignMentor studentId={id} />;
             case "FeeDetail":
-                // return <FeeDetails studentId={id} />;
-                // return <FeeDetailPage studentId={id} />
                 return <Fee studentId={id} />;
-            // case "Target":
-            //     return <TargetComponent studentId={id}  />
+            case "Target":
+                return <TargetComponent studentId={id}  />
             case "Calling":
                 return <CallRecord studentId={id} />;
+            case "Vision Board":
+                return <VisionBoardComponent studentId={id} />;
         }
     };
 
