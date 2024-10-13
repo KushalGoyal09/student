@@ -1,5 +1,3 @@
-'use client'
-
 import { useState, useEffect } from 'react'
 import axios from 'axios'
 import { ChevronDown, ChevronUp, Filter, BookOpen, Users, User } from 'lucide-react'

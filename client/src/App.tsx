@@ -25,7 +25,7 @@ import FeeDetail from "./pages/New/FeeDetail";
 import KitDispatchPage from "./pages/New/KitDetails";
 import StudentList from "./pages/Detail/StudentList";
 import Layout from "./components/Layout";
-import Syallabus from "./pages/Syallabus";
+// import Syallabus from "./pages/Syallabus";
 import MentorFeedback from "./pages/MentorFeedbacks";
 import MentorPage from "./pages/MentorPage";
 import AdminPanel from "./pages/AdminPanel";
@@ -37,6 +37,8 @@ import CallRecord from "./pages/CallRecord2";
 import MentorSalaryManagement from "./pages/MentorSalary";
 import RoleManagement from "./pages/RoleManagement";
 import OverallSyllabus from "./pages/OverallSyallabus";
+import SyllabusComponent from "./pages/Syallabus/NeetSyallabus";
+import Syallabus from "./pages/Syallabus/Syallabus";
 
 const App = () => {
     const router = createBrowserRouter([
@@ -159,7 +161,11 @@ const App = () => {
                 },
                 {
                     path: "/syllabus",
-                    element: <Syallabus />,
+                    element: <SyllabusComponent />,
+                },
+                {
+                    path:"/admin/syllabus",
+                    element: <Syallabus/>
                 },
                 {
                     path: "admin/mentor",

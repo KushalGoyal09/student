@@ -57,7 +57,7 @@ export default function AdminPanel() {
                         {
                             title: "SYLLABUS",
                             icon: <FileText className="h-8 w-8" />,
-                            path: "/syllabus",
+                            path: "/admin/syllabus",
                         },
                         {
                             title: "SALARY",

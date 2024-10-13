@@ -107,16 +107,16 @@ model PhysicsVisionBoard {
 }
 
 model ChemistryVisionBoard {
-  id                 String             @id @default(uuid())
-  chapter            ChemistrySyallabus @relation(fields: [chemistrySyallabusId], references: [id])
-  notes              Boolean
-  leacture           Boolean
-  ncert              Boolean
-  QP                 Boolean
-  revision           Boolean
-  viva               Boolean
-  Student            Student            @relation(fields: [studentId], references: [id])
-  studentId          String
+  id                   String             @id @default(uuid())
+  chapter              ChemistrySyallabus @relation(fields: [chemistrySyallabusId], references: [id])
+  notes                Boolean
+  leacture             Boolean
+  ncert                Boolean
+  QP                   Boolean
+  revision             Boolean
+  viva                 Boolean
+  Student              Student            @relation(fields: [studentId], references: [id])
+  studentId            String
   chemistrySyallabusId Int
 
   @@unique([studentId, chemistrySyallabusId])
