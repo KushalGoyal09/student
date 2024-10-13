@@ -76,7 +76,7 @@ const setTarget = async (req: AuthRequest, res: Response) => {
     res.json({
         message: "Target set successfully",
         success: true,
-    })
+    });
 };
 
 export default setTarget;

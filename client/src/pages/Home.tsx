@@ -12,9 +12,9 @@ const Home = () => {
 
     useEffect(() => {
         if (role === Role.seniorMentor) {
-            navigate("/students");
+            navigate("/juniors");
         } else if (role === Role.supervisor) {
-            navigate("/students");
+            navigate("/juniors");
         } else if (role === Role.groupMentor) {
             navigate("/call-records");
         }

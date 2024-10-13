@@ -212,8 +212,7 @@ async function updateVisionBoardOnTargetCompletion(targetId: string) {
         }
     }
     if (target.biology.length > 0) {
-        for (const subjectTarget of target.biology
-        ) {
+        for (const subjectTarget of target.biology) {
             const chapterId = subjectTarget.chapterId;
             const studentId = target.studentId;
             if (target.targetType === TargetType.Regular) {

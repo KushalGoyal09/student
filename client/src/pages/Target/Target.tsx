@@ -96,7 +96,7 @@ export default function TargetAssignment() {
         checked: boolean,
     ) => {
         const chapterId = selectedChapters[targetType][subject][columnIndex];
-        if (chapterId === 0) return; 
+        if (chapterId === 0) return;
 
         setTargets((prevTargets) => {
             const targetIndex = prevTargets.findIndex(
@@ -109,7 +109,8 @@ export default function TargetAssignment() {
                         date,
                         targetType,
                         physics: subject === "physics" ? [{ chapterId }] : [],
-                        chemistry: subject === "chemistry" ? [{ chapterId }] : [],
+                        chemistry:
+                            subject === "chemistry" ? [{ chapterId }] : [],
                         biology: subject === "biology" ? [{ chapterId }] : [],
                     },
                 ];
@@ -118,21 +119,28 @@ export default function TargetAssignment() {
                 if (checked) {
                     updatedTargets[targetIndex][subject].push({ chapterId });
                 } else {
-                    updatedTargets[targetIndex][subject] = updatedTargets[targetIndex][subject].filter(
-                        (t) => t.chapterId !== chapterId
-                    );
+                    updatedTargets[targetIndex][subject] = updatedTargets[
+                        targetIndex
+                    ][subject].filter((t) => t.chapterId !== chapterId);
                 }
                 return updatedTargets;
             }
         });
     };
 
-    const handleChapterSelect = (targetType: TargetType, subject: Subject, columnIndex: number, chapterId: number) => {
+    const handleChapterSelect = (
+        targetType: TargetType,
+        subject: Subject,
+        columnIndex: number,
+        chapterId: number,
+    ) => {
         setSelectedChapters((prev) => ({
             ...prev,
             [targetType]: {
                 ...prev[targetType],
-                [subject]: prev[targetType][subject].map((id, index) => (index === columnIndex ? chapterId : id)),
+                [subject]: prev[targetType][subject].map((id, index) =>
+                    index === columnIndex ? chapterId : id,
+                ),
             },
         }));
     };
@@ -142,10 +150,7 @@ export default function TargetAssignment() {
         setIsPreviewOpen(true);
     };
 
-    const renderSubjectTable = (
-        targetType: TargetType,
-        subject: Subject,
-    ) => (
+    const renderSubjectTable = (targetType: TargetType, subject: Subject) => (
         <Card className="mt-4 bg-white shadow-md">
             <CardHeader className="bg-pcb/10">
                 <CardTitle className="text-pcb">
@@ -161,21 +166,38 @@ export default function TargetAssignment() {
                                 {[0, 1, 2].map((_, index) => (
                                     <th key={index} className="p-2">
                                         <Select
-                                            onValueChange={(value) => handleChapterSelect(targetType, subject, index, Number(value))}
-                                            value={selectedChapters[targetType][subject][index].toString()}
+                                            onValueChange={(value) =>
+                                                handleChapterSelect(
+                                                    targetType,
+                                                    subject,
+                                                    index,
+                                                    Number(value),
+                                                )
+                                            }
+                                            value={selectedChapters[targetType][
+                                                subject
+                                            ][index].toString()}
                                         >
                                             <SelectTrigger className="border-pcb/30 text-pcb">
-                                                <SelectValue placeholder={"Select chapter"} />
+                                                <SelectValue
+                                                    placeholder={
+                                                        "Select chapter"
+                                                    }
+                                                />
                                             </SelectTrigger>
                                             <SelectContent>
-                                                {syllabus[subject].map((chapter) => (
-                                                    <SelectItem
-                                                        key={chapter.id}
-                                                        value={chapter.id.toString()}
-                                                    >
-                                                        {chapter.chapterName}
-                                                    </SelectItem>
-                                                ))}
+                                                {syllabus[subject].map(
+                                                    (chapter) => (
+                                                        <SelectItem
+                                                            key={chapter.id}
+                                                            value={chapter.id.toString()}
+                                                        >
+                                                            {
+                                                                chapter.chapterName
+                                                            }
+                                                        </SelectItem>
+                                                    ),
+                                                )}
                                             </SelectContent>
                                         </Select>
                                     </th>
@@ -184,12 +206,18 @@ export default function TargetAssignment() {
                         </thead>
                         <tbody>
                             {dates.map((date) => (
-                                <tr key={date} className="border-b border-pcb/10">
+                                <tr
+                                    key={date}
+                                    className="border-b border-pcb/10"
+                                >
                                     <td className="p-2 text-pcb text-center">
                                         {format(new Date(date), "MMM dd")}
                                     </td>
                                     {[0, 1, 2].map((_, index) => (
-                                        <td key={`${date}-${index}`} className="p-2 text-center">
+                                        <td
+                                            key={`${date}-${index}`}
+                                            className="p-2 text-center"
+                                        >
                                             <Checkbox
                                                 className="border-pcb/30 text-pcb"
                                                 onCheckedChange={(checked) =>
@@ -201,7 +229,11 @@ export default function TargetAssignment() {
                                                         checked as boolean,
                                                     )
                                                 }
-                                                disabled={selectedChapters[targetType][subject][index] === 0}
+                                                disabled={
+                                                    selectedChapters[
+                                                        targetType
+                                                    ][subject][index] === 0
+                                                }
                                             />
                                         </td>
                                     ))}
@@ -390,7 +422,6 @@ export default function TargetAssignment() {
             </Card>
             <PreviewModal
                 isOpen={isPreviewOpen}
-                
                 onClose={() => setIsPreviewOpen(false)}
                 onEdit={() => setIsPreviewOpen(false)}
                 data={{

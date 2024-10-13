@@ -11,37 +11,104 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChevronDown, UserCircle } from "lucide-react";
+import axios from "axios";
 
-const supervisors = [
-    { id: 1, name: "Alka" },
-    { id: 2, name: "Ankit" },
-];
+interface Permission {
+    FeeManagement: boolean;
+    KitDispatch: boolean;
+    AssaignMentor: boolean;
+}
 
-const fetchPermissions = async (supervisorId: string) => {
-    console.log("supervisorId", supervisorId);
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    return {
-        UpdateSyllabus: Math.random() < 0.5,
-        FeeManagement: Math.random() < 0.5,
-        KitDispatch: Math.random() < 0.5,
-        AssignMentor: Math.random() < 0.5,
-    };
+interface Supervisor {
+    id: string;
+    name: string;
+    username: string;
+}
+
+const fetchSupervisor = async (): Promise<Supervisor[]> => {
+    const { data } = await axios.get("/api/role/get-super", {
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+    });
+    return data.data;
+};
+
+const getPermissions = async (supervisorId: string) => {
+    const { data } = await axios.post<{
+        success: boolean;
+        data: Permission;
+    }>(
+        "/api/role/get",
+        {
+            supervisorId,
+        },
+        {
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+        },
+    );
+    return data.data;
+};
+
+const setPermissionsBackend = async (
+    supervisorId: string,
+    FeeManagement?: boolean,
+    KitDispatch?: boolean,
+    AssaignMentor?: boolean,
+) => {
+    try {
+        await axios.post(
+            "/api/role/set",
+            {
+                supervisorId,
+                FeeManagement,
+                KitDispatch,
+                AssaignMentor,
+            },
+            {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem("token")}`,
+                },
+            },
+        );
+        return true;
+    } catch (error) {
+        return false;
+    }
 };
 
 export default function RoleManagement() {
     const [selectedSupervisor, setSelectedSupervisor] = useState("");
-    const [permissions, setPermissions] = useState({});
+    const [permissions, setPermissions] = useState<Permission | null>(null);
     const [loading, setLoading] = useState(false);
+    const [supervisors, setSupervisors] = useState<Supervisor[]>([]);
+
+    useEffect(() => {
+        fetchSupervisor().then(setSupervisors);
+    }, []);
 
     useEffect(() => {
         if (selectedSupervisor) {
             setLoading(true);
-            fetchPermissions(selectedSupervisor).then((perms) => {
-                setPermissions(perms);
+            getPermissions(selectedSupervisor).then((data) => {
+                setPermissions(data);
                 setLoading(false);
             });
         }
     }, [selectedSupervisor]);
+
+    useEffect(() => {
+        if (selectedSupervisor && permissions) {
+            setPermissionsBackend(
+                selectedSupervisor,
+                permissions.FeeManagement,
+                permissions.KitDispatch,
+                permissions.AssaignMentor,
+            );
+        }
+    }, [permissions]);
 
     const containerVariants = {
         hidden: { opacity: 0 },
@@ -94,7 +161,7 @@ export default function RoleManagement() {
                             </Select>
                         </div>
 
-                        {selectedSupervisor && (
+                        {selectedSupervisor && permissions && (
                             <motion.div
                                 variants={containerVariants}
                                 initial="hidden"
@@ -138,6 +205,7 @@ export default function RoleManagement() {
                                                         newValue,
                                                     ) =>
                                                         setPermissions(
+                                                            // @ts-ignore
                                                             (prev) => ({
                                                                 ...prev,
                                                                 [key]: newValue,

@@ -109,96 +109,106 @@ export default function SyllabusComponent() {
                     </CardTitle>
                 </CardHeader>
                 <CardContent>
-                <Tabs
-                defaultValue="physics"
-                onValueChange={(value) => setActiveTab(value as Subject)}
-            >
-                <TabsList className="grid w-full grid-cols-3">
-                    <TabsTrigger
-                        value="physics"
-                        className="data-[state=active]:bg-pcb data-[state=active]:text-white"
+                    <Tabs
+                        defaultValue="physics"
+                        onValueChange={(value) =>
+                            setActiveTab(value as Subject)
+                        }
                     >
-                        Physics
-                    </TabsTrigger>
-                    <TabsTrigger
-                        value="chemistry"
-                        className="data-[state=active]:bg-pcb data-[state=active]:text-white"
-                    >
-                        Chemistry
-                    </TabsTrigger>
-                    <TabsTrigger
-                        value="biology"
-                        className="data-[state=active]:bg-pcb data-[state=active]:text-white"
-                    >
-                        Biology
-                    </TabsTrigger>
-                </TabsList>
-                {(["physics", "chemistry", "biology"] as const).map(
-                    (subject) => (
-                        <TabsContent key={subject} value={subject}>
-                            <Card>
-                                <CardHeader>
-                                    <CardTitle className="text-pcb">
-                                        {subject.charAt(0).toUpperCase() +
-                                            subject.slice(1)}{" "}
-                                        Syllabus
-                                    </CardTitle>
-                                </CardHeader>
-                                <CardContent>
-                                    {role === Role.admin && (
-                                        <div className="flex space-x-2 mb-4">
-                                            <Input
-                                                placeholder="New chapter name"
-                                                value={newChapter}
-                                                onChange={(e) =>
-                                                    setNewChapter(
-                                                        e.target.value,
-                                                    )
-                                                }
-                                            />
-                                            <Button
-                                                onClick={handleAddChapter}
-                                                className="bg-pcb hover:bg-pcb/90"
-                                            >
-                                                Add
-                                            </Button>
-                                        </div>
-                                    )}
-                                    <ul className="space-y-2">
-                                        {syllabus[subject].map((chapter) => (
-                                            <li
-                                                key={chapter.id}
-                                                className="flex items-center justify-between p-2 bg-gray-100 rounded"
-                                            >
-                                                <span>
-                                                    {chapter.chapterName}
-                                                </span>
-                                                {role === Role.admin && (
-                                                    <Button
-                                                        variant="ghost"
-                                                        size="icon"
-                                                        onClick={() =>
-                                                            handleDeleteChapter(
-                                                                chapter.id,
+                        <TabsList className="grid w-full grid-cols-3">
+                            <TabsTrigger
+                                value="physics"
+                                className="data-[state=active]:bg-pcb data-[state=active]:text-white"
+                            >
+                                Physics
+                            </TabsTrigger>
+                            <TabsTrigger
+                                value="chemistry"
+                                className="data-[state=active]:bg-pcb data-[state=active]:text-white"
+                            >
+                                Chemistry
+                            </TabsTrigger>
+                            <TabsTrigger
+                                value="biology"
+                                className="data-[state=active]:bg-pcb data-[state=active]:text-white"
+                            >
+                                Biology
+                            </TabsTrigger>
+                        </TabsList>
+                        {(["physics", "chemistry", "biology"] as const).map(
+                            (subject) => (
+                                <TabsContent key={subject} value={subject}>
+                                    <Card>
+                                        <CardHeader>
+                                            <CardTitle className="text-pcb">
+                                                {subject
+                                                    .charAt(0)
+                                                    .toUpperCase() +
+                                                    subject.slice(1)}{" "}
+                                                Syllabus
+                                            </CardTitle>
+                                        </CardHeader>
+                                        <CardContent>
+                                            {role === Role.admin && (
+                                                <div className="flex space-x-2 mb-4">
+                                                    <Input
+                                                        placeholder="New chapter name"
+                                                        value={newChapter}
+                                                        onChange={(e) =>
+                                                            setNewChapter(
+                                                                e.target.value,
                                                             )
                                                         }
-                                                        className="text-red-500 hover:text-red-700"
+                                                    />
+                                                    <Button
+                                                        onClick={
+                                                            handleAddChapter
+                                                        }
+                                                        className="bg-pcb hover:bg-pcb/90"
                                                     >
-                                                        <Trash2 className="h-4 w-4" />
+                                                        Add
                                                     </Button>
+                                                </div>
+                                            )}
+                                            <ul className="space-y-2">
+                                                {syllabus[subject].map(
+                                                    (chapter) => (
+                                                        <li
+                                                            key={chapter.id}
+                                                            className="flex items-center justify-between p-2 bg-gray-100 rounded"
+                                                        >
+                                                            <span>
+                                                                {
+                                                                    chapter.chapterName
+                                                                }
+                                                            </span>
+                                                            {role ===
+                                                                Role.admin && (
+                                                                <Button
+                                                                    variant="ghost"
+                                                                    size="icon"
+                                                                    onClick={() =>
+                                                                        handleDeleteChapter(
+                                                                            chapter.id,
+                                                                        )
+                                                                    }
+                                                                    className="text-red-500 hover:text-red-700"
+                                                                >
+                                                                    <Trash2 className="h-4 w-4" />
+                                                                </Button>
+                                                            )}
+                                                        </li>
+                                                    ),
                                                 )}
-                                            </li>
-                                        ))}
-                                    </ul>
-                                </CardContent>
-                            </Card>
-                        </TabsContent>
-                    ),
-                )}
-            </Tabs>
+                                            </ul>
+                                        </CardContent>
+                                    </Card>
+                                </TabsContent>
+                            ),
+                        )}
+                    </Tabs>
                 </CardContent>
             </Card>
-           
         </div>
     );
 }

@@ -25,7 +25,7 @@ const addChapter = async (req: AuthRequest, res: Response) => {
         return;
     }
     const { chapterName, subject } = bodySchemaAdd.parse(req.body);
-    let data : Chapter;
+    let data: Chapter;
     if (subject === "physics") {
         data = await db.physicsSyallabus.create({
             data: {
@@ -64,7 +64,7 @@ const addChapter = async (req: AuthRequest, res: Response) => {
     res.json({
         success: true,
         message: `Physics ${chapterName} added successfully`,
-        data
+        data,
     });
 };
 

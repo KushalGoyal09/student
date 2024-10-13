@@ -15,34 +15,34 @@ const getVision = async (req: AuthRequest, res: Response) => {
             studentId,
         },
     });
-    const physics = physicsVision.map(vision => {
+    const physics = physicsVision.map((vision) => {
         return {
             ...vision,
-            chapterId: vision.physicsSyallabusId
-        }
-    })
+            chapterId: vision.physicsSyallabusId,
+        };
+    });
     const chemistryVision = await db.chemistryVisionBoard.findMany({
         where: {
             studentId,
         },
     });
-    const chemistry = chemistryVision.map(vision => {
+    const chemistry = chemistryVision.map((vision) => {
         return {
             ...vision,
-            chapterId: vision.chemistrySyallabusId
-        }
-    })
+            chapterId: vision.chemistrySyallabusId,
+        };
+    });
     const biologyVision = await db.biologyVisionBoard.findMany({
         where: {
             studentId,
         },
     });
-    const biology = biologyVision.map(vision => {
+    const biology = biologyVision.map((vision) => {
         return {
             ...vision,
-            chapterId: vision.biologySyallabusId
-        }
-    })
+            chapterId: vision.biologySyallabusId,
+        };
+    });
     res.status(200).json({
         success: true,
         data: {

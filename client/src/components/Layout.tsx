@@ -6,6 +6,7 @@ import Loading from "./Loading";
 import { nameAtom, Role, userAtom } from "@/recoil/userAtom";
 import WelcomeComponent from "./Welcome";
 import Tiles from "./Tiles";
+import permissionAtom from "@/recoil/permission";
 
 interface Links {
     role: Array<Role | null>;
@@ -13,11 +14,21 @@ interface Links {
     path: string;
 }
 
+interface Permission {
+    FeeManagement: boolean;
+    KitDispatch: boolean;
+    AssaignMentor: boolean;
+}
+
 const Layout = () => {
     const [name, setName] = useState<string | null>(null);
     const [role, setRole] = useState<Role | null>(null);
+    const [permission, setPermission] = useState<Permission | null>(null);
     const nameLoadable = useRecoilValueLoadable(nameAtom);
     const roleLoadable = useRecoilValueLoadable(userAtom);
+    const permissionLoadable = useRecoilValueLoadable<Permission | null>(
+        permissionAtom,
+    );
 
     useEffect(() => {
         if (nameLoadable.state === "hasValue") {
@@ -30,6 +41,12 @@ const Layout = () => {
             setRole(roleLoadable.contents);
         }
     }, [roleLoadable]);
+
+    useEffect(() => {
+        if (permissionLoadable.state === "hasValue") {
+            setPermission(permissionLoadable.contents);
+        }
+    }, [permissionLoadable]);
 
     const links: Links[] = [
         {
@@ -59,18 +76,18 @@ const Layout = () => {
         },
         {
             role: [Role.supervisor, Role.admin],
-            label: "See all Senior Mentors",
+            label: "All Senior Mentors",
             path: "/seniorMentor",
         },
         {
             role: [Role.supervisor, Role.admin, Role.seniorMentor],
-            label: "See all Mentors",
+            label: "All Group Mentors",
             path: "/mentor",
         },
         {
             role: [Role.seniorMentor, Role.admin, Role.supervisor],
-            label: "See all Students",
-            path: "/students",
+            label: "Juniors",
+            path: "/juniors",
         },
         {
             role: [Role.admin],
@@ -99,7 +116,7 @@ const Layout = () => {
         },
         {
             role: [Role.seniorMentor, Role.supervisor, Role.admin],
-            label: "See Syallabus",
+            label: "Syallabus",
             path: "/syllabus",
         },
         {
@@ -115,7 +132,7 @@ const Layout = () => {
         {
             role: [Role.groupMentor],
             label: "My Juniors",
-            path: "/students",
+            path: "/juniors",
         },
         {
             role: [Role.groupMentor],
@@ -133,6 +150,22 @@ const Layout = () => {
             path: "/ticket/create",
         },
     ];
+
+    if (permission?.FeeManagement === true) {
+        links.push({
+            role: [Role.supervisor],
+            label: "Fee Management",
+            path: "/fee-details",
+        });
+    }
+
+    if (permission?.KitDispatch === true) {
+        links.push({
+            role: [Role.supervisor],
+            label: "Kit Distribution",
+            path: "/kit-data",
+        });
+    }
 
     const filteredLinks = links.filter((link) => link.role.includes(role));
 

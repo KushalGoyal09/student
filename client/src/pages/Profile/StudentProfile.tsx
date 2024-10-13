@@ -9,14 +9,22 @@ import AssignMentor from "./AssaignMentor";
 import { useParams } from "react-router-dom";
 import Fee from "./Fee/Fee";
 import VisionBoardComponent from "./VisionBoard";
+import permissionAtom from "@/recoil/permission";
 
-type TabType = "Info" | "AssignMentor" | "FeeDetail" | "Target" | "Calling" | "Vision Board";
+type TabType =
+    | "Info"
+    | "AssignMentor"
+    | "FeeDetail"
+    | "Target"
+    | "Calling"
+    | "Vision Board";
 
 const tabConfig: {
     [key in TabType]: {
         icon: React.ReactNode;
         label: string;
         role: Array<Role>;
+        permissionCheck?: (permissions: Permission | null) => boolean;
     };
 } = {
     Info: {
@@ -33,11 +41,13 @@ const tabConfig: {
         icon: <Users className="w-5 h-5" />,
         label: "Assign Mentor",
         role: [Role.admin],
+        permissionCheck: (permissions) => permissions?.AssaignMentor || false,
     },
     FeeDetail: {
         icon: <DollarSign className="w-5 h-5" />,
         label: "Fee Detail",
         role: [Role.admin],
+        permissionCheck: (permissions) => permissions?.FeeManagement || false,
     },
     Target: {
         icon: <Target className="w-5 h-5" />,
@@ -68,20 +78,32 @@ const tabConfig: {
             Role.seniorMentor,
             Role.supervisor,
         ],
-    }
+    },
 };
+
+interface Permission {
+    FeeManagement: boolean;
+    KitDispatch: boolean;
+    AssaignMentor: boolean;
+}
 
 export default function StudentProfile() {
     const tabsRef = useRef<HTMLDivElement>(null);
     const userRole = useRecoilValue(userAtom);
+    const userPermission = useRecoilValue(permissionAtom);
     const { id } = useParams();
     if (!id) {
         return null;
     }
 
-    const allowedTabs = Object.entries(tabConfig).filter(([_, config]) =>
-        userRole ? config.role.includes(userRole) : false,
-    );
+    const allowedTabs = Object.entries(tabConfig).filter(([_, config]) => {
+        // Check if the user's role allows the tab or if there's a permission check that passes
+        const hasRoleAccess = userRole ? config.role.includes(userRole) : false;
+        const hasPermissionAccess = config.permissionCheck
+            ? config.permissionCheck(userPermission)
+            : true;
+        return hasRoleAccess || hasPermissionAccess;
+    });
 
     const [tab, setTab] = useState<TabType>(
         allowedTabs.length > 0 ? (allowedTabs[0][0] as TabType) : "Info",
@@ -109,7 +131,7 @@ export default function StudentProfile() {
             case "FeeDetail":
                 return <Fee studentId={id} />;
             case "Target":
-                return <TargetComponent studentId={id}  />
+                return <TargetComponent studentId={id} />;
             case "Calling":
                 return <CallRecord studentId={id} />;
             case "Vision Board":

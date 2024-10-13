@@ -6,8 +6,22 @@ const db = new PrismaClient();
 
 const getKitDispatchData = async (req: AuthRequest, res: Response) => {
     const role = req.role;
-    if (role !== Role.admin) {
+    const userId = req.userId;
+    if (role !== Role.admin && role !== Role.supervisor) {
         return res.status(401).json({ error: "Unauthorized" });
+    }
+    if (role === Role.supervisor) {
+        const supervisor = await db.supervisor.findUnique({
+            where: {
+                id: userId,
+            },
+            select: {
+                KitDispatch: true,
+            },
+        });
+        if (!supervisor || supervisor.KitDispatch === false) {
+            return res.status(401).json({ error: "Unauthorized" });
+        }
     }
     const students = await db.student.findMany({
         where: {

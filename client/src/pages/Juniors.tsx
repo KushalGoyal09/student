@@ -1,11 +1,24 @@
 import Loading from "@/components/Loading";
+import permissionAtom from "@/recoil/permission";
+import { Role, userAtom } from "@/recoil/userAtom";
 import { useState } from "react";
 import { Suspense, lazy } from "react";
+import { useRecoilValue } from "recoil";
 const ExistingStudents = lazy(() => import("./Detail/StudentList"));
 const NewAdmissions = lazy(() => import("./New/NewAdmissions"));
 
 export default function Juniors() {
     const [tab, setTab] = useState<"new" | "all">("new");
+    const role = useRecoilValue(userAtom);
+    const permissions = useRecoilValue(permissionAtom);
+
+    if (role !== Role.supervisor && role !== Role.admin) {
+        return <ExistingStudents />;
+    }
+
+    if (role === Role.supervisor && !permissions?.AssaignMentor) {
+        return <ExistingStudents />;
+    }
 
     return (
         <Suspense fallback={<Loading />}>

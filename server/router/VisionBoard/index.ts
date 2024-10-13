@@ -4,7 +4,7 @@ import getVision from "./getVision";
 import authMiddleware from "../../middleware/auth";
 const visionBoardRouter = Router();
 
-visionBoardRouter.post("/set",authMiddleware ,setVision);
-visionBoardRouter.post("/get",authMiddleware ,getVision);
+visionBoardRouter.post("/set", authMiddleware, setVision);
+visionBoardRouter.post("/get", authMiddleware, getVision);
 
 export default visionBoardRouter;

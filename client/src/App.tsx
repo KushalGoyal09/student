@@ -17,15 +17,12 @@ import SeniorMentorDetail from "./pages/Detail/SeniorMentor/SeniorMentorDetail";
 import SeniorMentorDetailMain from "./pages/Detail/SeniorMentor/SeniorMentorDetailMain";
 import MentorDetail from "./pages/Detail/GroupMentor/MentorDetail";
 import MentorDetailMain from "./pages/Detail/GroupMentor/MentorDetailMain";
-import Temp from "./pages/Profile/Temp";
 import NotFound from "./pages/NotFound";
 import { RecoilRoot } from "recoil";
 import NewAdmissions from "./pages/New/NewAdmissions";
 import FeeDetail from "./pages/New/FeeDetail";
 import KitDispatchPage from "./pages/New/KitDetails";
-import StudentList from "./pages/Detail/StudentList";
 import Layout from "./components/Layout";
-// import Syallabus from "./pages/Syallabus";
 import MentorFeedback from "./pages/MentorFeedbacks";
 import MentorPage from "./pages/MentorPage";
 import AdminPanel from "./pages/AdminPanel";
@@ -130,10 +127,6 @@ const App = () => {
                     element: <AdminPanel />,
                 },
                 {
-                    path: "/students",
-                    element: <StudentList />,
-                },
-                {
                     path: "/profile",
                     children: [
                         {
@@ -164,8 +157,8 @@ const App = () => {
                     element: <SyllabusComponent />,
                 },
                 {
-                    path:"/admin/syllabus",
-                    element: <Syallabus/>
+                    path: "/admin/syllabus",
+                    element: <Syallabus />,
                 },
                 {
                     path: "admin/mentor",
@@ -184,19 +177,16 @@ const App = () => {
                     element: <Juniors />,
                 },
                 {
-                    path: "/tab/:id",
-                    element: <Temp />,
-                },
-                {
                     path: "/salary",
                     element: <MentorSalaryManagement />,
                 },
                 {
                     path: "/role",
                     element: <RoleManagement />,
-                },{
+                },
+                {
                     path: "/overall",
-                    element: <OverallSyllabus/>
+                    element: <OverallSyllabus />,
                 },
                 {
                     path: "*",

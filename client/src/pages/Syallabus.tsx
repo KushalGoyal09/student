@@ -24,7 +24,7 @@ export default function AdminSyllabus() {
         chemistry: [],
         biology: [],
     });
-    
+
     const [newChapter, setNewChapter] = useState("");
     const [isLoading, setIsLoading] = useState(true);
     const role = useRecoilValue(userAtom);

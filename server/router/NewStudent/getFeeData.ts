@@ -2,10 +2,7 @@ import { AuthRequest, Role } from "../../types";
 import { Response } from "express";
 import { PrismaClient } from "@prisma/client";
 import { z } from "zod";
-import {
-    throwNotFoundError,
-    throwUnauthorizedError,
-} from "../../custom-error/customError";
+import { throwUnauthorizedError } from "../../custom-error/customError";
 const db = new PrismaClient();
 
 const bodySchema = z.object({
@@ -38,9 +35,24 @@ type FeeDataResponse = {
 
 const getFeeData = async (req: AuthRequest, res: Response<FeeDataResponse>) => {
     const role = req.role;
-    if (role !== Role.admin) {
-        throwUnauthorizedError("You are not authorized to perform this action");
+    const userId = req.userId;
+    if (role !== Role.admin && role !== Role.supervisor) {
+        throwUnauthorizedError("Unauthorized");
         return;
+    }
+    if (role === Role.supervisor) {
+        const supervisor = await db.supervisor.findUnique({
+            where: {
+                id: userId,
+            },
+            select: {
+                FeeManagement: true,
+            },
+        });
+        if (!supervisor || supervisor.FeeManagement === false) {
+            throwUnauthorizedError("Unauthorized");
+            return;
+        }
     }
     const { studentId } = bodySchema.parse(req.body);
     const fee = await db.fees.findUnique({

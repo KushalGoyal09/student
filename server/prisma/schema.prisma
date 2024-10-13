@@ -7,13 +7,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum Permission {
-  UpdateSyallabus
-  FeeManagement
-  KitDispatch
-  AssaignMentor
-}
-
 model Supervisor {
   id                 String               @id @default(uuid())
   name               String
@@ -21,7 +14,9 @@ model Supervisor {
   password           String
   SeniorMentor       SeniorMentor[]
   RatingBySupervisor RatingBySupervisor[]
-  permissions        Permission[]
+  FeeManagement      Boolean              @default(false)
+  KitDispatch        Boolean              @default(false)
+  AssaignMentor      Boolean              @default(false)
 }
 
 model SeniorMentor {

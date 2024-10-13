@@ -12,8 +12,22 @@ const bodySchema = z.object({
 
 const assaignMentor = async (req: AuthRequest, res: Response) => {
     const role = req.role;
-    if (role !== Role.admin) {
+    const userId = req.userId;
+    if (role !== Role.admin && role !== Role.supervisor) {
         return res.status(401).json({ error: "Unauthorized" });
+    }
+    if (role === Role.supervisor) {
+        const supervisor = await db.supervisor.findUnique({
+            where: {
+                id: userId,
+            },
+            select: {
+                AssaignMentor: true,
+            },
+        });
+        if (!supervisor || supervisor.AssaignMentor === false) {
+            return res.status(401).json({ error: "Unauthorized" });
+        }
     }
     const parsedData = bodySchema.parse(req.body);
     await db.student.update({

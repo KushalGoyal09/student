@@ -26,8 +26,6 @@ const bodySchema = z.object({
     }),
 });
 
-const editTarget = async (req: AuthRequest, res: Response) => {
-
-}
+const editTarget = async (req: AuthRequest, res: Response) => {};
 
 export default editTarget;

@@ -14,7 +14,7 @@ const getUncompletedTarget = async (req: AuthRequest, res: Response) => {
     const data = await db.target.findMany({
         where: {
             studentId,
-        completed: false,
+            completed: false,
         },
         select: {
             id: true,
@@ -24,12 +24,12 @@ const getUncompletedTarget = async (req: AuthRequest, res: Response) => {
             physics: true,
             chemistry: true,
             biology: true,
-        }
-    })
+        },
+    });
     res.json({
         data,
         message: "Targets fetched successfully",
-    success: true,
+        success: true,
     });
 };
 

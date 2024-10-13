@@ -178,7 +178,7 @@ interface GroupMentorCompletion {
     groupMentorName: string;
     totalNumberOfStudents: number;
     totalNumberOfStudentsWhoHaveCompletedTheChapter: number;
-    students: Student[]
+    students: Student[];
 }
 
 interface OverallSyllabusResponse {

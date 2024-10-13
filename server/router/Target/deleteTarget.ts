@@ -20,6 +20,6 @@ const deleteTarget = async (req: AuthRequest, res: Response) => {
         success: true,
         message: "Target deleted successfully",
     });
-}
+};
 
 export default deleteTarget;

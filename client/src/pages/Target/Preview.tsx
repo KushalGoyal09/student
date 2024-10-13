@@ -99,158 +99,183 @@ const PreviewModal: React.FC<PreviewModalProps> = ({
         const margin = 10;
         const pcbColor = "#8A0C7A";
         const contentWidth = pageWidth - 2 * margin;
-    
+
         let yPosition = margin;
-    
+
         const addHeader = () => {
-          pdf.addImage("/pcb-point-logo.png", "PNG", margin, yPosition, 20, 20);
-          pdf.setFontSize(16);
-          pdf.setFont("helvetica", "bold");
-          pdf.setTextColor(pcbColor);
-          pdf.text("Personal Mentorship Programme", margin + 25, yPosition + 10);
-          pdf.setFontSize(12);
-          pdf.setFont("helvetica", "normal");
-          pdf.setTextColor(0);
-          pdf.text(`Target for Future Doctor: ${data.studentName}`, margin + 25, yPosition + 18);
-          pdf.setDrawColor(pcbColor);
-          pdf.line(margin, yPosition + 25, pageWidth - margin, yPosition + 25);
-          yPosition += 30;
+            pdf.addImage(
+                "/pcb-point-logo.png",
+                "PNG",
+                margin,
+                yPosition,
+                20,
+                20,
+            );
+            pdf.setFontSize(16);
+            pdf.setFont("helvetica", "bold");
+            pdf.setTextColor(pcbColor);
+            pdf.text(
+                "Personal Mentorship Programme",
+                margin + 25,
+                yPosition + 10,
+            );
+            pdf.setFontSize(12);
+            pdf.setFont("helvetica", "normal");
+            pdf.setTextColor(0);
+            pdf.text(
+                `Target for Future Doctor: ${data.studentName}`,
+                margin + 25,
+                yPosition + 18,
+            );
+            pdf.setDrawColor(pcbColor);
+            pdf.line(
+                margin,
+                yPosition + 25,
+                pageWidth - margin,
+                yPosition + 25,
+            );
+            yPosition += 30;
         };
-    
+
         const addTargetTable = (targets: DayTarget[], title: string) => {
-          if (yPosition + 60 > pageHeight) {
-            pdf.addPage();
-            yPosition = margin;
-            addHeader();
-          }
-    
-          pdf.setFontSize(14);
-          pdf.setFont("helvetica", "bold");
-          pdf.setTextColor(pcbColor);
-          pdf.text(title, margin, yPosition);
-          yPosition += 10;
-          pdf.setFontSize(10);
-          pdf.setFont("helvetica", "normal");
-          pdf.setTextColor(0);
-    
-          const headers = ["Date", "Physics", "Chemistry", "Biology"];
-          const rows = targets.map((target) => [
-            `${format(new Date(target.date), "dd/MM/yyyy")}\n${
-              daysOfWeek[new Date(target.date).getDay()]
-            }`,
-            target.physics
-              .map(
-                (chapter) =>
-                  syllabus.physics.find((p) => p.id === chapter.chapterId)?.chapterName
-              )
-              .join(", "),
-            target.chemistry
-              .map(
-                (chapter) =>
-                  syllabus.chemistry.find((p) => p.id === chapter.chapterId)?.chapterName
-              )
-              .join(", "),
-            target.biology
-              .map(
-                (chapter) =>
-                  syllabus.biology.find((p) => p.id === chapter.chapterId)?.chapterName
-              )
-              .join(", "),
-          ]);
-    
-          autoTable(pdf,{
-            head: [headers],
-            body: rows,
-            startY: yPosition,
-            margin: { left: margin, right: margin },
-            columnStyles: {
-              0: { cellWidth: 30, fillColor: [255, 255, 255] },
-              1: { cellWidth: 45, fillColor: [230, 247, 255] },
-              2: { cellWidth: 45, fillColor: [255, 243, 230] },
-              3: { cellWidth: 45, fillColor: [230, 255, 230] },
-            },
-            styles: { cellPadding: 2, fontSize: 8 },
-            headStyles: { fillColor: [138, 12, 122], textColor: 255 },
-            alternateRowStyles: {},
-          });
-    
-          yPosition = (pdf as any).lastAutoTable.finalY + 10;
-        };
-    
-        const addInstructions = () => {
-          if (yPosition + 80 > pageHeight) {
-            pdf.addPage();
-            yPosition = margin;
-          }
-    
-          pdf.setFontSize(14);
-          pdf.setFont("helvetica", "bold");
-          pdf.setTextColor(pcbColor);
-          pdf.text("Follow These Steps:", margin, yPosition);
-          yPosition += 10;
-          pdf.setFontSize(10);
-          pdf.setFont("helvetica", "normal");
-          pdf.setTextColor(0);
-          commonStepsWithout.forEach((step, index) => {
-            if (yPosition + 10 > pageHeight) {
-              pdf.addPage();
-              yPosition = margin;
+            if (yPosition + 60 > pageHeight) {
+                pdf.addPage();
+                yPosition = margin;
+                addHeader();
             }
-            pdf.text(`${index + 1}. ${step}`, margin, yPosition);
+
+            pdf.setFontSize(14);
+            pdf.setFont("helvetica", "bold");
+            pdf.setTextColor(pcbColor);
+            pdf.text(title, margin, yPosition);
             yPosition += 10;
-          });
+            pdf.setFontSize(10);
+            pdf.setFont("helvetica", "normal");
+            pdf.setTextColor(0);
+
+            const headers = ["Date", "Physics", "Chemistry", "Biology"];
+            const rows = targets.map((target) => [
+                `${format(new Date(target.date), "dd/MM/yyyy")}\n${
+                    daysOfWeek[new Date(target.date).getDay()]
+                }`,
+                target.physics
+                    .map(
+                        (chapter) =>
+                            syllabus.physics.find(
+                                (p) => p.id === chapter.chapterId,
+                            )?.chapterName,
+                    )
+                    .join(", "),
+                target.chemistry
+                    .map(
+                        (chapter) =>
+                            syllabus.chemistry.find(
+                                (p) => p.id === chapter.chapterId,
+                            )?.chapterName,
+                    )
+                    .join(", "),
+                target.biology
+                    .map(
+                        (chapter) =>
+                            syllabus.biology.find(
+                                (p) => p.id === chapter.chapterId,
+                            )?.chapterName,
+                    )
+                    .join(", "),
+            ]);
+
+            autoTable(pdf, {
+                head: [headers],
+                body: rows,
+                startY: yPosition,
+                margin: { left: margin, right: margin },
+                columnStyles: {
+                    0: { cellWidth: 30, fillColor: [255, 255, 255] },
+                    1: { cellWidth: 45, fillColor: [230, 247, 255] },
+                    2: { cellWidth: 45, fillColor: [255, 243, 230] },
+                    3: { cellWidth: 45, fillColor: [230, 255, 230] },
+                },
+                styles: { cellPadding: 2, fontSize: 8 },
+                headStyles: { fillColor: [138, 12, 122], textColor: 255 },
+                alternateRowStyles: {},
+            });
+
+            yPosition = (pdf as any).lastAutoTable.finalY + 10;
         };
-    
+
+        const addInstructions = () => {
+            if (yPosition + 80 > pageHeight) {
+                pdf.addPage();
+                yPosition = margin;
+            }
+
+            pdf.setFontSize(14);
+            pdf.setFont("helvetica", "bold");
+            pdf.setTextColor(pcbColor);
+            pdf.text("Follow These Steps:", margin, yPosition);
+            yPosition += 10;
+            pdf.setFontSize(10);
+            pdf.setFont("helvetica", "normal");
+            pdf.setTextColor(0);
+            commonStepsWithout.forEach((step, index) => {
+                if (yPosition + 10 > pageHeight) {
+                    pdf.addPage();
+                    yPosition = margin;
+                }
+                pdf.text(`${index + 1}. ${step}`, margin, yPosition);
+                yPosition += 10;
+            });
+        };
+
         // Regular Targets
         addHeader();
         addTargetTable(data.targets.regular, "Regular Target");
-    
+
         // Revision Targets
         if (data.targets.revision.length > 0) {
-          if (yPosition + 60 > pageHeight) {
-            pdf.addPage();
-            yPosition = margin;
-            addHeader();
-          }
-          addTargetTable(data.targets.revision, "Revision Target");
+            if (yPosition + 60 > pageHeight) {
+                pdf.addPage();
+                yPosition = margin;
+                addHeader();
+            }
+            addTargetTable(data.targets.revision, "Revision Target");
         }
-    
+
         // Extra Targets
         if (data.targets.extra.length > 0) {
-          if (yPosition + 60 > pageHeight) {
-            pdf.addPage();
-            yPosition = margin;
-            addHeader();
-          }
-          addTargetTable(data.targets.extra, "Extra Target");
+            if (yPosition + 60 > pageHeight) {
+                pdf.addPage();
+                yPosition = margin;
+                addHeader();
+            }
+            addTargetTable(data.targets.extra, "Extra Target");
         }
-    
+
         // Instructions
         if (data.includeCommonSteps) {
-          addInstructions();
+            addInstructions();
         }
-    
+
         // Special Note
         if (data.specialNote) {
-          if (yPosition + 60 > pageHeight) {
-            pdf.addPage();
-            yPosition = margin;
-          }
-          pdf.setFontSize(14);
-          pdf.setFont("helvetica", "bold");
-          pdf.setTextColor(pcbColor);
-          pdf.text("Special Note by Mentor:", margin, yPosition);
-          yPosition += 10;
-          pdf.setFontSize(10);
-          pdf.setFont("helvetica", "normal");
-          pdf.setTextColor(0);
-          const lines = pdf.splitTextToSize(data.specialNote, contentWidth);
-          pdf.text(lines, margin, yPosition);
+            if (yPosition + 60 > pageHeight) {
+                pdf.addPage();
+                yPosition = margin;
+            }
+            pdf.setFontSize(14);
+            pdf.setFont("helvetica", "bold");
+            pdf.setTextColor(pcbColor);
+            pdf.text("Special Note by Mentor:", margin, yPosition);
+            yPosition += 10;
+            pdf.setFontSize(10);
+            pdf.setFont("helvetica", "normal");
+            pdf.setTextColor(0);
+            const lines = pdf.splitTextToSize(data.specialNote, contentWidth);
+            pdf.text(lines, margin, yPosition);
         }
-    
+
         return pdf;
-      };
-    
+    };
 
     const handlePrintPDF = async () => {
         const pdf = await generatePDF();
@@ -346,10 +371,13 @@ const PreviewModal: React.FC<PreviewModalProps> = ({
     );
 
     return (
-        <Dialog open={isOpen} onOpenChange={() => {
-            setIsApproved(false);
-            onClose();
-        }}>
+        <Dialog
+            open={isOpen}
+            onOpenChange={() => {
+                setIsApproved(false);
+                onClose();
+            }}
+        >
             <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
                     <DialogTitle className="flex items-center justify-between">
@@ -431,8 +459,8 @@ const PreviewModal: React.FC<PreviewModalProps> = ({
                     </Button>
                     <Button
                         onClick={() => {
-                            setIsApproved(false)
-                            onEdit()
+                            setIsApproved(false);
+                            onEdit();
                         }}
                         className="bg-yellow-500 hover:bg-yellow-600"
                     >
