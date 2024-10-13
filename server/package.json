@@ -9,9 +9,6 @@
         "generate": "prisma generate",
         "studio": "prisma studio"
     },
-    "prisma": {
-        "seed": "bun prisma/seed.ts"
-    },
     "devDependencies": {
         "@types/bun": "latest",
         "@types/date-fns": "^2.6.0",
