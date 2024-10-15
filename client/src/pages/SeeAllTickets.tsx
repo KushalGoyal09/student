@@ -1,7 +1,9 @@
 import { useState, useEffect, useRef } from "react";
+import { ExternalLinkIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Play, Pause } from "lucide-react";
 import { Role } from "@/recoil/userAtom";
+import { useNavigate } from "react-router-dom";
 
 interface TicketResponse {
     id: string;
@@ -25,6 +27,7 @@ export default function StylizedTickets() {
     const [isPlaying, setIsPlaying] = useState<string | null>(null);
     const animationRef = useRef<number | null>(null);
     const progressRef = useRef<HTMLDivElement | null>(null);
+    const navigate = useNavigate();
 
     useEffect(() => {
         fetchTickets();
@@ -94,6 +97,17 @@ export default function StylizedTickets() {
         }
     };
 
+    const openProfile = (role: Role, username: string) => {
+        console.log(role, username);
+        if (role === Role.groupMentor) {
+            navigate(`/mentor/${username}`);
+        } else if (role === Role.seniorMentor) {
+            navigate(`/seniorMentor`);
+        } else if (role === Role.supervisor) {
+            navigate(`/supervisor`);
+        }
+    };
+
     return (
         <div className="container mx-auto px-4 py-8 bg-pcb/10 min-h-screen">
             <h1 className="text-4xl font-bold mb-8 text-center text-pcb">
@@ -112,17 +126,19 @@ export default function StylizedTickets() {
                             className="bg-pcb/30 rounded-lg p-4 mb-4"
                         >
                             <div className="mb-2">
-                                <p>
+                                <div>
                                     <strong>Created by:</strong>{" "}
-                                    {`${ticket.createdByName} - ${
-                                        ticket.createdByRole === Role.supervisor
-                                            ? "Supervisor"
-                                            : ticket.createdByRole ===
-                                                Role.groupMentor
-                                              ? "Group Mentor"
-                                              : "Senior Mentor"
-                                    }`}
-                                </p>
+                                    {ticket.createdByName}
+                                    <ExternalLinkIcon
+                                        className="h-4 w-4 ml-1 cursor-pointer inline"
+                                        onClick={() =>
+                                            openProfile(
+                                                ticket.createdByRole,
+                                                ticket.createdByUsername,
+                                            )
+                                        }
+                                    />
+                                </div>
                                 <p>
                                     <strong>Subject:</strong> {ticket.subject}
                                 </p>
@@ -177,10 +193,19 @@ export default function StylizedTickets() {
                             className="bg-pcb/30 rounded-lg p-4 mb-4"
                         >
                             <div className="mb-2">
-                                <p>
+                                <div>
                                     <strong>Created by:</strong>{" "}
                                     {ticket.createdByName}
-                                </p>
+                                    <ExternalLinkIcon
+                                        className="h-4 w-4 ml-1 cursor-pointer inline"
+                                        onClick={() =>
+                                            openProfile(
+                                                ticket.createdByRole,
+                                                ticket.createdByUsername,
+                                            )
+                                        }
+                                    />
+                                </div>
                                 <p>
                                     <strong>Subject:</strong> {ticket.subject}
                                 </p>

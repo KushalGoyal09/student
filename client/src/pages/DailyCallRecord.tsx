@@ -1,13 +1,25 @@
 import { useMemo } from "react";
 import { format } from "date-fns";
-import { PhoneIcon, CheckCircle, XCircle, AlertCircle } from "lucide-react";
+import {
+    PhoneIcon,
+    CheckCircle,
+    XCircle,
+    AlertCircle,
+} from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
 interface Student {
     id: string;
     name: string;
+    whattsapNumber: string;
     callNumber: string;
+    class: string;
+    dropperStatus: string;
+    previousScore: string;
+    platform: string;
+    status: boolean;
+    whattsapGroupLink: string | null;
 }
 
 type CallStatus = "Scheduled" | "Done" | "DNP" | "Nothing";
@@ -51,7 +63,9 @@ export default function DetailedDailySummary({
                     <Button
                         variant="ghost"
                         size="icon"
-                        onClick={() => window.open(`tel:${student.callNumber}`)}
+                        onClick={() =>
+                            window.open(student.whattsapGroupLink || "")
+                        }
                         aria-label={`Call ${student.name}`}
                     >
                         <PhoneIcon className="h-4 w-4" />

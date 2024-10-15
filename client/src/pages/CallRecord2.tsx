@@ -20,6 +20,12 @@ interface Student {
     name: string;
     whattsapNumber: string;
     callNumber: string;
+    class: string;
+    dropperStatus: string;
+    previousScore: string;
+    platform: string;
+    status: boolean;
+    whattsapGroupLink: string | null;
 }
 interface ApiResponse {
     data: {

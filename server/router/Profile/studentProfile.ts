@@ -58,6 +58,13 @@ const studentProfile = async (req: AuthRequest, res: Response) => {
             status: true,
             createdAt: true,
             whattsapGroupLink: true,
+            email: true,
+            completeAddress: true,
+            landmark: true,
+            city: true,
+            state: true,
+            pincode: true,
+            country: true,
             groupMentor: {
                 select: {
                     name: true,

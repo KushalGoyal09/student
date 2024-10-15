@@ -14,6 +14,7 @@ const getRole = async (req: AuthRequest, res: Response) => {
         return;
     }
     let name = "User";
+    let whattsapLink = null;
     if (role === Role.admin) {
         name = "Admin";
     } else if (role === Role.supervisor) {
@@ -51,6 +52,7 @@ const getRole = async (req: AuthRequest, res: Response) => {
             },
             select: {
                 name: true,
+                whattsapLink:   true,
             },
         });
         if (!groupMentor) {
@@ -58,11 +60,13 @@ const getRole = async (req: AuthRequest, res: Response) => {
             return;
         }
         name = groupMentor.name;
+        whattsapLink = groupMentor.whattsapLink;
     }
     res.json({
         success: true,
         role,
         name,
+        whattsapLink
     });
 };
 

@@ -14,12 +14,19 @@ const bodySchema = z.object({
     fatherNumber: z.coerce.string(),
     language: z.coerce.string(),
     target: z.coerce.string(),
-    StudyHours: z.coerce.number(),
+    StudyHours: z.string(),
     class: z.coerce.string(),
     dropperStatus: z.coerce.string(),
     previousScore: z.coerce.string(),
     platform: z.coerce.string(),
     expectation: z.coerce.string(),
+    email: z.string(),
+    completeAddress: z.string(),
+    landmark: z.string(),
+    city: z.string(),
+    state: z.string(),
+    pincode: z.string(),
+    country: z.string(),
 });
 
 const admissionForm = async (req: Request, res: Response) => {

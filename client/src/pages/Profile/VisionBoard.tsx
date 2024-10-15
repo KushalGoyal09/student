@@ -104,6 +104,16 @@ const VisionBoardComponent: FC<VisionBoardComponentProps> = ({ studentId }) => {
         vision: Vision,
         completed: boolean,
     ) => {
+        setVisionBoard((prev) => {
+            if (!prev) return prev;
+            const updatedSubject = prev[subject].map((chapter) => {
+                if (chapter.chapterId === chapterId) {
+                    return { ...chapter, [vision]: completed };
+                }
+                return chapter;
+            });
+            return { ...prev, [subject]: updatedSubject };
+        });
         const success = await setVision({
             studentId,
             subject,
@@ -111,18 +121,6 @@ const VisionBoardComponent: FC<VisionBoardComponentProps> = ({ studentId }) => {
             vision,
             completed,
         });
-        if (success) {
-            setVisionBoard((prev) => {
-                if (!prev) return prev;
-                const updatedSubject = prev[subject].map((chapter) => {
-                    if (chapter.chapterId === chapterId) {
-                        return { ...chapter, [vision]: completed };
-                    }
-                    return chapter;
-                });
-                return { ...prev, [subject]: updatedSubject };
-            });
-        }
     };
 
     const renderChapterCard = (subject: Subject, chapter: Chapter) => {

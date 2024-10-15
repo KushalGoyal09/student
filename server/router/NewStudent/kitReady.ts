@@ -1,10 +1,14 @@
 import { Response } from "express";
 import { AuthRequest, Role } from "../../types";
 import { PrismaClient } from "@prisma/client";
-
+import { z } from "zod";
 const db = new PrismaClient();
 
-const getKitDispatchData = async (req: AuthRequest, res: Response) => {
+const bodySchema = z.object({
+    studentId: z.coerce.string(),
+});
+
+const kitReady = async (req: AuthRequest, res: Response) => {
     const role = req.role;
     const userId = req.userId;
     if (role !== Role.admin && role !== Role.supervisor) {
@@ -23,28 +27,22 @@ const getKitDispatchData = async (req: AuthRequest, res: Response) => {
             return res.status(401).json({ error: "Unauthorized" });
         }
     }
-    const students = await db.student.findMany({
+    const parsedData = bodySchema.safeParse(req.body);
+    if (!parsedData.success) {
+        return res.status(400).json({ error: "Invalid input" });
+    }
+    const { studentId } = parsedData.data;
+    await db.student.update({
         where: {
-            Fees: {
-                allClear: true,
-            },
+            id: studentId,
         },
-        select: {
-            callNumber: true,
-            id: true,
-            name: true,
-            kitDispatched: true,
-            kitDispatchedDate: true,
+        data: {
             kitReady: true,
         },
-        orderBy: {
-            kitDispatched: "asc",
-        },
     });
-    res.status(200).json({
-        success: true,
-        data: students,
+    return res.status(200).json({
+        message: "Kit status updated",
     });
 };
 
-export default getKitDispatchData;
+export default kitReady;

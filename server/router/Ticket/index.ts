@@ -6,6 +6,7 @@ import createTickets from "./createTickets";
 import authMiddleware from "../../middleware/auth";
 import getTickets from "./getTickets";
 import changeTickets from "./changeTickets";
+import getMyTickets from "./getMyTickets";
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
@@ -31,6 +32,7 @@ ticketRouter.post(
     createTickets,
 );
 ticketRouter.get("/get", authMiddleware, getTickets);
+ticketRouter.get("/get-my", authMiddleware, getMyTickets);
 ticketRouter.post("/close", authMiddleware, changeTickets);
 
 export default ticketRouter;

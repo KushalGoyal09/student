@@ -16,15 +16,9 @@ export default function AdminPanel() {
         <div className="min-h-screen bg-gray-100 p-4">
             <div className="max-w-3xl mx-auto bg-white rounded-lg shadow-md p-6">
                 <div className="flex justify-center mb-6">
-                    <img
-                        src="/pcb-point-logo.png"
-                        alt="The PCB Point Logo"
-                        width={100}
-                        height={100}
-                    />
                 </div>
                 <h1 className="text-3xl font-bold text-center mb-8 text-pcb">
-                    Welcome to The PCB Point
+                    What's up?
                 </h1>
 
                 <div className="grid grid-cols-2 gap-4 mb-8">

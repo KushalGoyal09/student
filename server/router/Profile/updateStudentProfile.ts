@@ -1,6 +1,6 @@
 import { Response } from "express";
 import { PrismaClient } from "@prisma/client";
-import { AuthRequest, Role } from "../../types";
+import { AuthRequest } from "../../types";
 import { z } from "zod";
 const db = new PrismaClient();
 
@@ -16,21 +16,18 @@ const bodySchema = z.object({
     fatherNumber: z.string(),
     language: z.string(),
     target: z.string(),
-    StudyHours: z.coerce.number(),
+    StudyHours: z.string(),
     class: z.string(),
     dropperStatus: z.string(),
     previousScore: z.string(),
     platform: z.string(),
-    whattsapGroupLink: z.string().optional(),
+    whattsapGroupLink: z.string().nullable(),
 });
 
 const updateStudentProfile = async (req: AuthRequest, res: Response) => {
-    const role = req.role;
-    if (role !== Role.admin) {
-        return res.status(401).json({ message: "Unauthorized" });
-    }
     const parsedData = bodySchema.safeParse(req.body);
     if (!parsedData.success) {
+        console.log(parsedData.error);
         return res.status(400).json({ message: "Wrong inputs" });
     }
     await db.student.update({

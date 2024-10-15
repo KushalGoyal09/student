@@ -8,11 +8,13 @@ import getMentorDetail from "./getMentorDetail";
 import getSeniorMentorDetail from "./getSeniorMentorDetail";
 import getSupervisorDetail from "./getSupervisorDetail";
 import authMiddleware from "../../middleware/auth";
+import getAllEmployes from "./getAllEmployes";
 
 detailRouter.get("/students", authMiddleware, getAllStudents);
 detailRouter.get("/mentors", authMiddleware, getAllGroupMentor);
 detailRouter.get("/senior-mentors", authMiddleware, getAllSeniorMentor);
 detailRouter.get("/supervisors", authMiddleware, getAllSupervisors);
+detailRouter.get("/employes", authMiddleware, getAllEmployes);
 detailRouter.post("/mentor-detail", authMiddleware, getMentorDetail);
 detailRouter.post(
     "/senior-mentor-detail",

@@ -320,45 +320,33 @@ const PreviewModal: React.FC<PreviewModalProps> = ({
                                     <br />
                                     {daysOfWeek[new Date(target.date).getDay()]}
                                 </td>
-                                <td className="border p-2 bg-blue-100">
+                                <td
+                                    className={`border p-2 ${index % 2 === 0 ? "bg-blue-100" : ""}`}
+                                >
                                     {target.physics
                                         .map(
                                             (chapter) =>
-                                                `${
-                                                    syllabus.physics.find(
-                                                        (p) =>
-                                                            p.id ===
-                                                            chapter.chapterId,
-                                                    )?.chapterName
-                                                }`,
+                                                `${syllabus.physics.find((p) => p.id === chapter.chapterId)?.chapterName}`,
                                         )
                                         .join(", ")}
                                 </td>
-                                <td className="border p-2 bg-orange-100">
+                                <td
+                                    className={`border p-2 ${index % 2 === 0 ? "bg-orange-100" : ""}`}
+                                >
                                     {target.chemistry
                                         .map(
                                             (chapter) =>
-                                                `${
-                                                    syllabus.chemistry.find(
-                                                        (p) =>
-                                                            p.id ===
-                                                            chapter.chapterId,
-                                                    )?.chapterName
-                                                }`,
+                                                `${syllabus.chemistry.find((p) => p.id === chapter.chapterId)?.chapterName}`,
                                         )
                                         .join(", ")}
                                 </td>
-                                <td className="border p-2 bg-green-100">
+                                <td
+                                    className={`border p-2 ${index % 2 === 0 ? "bg-green-100" : ""}`}
+                                >
                                     {target.biology
                                         .map(
                                             (chapter) =>
-                                                `${
-                                                    syllabus.biology.find(
-                                                        (p) =>
-                                                            p.id ===
-                                                            chapter.chapterId,
-                                                    )?.chapterName
-                                                }`,
+                                                `${syllabus.biology.find((p) => p.id === chapter.chapterId)?.chapterName}`,
                                         )
                                         .join(", ")}
                                 </td>
@@ -393,7 +381,7 @@ const PreviewModal: React.FC<PreviewModalProps> = ({
                         </div>
                     </DialogTitle>
                 </DialogHeader>
-                <div id="preview-content">
+                <div id="preview-content" className="space-y-4">
                     <div className="bg-pcb text-white p-4 rounded-t-lg">
                         <div className="flex justify-between items-center">
                             <h2 className="text-xl font-bold">
@@ -404,59 +392,45 @@ const PreviewModal: React.FC<PreviewModalProps> = ({
                             </div>
                         </div>
                     </div>
-                    <div className="space-y-4">
-                        {renderTargetTable(
-                            data.targets.regular,
-                            "Regular Target 🎯",
+                    {renderTargetTable(
+                        data.targets.regular,
+                        "Regular Target 🎯",
+                    )}
+                    {data.targets.revision.length > 0 &&
+                        renderTargetTable(
+                            data.targets.revision,
+                            "Revision Target 🔄",
                         )}
-                        {data.targets.revision.length > 0 &&
-                            renderTargetTable(
-                                data.targets.revision,
-                                "Revision Target 🔄",
-                            )}
-                        {data.targets.extra.length > 0 &&
-                            renderTargetTable(
-                                data.targets.extra,
-                                "Extra Target 🚀",
-                            )}
-
-                        {data.includeCommonSteps && (
-                            <div className="mt-4 p-4 bg-gray-100 rounded">
-                                <h4 className="font-bold mb-2">
-                                    Follow These Steps:
-                                </h4>
-                                <ol className="list-decimal list-inside">
-                                    {commonSteps.map((step, index) => (
-                                        <li key={index}>{step}</li>
-                                    ))}
-                                </ol>
-                            </div>
+                    {data.targets.extra.length > 0 &&
+                        renderTargetTable(
+                            data.targets.extra,
+                            "Extra Target 🚀",
                         )}
 
-                        {data.specialNote && (
-                            <div className="mt-4 p-4 bg-yellow-100 rounded">
-                                <h4 className="font-bold mb-2">
-                                    Special Note by Mentor:
-                                </h4>
-                                <p>{data.specialNote}</p>
-                            </div>
-                        )}
-                    </div>
+                    {data.includeCommonSteps && (
+                        <div className="p-4 bg-gray-100 rounded">
+                            <h4 className="font-bold mb-2">
+                                Follow These Steps:
+                            </h4>
+                            <ol className="list-decimal list-inside">
+                                {commonSteps.map((step, index) => (
+                                    <li key={index}>{step}</li>
+                                ))}
+                            </ol>
+                        </div>
+                    )}
+
+                    {data.specialNote && (
+                        <div className="p-4 bg-yellow-100 rounded">
+                            <h4 className="font-bold mb-2">
+                                Special Note by Mentor:
+                            </h4>
+                            <p>{data.specialNote}</p>
+                        </div>
+                    )}
                 </div>
 
-                <div className="flex flex-wrap justify-end gap-2 mt-4">
-                    <Button
-                        onClick={handleSendToWhatsApp}
-                        className="bg-green-500 hover:bg-green-600"
-                    >
-                        <Send className="mr-2 h-4 w-4" /> Send to WhatsApp
-                    </Button>
-                    <Button
-                        onClick={handlePrintPDF}
-                        className="bg-blue-500 hover:bg-blue-600"
-                    >
-                        <Printer className="mr-2 h-4 w-4" /> Print PDF
-                    </Button>
+                <div className="flex flex-wrap justify-start gap-2 mt-4">
                     <Button
                         onClick={() => {
                             setIsApproved(false);
@@ -473,6 +447,18 @@ const PreviewModal: React.FC<PreviewModalProps> = ({
                     >
                         <Check className="mr-2 h-4 w-4" />{" "}
                         {isApproved ? "Approved" : "Approve"}
+                    </Button>
+                    <Button
+                        onClick={handlePrintPDF}
+                        className="bg-blue-500 hover:bg-blue-600"
+                    >
+                        <Printer className="mr-2 h-4 w-4" /> Print PDF
+                    </Button>
+                    <Button
+                        onClick={handleSendToWhatsApp}
+                        className="bg-green-500 hover:bg-green-600"
+                    >
+                        <Send className="mr-2 h-4 w-4" /> Send
                     </Button>
                 </div>
             </DialogContent>

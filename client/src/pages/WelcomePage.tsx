@@ -114,7 +114,12 @@ export default function WelcomeComponent() {
                     animate={{ opacity: 1 }}
                     transition={{ delay: 0.5, duration: 0.5 }}
                 >
-                    Welcome to PCB Point Family
+                    <p style={{ fontFamily: 'Better Saturday, sans-serif' }} className="text-slate-200 font-semibold">
+                        Welcome to
+                    </p>
+                    <p style={{ fontFamily: 'Chewy, cursive' }} className="mt-6 text-gray-800">
+                        THE PCB POINT FAMILY
+                    </p>
                 </motion.h1>
                 <motion.p
                     className="mb-8 text-gray-200 text-lg"
@@ -122,14 +127,14 @@ export default function WelcomeComponent() {
                     animate={{ opacity: 1 }}
                     transition={{ delay: 0.7, duration: 0.5 }}
                 >
-                    Login to access the dashboard
+                    
                 </motion.p>
                 <motion.div
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                 >
                     <Link to="/login">
-                        <Button className="bg-blue-500 text-white px-8 py-3 rounded-full text-lg font-semibold hover:bg-blue-600 transition-all duration-300 shadow-md hover:shadow-lg">
+                        <Button className="bg-white text-employee px-8 py-3 rounded-full text-lg font-semibold hover:bg-blue-600 transition-all duration-300 shadow-md hover:shadow-lg">
                             Login
                         </Button>
                     </Link>

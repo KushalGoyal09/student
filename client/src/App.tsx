@@ -21,21 +21,22 @@ import NotFound from "./pages/NotFound";
 import { RecoilRoot } from "recoil";
 import NewAdmissions from "./pages/New/NewAdmissions";
 import FeeDetail from "./pages/New/FeeDetail";
-import KitDispatchPage from "./pages/New/KitDetails";
+import KitDispatchPage from "./pages/New/KitDetails2";
 import Layout from "./components/Layout";
 import MentorFeedback from "./pages/MentorFeedbacks";
 import MentorPage from "./pages/MentorPage";
 import AdminPanel from "./pages/AdminPanel";
-import CreateComplaintTicket from "./pages/CreateTicket";
 import ComplaintTickets from "./pages/SeeAllTickets";
 import Juniors from "./pages/Juniors";
 import StudentProfile from "./pages/Profile/StudentProfile";
 import CallRecord from "./pages/CallRecord2";
 import MentorSalaryManagement from "./pages/MentorSalary";
 import RoleManagement from "./pages/RoleManagement";
-import OverallSyllabus from "./pages/OverallSyallabus";
 import SyllabusComponent from "./pages/Syallabus/NeetSyallabus";
 import Syallabus from "./pages/Syallabus/Syallabus";
+import AddEmploy from "./pages/Add/AddEmploy";
+import Ticket from "./pages/Ticket/Ticket";
+import Employee from "./pages/Employee";
 
 const App = () => {
     const router = createBrowserRouter([
@@ -74,6 +75,10 @@ const App = () => {
                             path: "senior-mentor",
                             element: <AddSeniorMentor />,
                         },
+                        {
+                            path: "employee",
+                            element: <AddEmploy/>
+                        }
                     ],
                 },
                 {
@@ -153,6 +158,10 @@ const App = () => {
                     element: <CallRecord />,
                 },
                 {
+                    path: "/employes",
+                    element: <Employee/>
+                },
+                {
                     path: "/syllabus",
                     element: <SyllabusComponent />,
                 },
@@ -166,7 +175,7 @@ const App = () => {
                 },
                 {
                     path: "ticket/create",
-                    element: <CreateComplaintTicket />,
+                    element: <Ticket />,
                 },
                 {
                     path: "tickets",
@@ -183,10 +192,6 @@ const App = () => {
                 {
                     path: "/role",
                     element: <RoleManagement />,
-                },
-                {
-                    path: "/overall",
-                    element: <OverallSyllabus />,
                 },
                 {
                     path: "*",

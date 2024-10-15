@@ -34,6 +34,7 @@ import axios from "axios";
 
 const formSchema = z.object({
     fullName: z.string(),
+    email: z.string(),
     gender: z.enum(["male", "female", "other"], {
         required_error: "Please select a gender.",
     }),
@@ -66,7 +67,7 @@ const formSchema = z.object({
         ],
         { required_error: "Please select your target." },
     ),
-    studyHours: z.number().min(0).max(24),
+    studyHours: z.string(),
     currentStatus: z.enum(
         [
             "Class XI",
@@ -99,10 +100,13 @@ const formSchema = z.object({
         ],
         { required_error: "Please select your study platform." },
     ),
-    expectation: z.string().min(10, {
-        message:
-            "Please provide at least 10 characters about your expectations.",
-    }),
+    completeAddress: z.string(),
+    landmark: z.string(),
+    city: z.string(),
+    state: z.string(),
+    pincode: z.string(),
+    country: z.string(),
+    expectation: z.string()
 });
 
 export default function AddStudent() {
@@ -121,12 +125,19 @@ export default function AddStudent() {
             parentNumberOwner: undefined,
             preferredLanguage: undefined,
             target: undefined,
-            studyHours: 0,
+            studyHours: "",
             currentStatus: undefined,
             dropperStatus: undefined,
             previousNeetScore: "",
             studyPlatform: undefined,
             expectation: "",
+            email: "",
+            completeAddress: "",
+            landmark: "",
+            city: "",
+            state: "",
+            pincode: "",
+            country: "",
         },
     });
 
@@ -157,6 +168,13 @@ export default function AddStudent() {
                     dropperStatus: data.dropperStatus,
                     previousScore: data.previousNeetScore || "",
                     platform: data.studyPlatform,
+                    email: data.email,
+                    completeAddress: data.completeAddress,
+                    landmark: data.landmark,
+                    city: data.city,
+                    state: data.state,
+                    pincode: data.pincode,
+                    country: data.country,
                     expectation: data.expectation,
                 },
                 {
@@ -194,9 +212,9 @@ export default function AddStudent() {
         <div className="container mx-auto py-10">
             <Card className="max-w-md mx-auto">
                 <CardHeader>
-                    <CardTitle>Add Senior Mentor</CardTitle>
+                    <CardTitle>Add Student</CardTitle>
                     <CardDescription>
-                        Enter the details of the new senior mentor.
+                        Enter the details of the new Student.
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -221,7 +239,22 @@ export default function AddStudent() {
                                     </FormItem>
                                 )}
                             />
-
+                            <FormField
+                                control={form.control}
+                                name="email"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Email</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                placeholder="Email"
+                                                {...field}
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
                             <FormField
                                 control={form.control}
                                 name="gender"
@@ -470,9 +503,7 @@ export default function AddStudent() {
                                                 {...field}
                                                 onChange={(e) =>
                                                     field.onChange(
-                                                        parseInt(
-                                                            e.target.value,
-                                                        ),
+                                                        e.target.value,
                                                     )
                                                 }
                                             />
@@ -636,6 +667,70 @@ export default function AddStudent() {
                                 )}
                             />
 
+<FormField
+                                control={form.control}
+                                name="completeAddress"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Complete Address</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                placeholder="Your Address"
+                                                {...field}
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+    <FormField
+                                control={form.control}
+                                name="pincode"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Pincode</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                placeholder="Pincode"
+                                                {...field}
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="state"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>State</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                placeholder="Your State"
+                                                {...field}
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="country"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Country</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                placeholder="Your Country"
+                                                {...field}
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
                             <FormField
                                 control={form.control}
                                 name="expectation"

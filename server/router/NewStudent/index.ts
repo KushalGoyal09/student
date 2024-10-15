@@ -11,6 +11,8 @@ import addPayment from "./addPayment";
 import getKitDispatchData from "./getKitDispatchData";
 import kitDispatched from "./kitDispatched";
 import allClear from "./feeAllClear";
+import kitReady from "./kitReady";
+import getAddress from "./getAddress";
 
 AdmissionRouter.post("/admission", admissionForm);
 AdmissionRouter.get("/students", authMiddleware, getAllNewStudents);
@@ -22,5 +24,7 @@ AdmissionRouter.post("/allClear", authMiddleware, allClear);
 AdmissionRouter.post("/assign-mentor", authMiddleware, assaignMentor);
 AdmissionRouter.get("/kit-data", authMiddleware, getKitDispatchData);
 AdmissionRouter.post("/kit-dispatch", authMiddleware, kitDispatched);
+AdmissionRouter.post("/kit-ready", authMiddleware, kitReady);
+AdmissionRouter.post("/address", authMiddleware, getAddress);
 
 export default AdmissionRouter;

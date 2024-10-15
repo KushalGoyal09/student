@@ -7,6 +7,12 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Employee {
+  id          String @id @default(uuid())
+  name        String
+  phoneNumber String @unique
+}
+
 model Supervisor {
   id                 String               @id @default(uuid())
   name               String
@@ -46,30 +52,38 @@ model GroupMentor {
 }
 
 model Student {
-  id             String   @id @default(uuid())
-  name           String
-  gender         String
-  fatherName     String
-  motherName     String
-  whattsapNumber String   @unique
-  callNumber     String
-  motherNumber   String
-  fatherNumber   String
-  language       String
-  target         String
-  StudyHours     Int
-  class          String
-  dropperStatus  String
-  previousScore  String
-  platform       String
-  expectation    String
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  id              String   @id @default(uuid())
+  email           String
+  name            String
+  gender          String
+  fatherName      String
+  motherName      String
+  whattsapNumber  String   @unique
+  callNumber      String
+  motherNumber    String
+  fatherNumber    String
+  language        String
+  target          String
+  StudyHours      String
+  class           String
+  dropperStatus   String
+  previousScore   String
+  platform        String
+  completeAddress String
+  landmark        String
+  pincode         String
+  city            String
+  state           String
+  country         String
+  expectation     String
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 
   status            Boolean   @default(true)
   dateOfDeactive    DateTime?
   Fees              Fees?
   kitDispatched     Boolean   @default(false)
+  kitReady          Boolean   @default(false)
   kitDispatchedDate DateTime?
 
   groupMentor       GroupMentor? @relation(fields: [groupMentorId], references: [id])

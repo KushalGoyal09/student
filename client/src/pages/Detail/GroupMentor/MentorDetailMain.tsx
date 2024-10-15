@@ -31,6 +31,7 @@ interface MentorData {
     overallRating: number;
     supervisorRating: number;
     studentsRating: number;
+    whattsapLink: string | null;
     id: string;
     name: string;
     username: string;
@@ -134,8 +135,18 @@ export default function Component() {
         <div className="container mx-auto px-4 py-8 max-w-4xl">
             <div className="bg-white shadow-lg rounded-lg overflow-hidden">
                 <div className="p-6 sm:p-8">
-                    <h1 className="text-3xl font-bold mb-4">{data.name}</h1>
+                    <h1 className="text-3xl font-bold">{data.name}</h1>
                     <p className="text-gray-600 mb-4">@{data.username}</p>
+                    {data.whattsapLink && (
+                        <p
+                            className="mb-4 text-blue-600"
+                            onClick={() =>
+                                window.open(data.whattsapLink || "", "_blank")
+                            }
+                        >
+                            Whappsap Group
+                        </p>
+                    )}
                     <div className="flex flex-wrap gap-4 mb-6">
                         <div className="flex items-center">
                             <Star className="text-yellow-400 mr-1" />

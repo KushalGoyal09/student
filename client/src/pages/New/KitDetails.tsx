@@ -32,12 +32,12 @@ import { toast } from "@/hooks/use-toast";
 import * as XLSX from "xlsx";
 import { jsPDF } from "jspdf";
 import autoTable from "jspdf-autotable";
-
 interface Student {
     id: string;
     name: string;
     callNumber: string;
     kitDispatched: boolean;
+    kitReady: boolean;
     kitDispatchedDate: Date | null;
 }
 

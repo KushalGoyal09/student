@@ -7,6 +7,7 @@ import { nameAtom, Role, userAtom } from "@/recoil/userAtom";
 import WelcomeComponent from "./Welcome";
 import Tiles from "./Tiles";
 import permissionAtom from "@/recoil/permission";
+import AdminWelcomeComponent from "./AdminWelcome";
 
 interface Links {
     role: Array<Role | null>;
@@ -173,7 +174,8 @@ const Layout = () => {
         <Suspense fallback={<Loading />}>
             <div className="min-h-screen flex flex-col">
                 <Navbar />
-                {name && role && <WelcomeComponent name={name} />}
+                {name && role && role !== Role.admin && <WelcomeComponent name={name} />}
+                {name && role && role === Role.admin && <AdminWelcomeComponent />}
                 {role && role !== Role.admin && (
                     <Tiles filteredLinks={filteredLinks} />
                 )}

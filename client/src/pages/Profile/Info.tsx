@@ -24,9 +24,8 @@ import {
     Award,
     Monitor,
     FileText,
+    MessageCircleIcon,
 } from "lucide-react";
-import { useRecoilValue } from "recoil";
-import { Role, userAtom } from "@/recoil/userAtom";
 import axios from "axios";
 import { toast } from "@/hooks/use-toast";
 
@@ -42,7 +41,7 @@ interface Student {
     fatherNumber: string;
     language: string;
     target: string;
-    StudyHours: number;
+    StudyHours: string;
     class: string;
     status: boolean;
     dropperStatus: string;
@@ -52,6 +51,13 @@ interface Student {
     expectation: string;
     createdAt: Date;
     whattsapGroupLink: string | null;
+    email: string;
+    completeAddress: string;
+    landmark: string;
+    city: string;
+    state: string;
+    pincode: string;
+    country: string;
     groupMentor?: {
         name: string;
         username: string;
@@ -62,7 +68,6 @@ export default function EnhancedStudentProfile({ id }: { id: string }) {
     const [isEditing, setIsEditing] = useState(false);
     const [student, setStudent] = useState<Student | null>(null);
     const [editedStudent, setEditedStudent] = useState<Student | null>(null);
-    const role = useRecoilValue(userAtom);
 
     const fetchStudent = useCallback(async () => {
         const { data } = await axios.post(
@@ -159,6 +164,10 @@ export default function EnhancedStudentProfile({ id }: { id: string }) {
         }
     };
 
+    const handleOpenWhattsap = () => {
+        window.open(student?.whattsapGroupLink || "");
+    };
+
     if (!student) return null;
 
     return (
@@ -175,7 +184,7 @@ export default function EnhancedStudentProfile({ id }: { id: string }) {
                             Student ID: {student.id}
                         </p>
                     </div>
-                    <div className="flex items-center space-x-2">
+                    <div className="flex items-center justify-center gap-2 space-x-2">
                         <Switch
                             id="active"
                             checked={student.status}
@@ -185,86 +194,83 @@ export default function EnhancedStudentProfile({ id }: { id: string }) {
                         <Label htmlFor="active" className="text-sm font-medium">
                             {student.status ? "Active" : "Inactive"}
                         </Label>
-                        {role === Role.admin && (
-                            <Dialog
-                                open={isEditing}
-                                onOpenChange={setIsEditing}
-                            >
-                                <DialogTrigger asChild>
-                                    <Button
-                                        variant="outline"
-                                        size="icon"
-                                        className="ml-2"
-                                    >
-                                        <Edit className="h-4 w-4" />
-                                        <span className="sr-only">
-                                            Edit student profile
-                                        </span>
-                                    </Button>
-                                </DialogTrigger>
-                                <DialogContent className="sm:max-w-[600px]">
-                                    <DialogHeader>
-                                        <DialogTitle>
-                                            Edit Student Profile
-                                        </DialogTitle>
-                                    </DialogHeader>
-                                    <form onSubmit={handleSubmit}>
-                                        <ScrollArea className="h-[60vh] pr-4">
-                                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                                {editedStudent &&
-                                                    Object.entries(
-                                                        editedStudent,
-                                                    ).map(([key, value]) => {
-                                                        if (
-                                                            key !== "id" &&
-                                                            key !==
-                                                                "createdAt" &&
-                                                            key !==
-                                                                "groupMentor" &&
-                                                            key !==
-                                                                "expectation" &&
-                                                            key !==
-                                                                "dateOfDeactive" &&
-                                                            key !== "status"
-                                                        ) {
-                                                            return (
-                                                                <div
-                                                                    key={key}
-                                                                    className="grid gap-2 py-2"
+                        <span
+                            className="flex items-center space-x-1 text-green-500"
+                            onClick={handleOpenWhattsap}
+                        >
+                            <MessageCircleIcon className="h-6 w-6" />
+                            <span>WhatsApp</span>
+                        </span>
+                        <Dialog open={isEditing} onOpenChange={setIsEditing}>
+                            <DialogTrigger asChild>
+                                <Button
+                                    variant="outline"
+                                    size="icon"
+                                    className="ml-2"
+                                >
+                                    <Edit className="h-4 w-4" />
+                                    <span className="sr-only">
+                                        Edit student profile
+                                    </span>
+                                </Button>
+                            </DialogTrigger>
+                            <DialogContent className="sm:max-w-[600px]">
+                                <DialogHeader>
+                                    <DialogTitle>
+                                        Edit Student Profile
+                                    </DialogTitle>
+                                </DialogHeader>
+                                <form onSubmit={handleSubmit}>
+                                    <ScrollArea className="h-[60vh] pr-4">
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                            {editedStudent &&
+                                                Object.entries(
+                                                    editedStudent,
+                                                ).map(([key, value]) => {
+                                                    if (
+                                                        key !== "id" &&
+                                                        key !== "createdAt" &&
+                                                        key !== "groupMentor" &&
+                                                        key !== "expectation" &&
+                                                        key !==
+                                                            "dateOfDeactive" &&
+                                                        key !== "status"
+                                                    ) {
+                                                        return (
+                                                            <div
+                                                                key={key}
+                                                                className="grid gap-2 py-2"
+                                                            >
+                                                                <Label
+                                                                    htmlFor={
+                                                                        key
+                                                                    }
                                                                 >
-                                                                    <Label
-                                                                        htmlFor={
-                                                                            key
-                                                                        }
-                                                                    >
-                                                                        {key}
-                                                                    </Label>
-                                                                    <Input
-                                                                        id={key}
-                                                                        name={
-                                                                            key
-                                                                        }
-                                                                        value={
-                                                                            value as string
-                                                                        }
-                                                                        onChange={
-                                                                            handleInputChange
-                                                                        }
-                                                                    />
-                                                                </div>
-                                                            );
-                                                        }
-                                                        return null;
-                                                    })}
-                                            </div>
-                                        </ScrollArea>
-                                        <Button type="submit" className="mt-4">
-                                            Save Changes
-                                        </Button>
-                                    </form>
-                                </DialogContent>
-                            </Dialog>
-                        )}
+                                                                    {key}
+                                                                </Label>
+                                                                <Input
+                                                                    id={key}
+                                                                    name={key}
+                                                                    value={
+                                                                        value as string
+                                                                    }
+                                                                    onChange={
+                                                                        handleInputChange
+                                                                    }
+                                                                />
+                                                            </div>
+                                                        );
+                                                    }
+                                                    return null;
+                                                })}
+                                        </div>
+                                    </ScrollArea>
+                                    <Button type="submit" className="mt-4">
+                                        Save Changes
+                                    </Button>
+                                </form>
+                            </DialogContent>
+                        </Dialog>
                     </div>
                 </CardHeader>
                 <CardContent className="pt-6">
@@ -340,15 +346,6 @@ export default function EnhancedStudentProfile({ id }: { id: string }) {
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <InfoCard
                                     icon={Phone}
-                                    label="WhatsApp Group"
-                                    value={
-                                        student.whattsapGroupLink ||
-                                        "Not available"
-                                    }
-                                    link
-                                />
-                                <InfoCard
-                                    icon={Phone}
                                     label="WhatsApp"
                                     value={student.whattsapNumber}
                                 />
@@ -380,7 +377,7 @@ export default function EnhancedStudentProfile({ id }: { id: string }) {
                                 <InfoCard
                                     icon={Clock}
                                     label="Study Hours"
-                                    value={student.StudyHours.toString()}
+                                    value={student.StudyHours}
                                 />
                                 <InfoCard
                                     icon={School}
@@ -397,16 +394,16 @@ export default function EnhancedStudentProfile({ id }: { id: string }) {
                                     label="Platform"
                                     value={student.platform}
                                 />
-                            </div>
-                        </TabsContent>
-
-                        <TabsContent value="other">
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <InfoCard
                                     icon={FileText}
                                     label="Dropper Status"
                                     value={student.dropperStatus}
                                 />
+                            </div>
+                        </TabsContent>
+
+                        <TabsContent value="other">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <InfoCard
                                     icon={FileText}
                                     label="Expectation"
@@ -439,17 +436,11 @@ function InfoCard({
     icon: Icon,
     label,
     value,
-    link = false,
 }: {
     icon: any;
     label: string;
     value: string;
-    link?: boolean;
 }) {
-    const handleOpen = () => {
-        window.open(value, "_blank");
-    };
-
     return (
         <div className="flex items-center space-x-3 p-4 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200">
             <div className="bg-pcb/10 p-3 rounded-full">
@@ -457,13 +448,7 @@ function InfoCard({
             </div>
             <div>
                 <p className="text-sm font-medium text-gray-500">{label}</p>
-                <p
-                    className={`text-lg font-semibold ${link ? "text-blue-500" : "text-gray-900"}`}
-                    onClick={handleOpen}
-                >
-                    {" "}
-                    {link ? "Group" : value}{" "}
-                </p>
+                <p className={`text-lg font-semibold text-gray-900`}>{value}</p>
             </div>
         </div>
     );

@@ -16,12 +16,19 @@ const bodySchema = z.object({
     fatherNumber: z.string(),
     language: z.string(),
     target: z.string(),
-    StudyHours: z.coerce.number(),
+    StudyHours: z.string(),
     class: z.string(),
     dropperStatus: z.string(),
     previousScore: z.string(),
     platform: z.string(),
     expectation: z.string(),
+    email: z.string(),
+    completeAddress: z.string(),
+    landmark: z.string(),
+    city: z.string(),
+    state: z.string(),
+    pincode: z.string(),
+    country: z.string(),
 });
 
 const addStudent = async (req: AuthRequest, res: Response) => {

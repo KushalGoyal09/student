@@ -13,7 +13,8 @@ export default {
   			sm: 'calc(var(--radius) - 4px)'
   		},
   		colors: {
-			"pcb": "#8A0C7A"
+			"pcb": "#8A0C7A",
+			"employee": "#336699"
 		},
   		keyframes: {
   			'accordion-down': {
