@@ -114,7 +114,7 @@ const VisionBoardComponent: FC<VisionBoardComponentProps> = ({ studentId }) => {
             });
             return { ...prev, [subject]: updatedSubject };
         });
-        const success = await setVision({
+        await setVision({
             studentId,
             subject,
             chapterId,

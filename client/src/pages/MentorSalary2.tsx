@@ -1,4 +1,6 @@
-import { useState, useEffect, useCallback } from "react";
+"use client";
+
+import { useState, useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
     Select,
@@ -7,6 +9,9 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
     Table,
     TableBody,
@@ -15,322 +20,591 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useRecoilValue } from "recoil";
-import { tokenAtom } from "@/recoil/userAtom";
-import debounce from "lodash/debounce";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Edit2, DollarSign } from "lucide-react";
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog";
 
-interface Mentor {
-    id: string;
-    username: string;
-    name: string;
-    studentCount: number;
-    overallRating: number;
-}
+import {
+    getAllGm,
+    getAllSm,
+    getAllemployes,
+    getCommonSalaryDetails,
+    setCommonSalaryDetails,
+    getSalaryDetails,
+    editSalary,
+    GroupMentor,
+    SeniorMentor,
+    Employee,
+    CommonSalary,
+    Salary,
+    Role,
+    Month,
+    months,
+} from "./salaryUtils";
 
-interface MentorSalary {
-    id: string;
-    userId: string;
-    basePay: number;
-    perStudentPay: number;
-    paid: boolean;
-}
-
-const months = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
-];
-
-export default function MentorSalaryManagement() {
-    const [activeTab, setActiveTab] = useState<"group" | "senior">("group");
-    const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
-    const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
-    const [mentors, setMentors] = useState<Mentor[]>([]);
-    const [salaries, setSalaries] = useState<MentorSalary[]>([]);
-    const token = useRecoilValue(tokenAtom);
-
-    const fetchMentors = useCallback(async () => {
-        const endpoint =
-            activeTab === "group"
-                ? "/api/salary/get-mentors"
-                : "/api/salary/get-seniors";
-        const response = await fetch(endpoint, {
-            headers: { Authorization: `Bearer ${token}` },
-        });
-        const data = await response.json();
-        if (data.success) {
-            setMentors(data.data);
-        }
-    }, [activeTab, token]);
-
-    const fetchSalaries = useCallback(async () => {
-        const endpoint =
-            activeTab === "group"
-                ? "/api/salary/get-mentor-salary"
-                : "/api/salary/get-senior-salary";
-        const response = await fetch(endpoint, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`,
-            },
-            body: JSON.stringify({
-                month: months[selectedMonth],
-                year: selectedYear,
-            }),
-        });
-        const data = await response.json();
-        if (data.success) {
-            setSalaries(data.data);
-        }
-    }, [activeTab, selectedMonth, selectedYear, token]);
+export default function MentorSalaryPage() {
+    const [activeTab, setActiveTab] = useState<Role>("GroupMentor");
+    const [month, setMonth] = useState<Month>(
+        months[new Date().getMonth()] as Month,
+    );
+    const [year, setYear] = useState(new Date().getFullYear());
+    const [mentors, setMentors] = useState<
+        (GroupMentor | SeniorMentor | Employee)[]
+    >([]);
+    const [commonSalary, setCommonSalary] = useState<CommonSalary | null>(null);
+    const [salaries, setSalaries] = useState<Salary[]>([]);
+    const [totalToPay, setTotalToPay] = useState(0);
+    const [totalPaid, setTotalPaid] = useState(0);
 
     useEffect(() => {
-        fetchMentors();
-        fetchSalaries();
-    }, [fetchMentors, fetchSalaries]);
+        fetchData();
+    }, [activeTab, month, year]);
 
-    const debouncedHandleSalaryEdit = useCallback(
-        debounce(
-            async (
-                userId: string,
-                field: "basePay" | "perStudentPay" | "paid",
-                value: number | boolean,
-            ) => {
-                let salary = salaries.find((s) => s.userId === userId);
-                if (!salary) {
-                    salary = {
-                        basePay: 0,
-                        perStudentPay: 0,
-                        paid: false,
-                        userId: userId,
-                        id: "",
-                    };
-                }
-                const response = await fetch("/api/salary/edit-salary", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        Authorization: `Bearer ${token}`,
-                    },
-                    body: JSON.stringify({
-                        month: months[selectedMonth],
-                        year: selectedYear,
-                        userId,
-                        basePay: field === "basePay" ? value : salary.basePay,
-                        perStudentPay:
-                            field === "perStudentPay"
-                                ? value
-                                : salary.perStudentPay,
-                        paid: field === "paid" ? value : salary.paid,
-                        mentorType:
-                            activeTab === "group"
-                                ? "GroupMentor"
-                                : "SeniorMentor",
-                    }),
-                });
-                const data = await response.json();
-                if (data.success) {
-                    fetchSalaries();
-                }
+    const fetchData = async () => {
+        let fetchedMentors: (GroupMentor | SeniorMentor | Employee)[] = [];
+        if (activeTab === "GroupMentor") {
+            fetchedMentors = await getAllGm();
+        } else if (activeTab === "SeniorMentor") {
+            fetchedMentors = await getAllSm();
+        } else {
+            fetchedMentors = await getAllemployes();
+        }
+        setMentors(fetchedMentors);
+
+        const commonSalaryData = await getCommonSalaryDetails(activeTab);
+        setCommonSalary(
+            commonSalaryData || {
+                baseSalary: 0,
+                perAj: 0,
+                payAccordingToRating: false,
+                perAjLess: 0,
+                perAjMore: 0,
             },
-            300,
-        ),
-        [
-            salaries,
-            token,
-            selectedMonth,
-            selectedYear,
-            activeTab,
-            fetchSalaries,
-        ],
-    );
+        );
 
-    const getTotalSalary = (mentor: Mentor, salary?: MentorSalary) => {
-        if (!salary) return 0;
-        return salary.basePay + salary.perStudentPay * mentor.studentCount;
+        const salaryData = await getSalaryDetails(month, year, activeTab);
+        setSalaries(salaryData);
+
+        calculateTotals(salaryData);
+    };
+
+    const calculateTotals = (salaryData: Salary[]) => {
+        const toPay = salaryData
+            .filter((salary) => !salary.paid)
+            .reduce(
+                (sum, salary) => sum + salary.totalSalary + salary.bonus,
+                0,
+            );
+
+        const paid = salaryData
+            .filter((salary) => salary.paid)
+            .reduce(
+                (sum, salary) => sum + salary.totalSalary + salary.bonus,
+                0,
+            );
+        setTotalToPay(toPay);
+        setTotalPaid(paid);
+    };
+
+    const handleCommonSalaryChange = async () => {
+        if (commonSalary) {
+            await setCommonSalaryDetails(
+                activeTab,
+                commonSalary.perAj || 0,
+                commonSalary.perAjLess || 0,
+                commonSalary.perAjMore || 0,
+                commonSalary.payAccordingToRating ? true : false,
+                commonSalary.baseSalary || 0,
+            );
+        }
+    };
+
+    const calculateSalary = (
+        mentor: GroupMentor | SeniorMentor | Employee,
+    ): number => {
+        if (activeTab === "Employee" || !commonSalary) return 0;
+
+        const {
+            baseSalary,
+            perAj,
+            payAccordingToRating,
+            perAjLess,
+            perAjMore,
+        } = commonSalary;
+        const { studentCount, overallRating } = mentor as
+            | GroupMentor
+            | SeniorMentor;
+
+        let salary = baseSalary || 0;
+
+        if (payAccordingToRating) {
+            salary +=
+                studentCount *
+                (overallRating >= 4.5 ? perAjMore || 0 : perAjLess || 0);
+        } else {
+            salary += studentCount * (perAj || 0);
+        }
+
+        return salary;
+    };
+
+    const handleSalaryEdit = async (
+        userId: string,
+        totalSalary: number,
+        bonus: number,
+        paid: boolean,
+    ) => {
+        await editSalary(
+            month,
+            year,
+            userId,
+            totalSalary,
+            bonus,
+            paid,
+            activeTab,
+        );
+        fetchData();
     };
 
     return (
-        <Card className="w-full max-w-4xl mx-auto">
-            <CardHeader>
-                <CardTitle>Mentor Salary Management</CardTitle>
-            </CardHeader>
-            <CardContent>
-                <Tabs
-                    value={activeTab}
-                    onValueChange={(value) =>
-                        setActiveTab(value as "group" | "senior")
-                    }
-                >
-                    <TabsList className="grid w-full grid-cols-2">
-                        <TabsTrigger value="group">Group Mentors</TabsTrigger>
-                        <TabsTrigger value="senior">Senior Mentors</TabsTrigger>
-                    </TabsList>
-                    <div className="flex justify-between items-center my-4">
-                        <Select
-                            value={selectedMonth.toString()}
-                            onValueChange={(value) =>
-                                setSelectedMonth(parseInt(value))
-                            }
-                        >
-                            <SelectTrigger className="w-[180px]">
-                                <SelectValue placeholder="Select month" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                {months.map((month, index) => (
-                                    <SelectItem
-                                        key={index}
-                                        value={index.toString()}
-                                    >
-                                        {month}
-                                    </SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
-                        <Input
-                            type="number"
-                            value={selectedYear}
-                            onChange={(e) =>
-                                setSelectedYear(parseInt(e.target.value))
-                            }
-                            className="w-[100px] mt-2 sm:mt-0"
-                        />
-                    </div>
-                    <TabsContent value="group">
-                        <MentorTable
-                            mentors={mentors}
-                            salaries={salaries}
-                            handleSalaryEdit={debouncedHandleSalaryEdit}
-                            getTotalSalary={getTotalSalary}
-                        />
-                    </TabsContent>
-                    <TabsContent value="senior">
-                        <MentorTable
-                            mentors={mentors}
-                            salaries={salaries}
-                            handleSalaryEdit={debouncedHandleSalaryEdit}
-                            getTotalSalary={getTotalSalary}
-                        />
-                    </TabsContent>
-                </Tabs>
-            </CardContent>
-        </Card>
-    );
-}
+        <div className="container mx-auto p-4 space-y-6">
+            <h1 className="text-3xl font-bold">SALARY MANAGEMENT</h1>
 
-function MentorTable({
-    mentors,
-    salaries,
-    handleSalaryEdit,
-    getTotalSalary,
-}: {
-    mentors: Mentor[];
-    salaries: MentorSalary[];
-    handleSalaryEdit: (
-        userId: string,
-        field: "basePay" | "perStudentPay" | "paid",
-        value: number | boolean,
-    ) => void;
-    getTotalSalary: (mentor: Mentor, salary?: MentorSalary) => number;
-}) {
-    return (
-        <div className="overflow-x-auto">
-            <Table>
-                <TableHeader>
-                    <TableRow>
-                        <TableHead>Name</TableHead>
-                        <TableHead>Students</TableHead>
-                        <TableHead>Rating</TableHead>
-                        <TableHead>Base Pay</TableHead>
-                        <TableHead>Per Student</TableHead>
-                        <TableHead>Total</TableHead>
-                        <TableHead>Paid</TableHead>
-                    </TableRow>
-                </TableHeader>
-                <TableBody>
-                    {mentors.map((mentor) => {
-                        const salary = salaries.find(
-                            (s) => s.userId === mentor.id,
-                        );
-                        return (
-                            <TableRow key={mentor.id}>
-                                <TableCell>{mentor.name}</TableCell>
-                                <TableCell>{mentor.studentCount}</TableCell>
-                                <TableCell>
-                                    {mentor.overallRating.toFixed(1)}
-                                </TableCell>
-                                <TableCell>
-                                    <Input
-                                        type="number"
-                                        value={salary?.basePay || ""}
-                                        onChange={(e) =>
-                                            handleSalaryEdit(
-                                                mentor.id,
-                                                "basePay",
-                                                parseFloat(e.target.value),
-                                            )
-                                        }
-                                        className="w-[100px]"
-                                    />
-                                </TableCell>
-                                <TableCell>
-                                    <Input
-                                        type="number"
-                                        value={salary?.perStudentPay || ""}
-                                        onChange={(e) =>
-                                            handleSalaryEdit(
-                                                mentor.id,
-                                                "perStudentPay",
-                                                parseFloat(e.target.value),
-                                            )
-                                        }
-                                        className="w-[100px]"
-                                    />
-                                </TableCell>
-                                <TableCell>
-                                    {getTotalSalary(mentor, salary).toFixed(2)}
-                                </TableCell>
-                                <TableCell>
-                                    <Button
-                                        className={
-                                            salary?.paid
-                                                ? "bg-green-500"
-                                                : "bg-red-500"
-                                        }
-                                        size="sm"
-                                        onClick={() =>
-                                            handleSalaryEdit(
-                                                mentor.id,
-                                                "paid",
-                                                !salary?.paid,
-                                            )
-                                        }
-                                    >
-                                        {salary?.paid ? (
-                                            <span>Paid</span>
-                                        ) : (
-                                            <span>Not Paid</span>
-                                        )}
+            <div className="flex flex-col sm:flex-row gap-4">
+                <Select
+                    value={month}
+                    onValueChange={(value) => setMonth(value as Month)}
+                >
+                    <SelectTrigger className="w-full sm:w-[180px]">
+                        <SelectValue placeholder="Select month" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        {months.map((m) => (
+                            <SelectItem key={m} value={m}>
+                                {m}
+                            </SelectItem>
+                        ))}
+                    </SelectContent>
+                </Select>
+
+                <Input
+                    type="number"
+                    value={year}
+                    onChange={(e) => setYear(Number(e.target.value))}
+                    className="w-full sm:w-[120px]"
+                />
+            </div>
+
+            <Card>
+                <CardHeader>
+                    <CardTitle>Summary</CardTitle>
+                </CardHeader>
+                <CardContent className="flex justify-between">
+                    <div>
+                        <p className="text-sm text-muted-foreground">
+                            Total to Pay
+                        </p>
+                        <p className="text-2xl font-bold">
+                            ₹ {totalToPay.toFixed(2)}
+                        </p>
+                    </div>
+                    <div>
+                        <p className="text-sm text-muted-foreground">
+                            Total Paid
+                        </p>
+                        <p className="text-2xl font-bold">
+                            ₹ {totalPaid.toFixed(2)}
+                        </p>
+                    </div>
+                </CardContent>
+            </Card>
+
+            <Tabs
+                value={activeTab}
+                onValueChange={(value) => setActiveTab(value as Role)}
+            >
+                <TabsList className="grid w-full grid-cols-3">
+                    <TabsTrigger value="GroupMentor">GM</TabsTrigger>
+                    <TabsTrigger value="SeniorMentor">SM</TabsTrigger>
+                    <TabsTrigger value="Employee">Others</TabsTrigger>
+                </TabsList>
+
+                {["GroupMentor", "SeniorMentor", "Employee"].map((role) => (
+                    <TabsContent key={role} value={role}>
+                        {role !== "Employee" && (
+                            <Card className="mb-6">
+                                <CardHeader>
+                                    <CardTitle>
+                                        Common Salary Settings
+                                    </CardTitle>
+                                </CardHeader>
+                                <CardContent className="space-y-4">
+                                    <div className="flex flex-wrap gap-4">
+                                        <Input
+                                            type="number"
+                                            value={
+                                                commonSalary?.baseSalary || 0
+                                            }
+                                            onChange={(e) =>
+                                                //@ts-ignore
+                                                setCommonSalary({
+                                                    //@ts-ignore
+                                                    ...commonSalary,
+                                                    baseSalary: Number(
+                                                        e.target.value,
+                                                    ),
+                                                })
+                                            }
+                                            placeholder="Base Salary"
+                                        />
+                                        <Input
+                                            type="number"
+                                            value={commonSalary?.perAj || 0}
+                                            onChange={(e) =>
+                                                //@ts-ignore
+                                                setCommonSalary({
+                                                    //@ts-ignore
+                                                    ...commonSalary,
+                                                    perAj: Number(
+                                                        e.target.value,
+                                                    ),
+                                                })
+                                            }
+                                            placeholder="Per AJ"
+                                        />
+                                    </div>
+                                    <div className="flex items-center space-x-2">
+                                        <Checkbox
+                                            id="payAsRating"
+                                            checked={
+                                                commonSalary?.payAccordingToRating ||
+                                                false
+                                            }
+                                            //@ts-ignore
+                                            onCheckedChange={(checked) =>
+                                                //@ts-ignore
+                                                setCommonSalary({
+                                                    //@ts-ignore
+                                                    ...commonSalary,
+                                                    payAccordingToRating:
+                                                        checked as boolean,
+                                                })
+                                            }
+                                        />
+                                        <label htmlFor="payAsRating">
+                                            Pay According to Rating
+                                        </label>
+                                    </div>
+                                    {commonSalary?.payAccordingToRating && (
+                                        <div className="flex flex-wrap gap-4">
+                                            <Input
+                                                type="number"
+                                                value={
+                                                    commonSalary?.perAjLess || 0
+                                                }
+                                                onChange={(e) =>
+                                                    setCommonSalary({
+                                                        ...commonSalary,
+                                                        perAjLess: Number(
+                                                            e.target.value,
+                                                        ),
+                                                    })
+                                                }
+                                                placeholder="Pay for Less than 4.5 rating"
+                                            />
+                                            <Input
+                                                type="number"
+                                                value={
+                                                    commonSalary?.perAjMore || 0
+                                                }
+                                                onChange={(e) =>
+                                                    setCommonSalary({
+                                                        ...commonSalary,
+                                                        perAjMore: Number(
+                                                            e.target.value,
+                                                        ),
+                                                    })
+                                                }
+                                                placeholder="Pay for More than 4.5 rating"
+                                            />
+                                        </div>
+                                    )}
+                                    <Button onClick={handleCommonSalaryChange}>
+                                        Save Common Salary Settings
                                     </Button>
-                                </TableCell>
-                            </TableRow>
-                        );
-                    })}
-                </TableBody>
-            </Table>
+                                </CardContent>
+                            </Card>
+                        )}
+
+                        <div className="overflow-x-auto">
+                            <Table>
+                                <TableHeader>
+                                    <TableRow>
+                                        <TableHead className="sticky left-0 bg-background">
+                                            Name
+                                        </TableHead>
+                                        {(role === "GroupMentor" ||
+                                            role === "SeniorMentor") && (
+                                            <>
+                                                <TableHead>
+                                                    Student Count
+                                                </TableHead>
+                                                <TableHead>
+                                                    Overall Rating
+                                                </TableHead>
+                                            </>
+                                        )}
+                                        {role === "Employee" && (
+                                            <TableHead>Phone Number</TableHead>
+                                        )}
+                                        <TableHead>Total Salary</TableHead>
+                                        <TableHead>Bonus</TableHead>
+                                        <TableHead>Paid</TableHead>
+                                        <TableHead>Actions</TableHead>
+                                    </TableRow>
+                                </TableHeader>
+                                <TableBody>
+                                    {mentors.map((mentor) => {
+                                        const salary = salaries.find(
+                                            (s) => s.userId === mentor.id,
+                                        ) || {
+                                            totalSalary: 0,
+                                            bonus: 0,
+                                            paid: false,
+                                        };
+                                        const calculatedSalary =
+                                            role !== "Employee"
+                                                ? calculateSalary(mentor)
+                                                : 0;
+                                        return (
+                                            <TableRow key={mentor.id}>
+                                                <TableCell className="sticky left-0 bg-background">
+                                                    {mentor.name}
+                                                </TableCell>
+                                                {(role === "GroupMentor" ||
+                                                    role ===
+                                                        "SeniorMentor") && (
+                                                    <>
+                                                        <TableCell>
+                                                            {
+                                                                (
+                                                                    mentor as
+                                                                        | GroupMentor
+                                                                        | SeniorMentor
+                                                                ).studentCount
+                                                            }
+                                                        </TableCell>
+                                                        <TableCell>
+                                                            {(
+                                                                mentor as
+                                                                    | GroupMentor
+                                                                    | SeniorMentor
+                                                            ).overallRating.toFixed(
+                                                                2,
+                                                            )}
+                                                        </TableCell>
+                                                    </>
+                                                )}
+                                                {role === "Employee" && (
+                                                    <TableCell>
+                                                        {
+                                                            (mentor as Employee)
+                                                                .phoneNumber
+                                                        }
+                                                    </TableCell>
+                                                )}
+                                                <TableCell>
+                                                    $
+                                                    {(role !== "Employee"
+                                                        ? calculatedSalary
+                                                        : salary.totalSalary
+                                                    ).toFixed(2)}
+                                                </TableCell>
+                                                <TableCell>
+                                                    ${salary.bonus.toFixed(2)}
+                                                </TableCell>
+                                                <TableCell>
+                                                    {salary.paid ? "Yes" : "No"}
+                                                </TableCell>
+                                                <TableCell>
+                                                    <Dialog>
+                                                        <DialogTrigger asChild>
+                                                            <Button
+                                                                variant="outline"
+                                                                size="icon"
+                                                            >
+                                                                <Edit2 className="h-4 w-4" />
+                                                            </Button>
+                                                        </DialogTrigger>
+                                                        <DialogContent>
+                                                            <DialogHeader>
+                                                                <DialogTitle>
+                                                                    Edit Salary
+                                                                    for{" "}
+                                                                    {
+                                                                        mentor.name
+                                                                    }
+                                                                </DialogTitle>
+                                                            </DialogHeader>
+                                                            <div className="space-y-4 py-4">
+                                                                <div className="flex flex-col space-y-2">
+                                                                    <label htmlFor="totalSalary">
+                                                                        Total
+                                                                        Salary
+                                                                    </label>
+                                                                    <Input
+                                                                        id="totalSalary"
+                                                                        type="number"
+                                                                        value={
+                                                                            role !==
+                                                                            "Employee"
+                                                                                ? calculatedSalary
+                                                                                : salary.totalSalary
+                                                                        }
+                                                                        onChange={(
+                                                                            e,
+                                                                        ) =>
+                                                                            setSalaries(
+                                                                                salaries.map(
+                                                                                    (
+                                                                                        s,
+                                                                                    ) =>
+                                                                                        s.userId ===
+                                                                                        mentor.id
+                                                                                            ? {
+                                                                                                  ...s,
+                                                                                                  totalSalary:
+                                                                                                      Number(
+                                                                                                          e
+                                                                                                              .target
+                                                                                                              .value,
+                                                                                                      ),
+                                                                                              }
+                                                                                            : s,
+                                                                                ),
+                                                                            )
+                                                                        }
+                                                                        readOnly={
+                                                                            role !==
+                                                                            "Employee"
+                                                                        }
+                                                                    />
+                                                                </div>
+                                                                <div className="flex flex-col space-y-2">
+                                                                    <label htmlFor="bonus">
+                                                                        Bonus
+                                                                    </label>
+                                                                    <Input
+                                                                        id="bonus"
+                                                                        type="number"
+                                                                        value={
+                                                                            salary.bonus
+                                                                        }
+                                                                        onChange={(
+                                                                            e,
+                                                                        ) =>
+                                                                            setSalaries(
+                                                                                salaries.map(
+                                                                                    (
+                                                                                        s,
+                                                                                    ) =>
+                                                                                        s.userId ===
+                                                                                        mentor.id
+                                                                                            ? {
+                                                                                                  ...s,
+                                                                                                  bonus: Number(
+                                                                                                      e
+                                                                                                          .target
+                                                                                                          .value,
+                                                                                                  ),
+                                                                                              }
+                                                                                            : s,
+                                                                                ),
+                                                                            )
+                                                                        }
+                                                                    />
+                                                                </div>
+                                                                <div className="flex items-center space-x-2">
+                                                                    <Checkbox
+                                                                        id="paid"
+                                                                        checked={
+                                                                            salary.paid
+                                                                        }
+                                                                        onCheckedChange={(
+                                                                            checked,
+                                                                        ) =>
+                                                                            setSalaries(
+                                                                                salaries.map(
+                                                                                    (
+                                                                                        s,
+                                                                                    ) =>
+                                                                                        s.userId ===
+                                                                                        mentor.id
+                                                                                            ? {
+                                                                                                  ...s,
+                                                                                                  paid: checked as boolean,
+                                                                                              }
+                                                                                            : s,
+                                                                                ),
+                                                                            )
+                                                                        }
+                                                                    />
+                                                                    <label htmlFor="paid">
+                                                                        Paid
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+                                                            <Button
+                                                                onClick={() =>
+                                                                    handleSalaryEdit(
+                                                                        mentor.id,
+                                                                        role !==
+                                                                            "Employee"
+                                                                            ? calculatedSalary
+                                                                            : salary.totalSalary,
+                                                                        salary.bonus,
+                                                                        salary.paid,
+                                                                    )
+                                                                }
+                                                            >
+                                                                Save Changes
+                                                            </Button>
+                                                        </DialogContent>
+                                                    </Dialog>
+                                                    <Button
+                                                        variant="outline"
+                                                        size="icon"
+                                                        className="ml-2"
+                                                        onClick={() =>
+                                                            handleSalaryEdit(
+                                                                mentor.id,
+                                                                role !==
+                                                                    "Employee"
+                                                                    ? calculatedSalary
+                                                                    : salary.totalSalary,
+                                                                salary.bonus,
+                                                                !salary.paid,
+                                                            )
+                                                        }
+                                                    >
+                                                        <DollarSign className="h-4 w-4" />
+                                                    </Button>
+                                                </TableCell>
+                                            </TableRow>
+                                        );
+                                    })}
+                                </TableBody>
+                            </Table>
+                        </div>
+                    </TabsContent>
+                ))}
+            </Tabs>
         </div>
     );
 }
