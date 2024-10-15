@@ -21,6 +21,7 @@ const bodySchema = z.object({
         "December",
     ]),
     year: z.coerce.number(),
+    salaryRole: z.enum(["GroupMentor", "SeniorMentor", "Employee"]),
 });
 
 const getMentorSalaryDetail = async (req: AuthRequest, res: Response) => {
@@ -31,17 +32,17 @@ const getMentorSalaryDetail = async (req: AuthRequest, res: Response) => {
         );
         return;
     }
-    const { month, year } = bodySchema.parse(req.body);
+    const { month, year,salaryRole } = bodySchema.parse(req.body);
     const mentorSalary = await db.mentorSalary.findMany({
         where: {
             month,
             year,
-            Role: "GroupMentor",
+            Role: salaryRole,
         },
         select: {
             id: true,
-            basePay: true,
-            perStudentPay: true,
+            bonus: true,
+            totalSalary: true,
             paid: true,
             userId: true,
         },

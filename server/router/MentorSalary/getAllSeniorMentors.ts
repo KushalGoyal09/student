@@ -34,7 +34,11 @@ const getAllTheSeniors = async (
             name: true,
             GroupMentor: {
                 select: {
-                    Student: true,
+                    Student: {
+                        where: {
+                            status: true
+                        }
+                    },
                 },
             },
         },

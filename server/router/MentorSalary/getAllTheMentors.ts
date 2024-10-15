@@ -32,7 +32,11 @@ const getAllTheMentors = async (
             id: true,
             username: true,
             name: true,
-            Student: true,
+            Student: {
+                where: {
+                    status: true
+                }
+            },
         },
     });
     const rating = await Promise.all(

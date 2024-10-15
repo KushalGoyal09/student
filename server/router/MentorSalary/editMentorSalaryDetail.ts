@@ -1,4 +1,4 @@
-import { PrismaClient } from "prisma/prisma-client";
+import { PrismaClient, Month } from "prisma/prisma-client";
 import { Response } from "express";
 import { AuthRequest, Role } from "../../types";
 import { throwUnauthorizedError } from "../../custom-error/customError";
@@ -22,10 +22,10 @@ const bodySchema = z.object({
     ]),
     year: z.coerce.number(),
     userId: z.string(),
-    basePay: z.coerce.number(),
-    perStudentPay: z.coerce.number(),
+    totalSalary: z.number(),
+    bonus: z.number(),
     paid: z.boolean(),
-    mentorType: z.enum(["GroupMentor", "SeniorMentor"]),
+    mentorType: z.enum(["GroupMentor", "SeniorMentor", "Employee"]),
 });
 
 const editMentorSalaryDetail = async (req: AuthRequest, res: Response) => {
@@ -36,17 +36,18 @@ const editMentorSalaryDetail = async (req: AuthRequest, res: Response) => {
         );
         return;
     }
-    const { userId, month, year, basePay, perStudentPay, paid, mentorType } =
+    const { userId, month, year, totalSalary, bonus, paid, mentorType } =
         bodySchema.parse(req.body);
     const mentorSalary = await db.mentorSalary.updateMany({
         where: {
             month,
             year,
             userId,
+            Role: mentorType,
         },
         data: {
-            basePay,
-            perStudentPay,
+            totalSalary,
+            bonus,
             paid,
         },
     });
@@ -57,8 +58,9 @@ const editMentorSalaryDetail = async (req: AuthRequest, res: Response) => {
                 year,
                 userId,
                 Role: mentorType,
-                basePay,
-                perStudentPay,
+                totalSalary,
+                bonus,
+                paid,
             },
         });
     }

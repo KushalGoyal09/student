@@ -1,0 +1,4 @@
+-- AlterTable
+ALTER TABLE "Salary" ADD COLUMN     "payAccordingToRating" BOOLEAN NOT NULL DEFAULT false,
+ADD COLUMN     "perAjLess" INTEGER NOT NULL DEFAULT 0,
+ADD COLUMN     "perAjMore" INTEGER NOT NULL DEFAULT 0;

@@ -355,15 +355,32 @@ enum Role {
   GroupMentor
 }
 
+enum SalaryRole {
+  SeniorMentor
+  GroupMentor
+  Employee
+}
+
 model MentorSalary {
-  id            String  @id @default(uuid())
-  Role          Role
-  userId        String
-  month         Month
-  year          Int
-  basePay       Int
-  perStudentPay Int
-  paid          Boolean @default(false)
+  id          String     @id @default(uuid())
+  Role        SalaryRole
+  userId      String
+  month       Month
+  year        Int
+  totalSalary Int
+  bonus       Int        @default(0)
+  paid        Boolean    @default(false)
+}
+
+model Salary {
+  id                   String     @id @default(uuid())
+  Role                 SalaryRole @unique
+  
+  baseSalary           Int        @default(0)
+  perAj                Int        @default(0)
+  payAccordingToRating Boolean    @default(false)
+  perAjLess            Int        @default(0)
+  perAjMore            Int        @default(0)
 }
 
 enum Month {
