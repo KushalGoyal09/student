@@ -1,12 +1,5 @@
 import { useState, useEffect } from "react";
-import {
-    CalendarIcon,
-    ChevronLeftIcon,
-    ChevronRightIcon,
-    PhoneIcon,
-    UserIcon,
-    MessageCircleIcon,
-} from "lucide-react";
+import { CalendarIcon, ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
     Select,
@@ -15,14 +8,25 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { endOfWeek, startOfWeek, addDays, format } from "date-fns";
 import axios from "axios";
-import { Link } from "react-router-dom";
 import { toast } from "@/hooks/use-toast";
+import DetailedDailySummary from "./DailyCallRecord";
 
 type CallStatus = "Scheduled" | "Done" | "DNP" | "Nothing";
 
+interface Student {
+    id: string;
+    name: string;
+    whattsapNumber: string;
+    callNumber: string;
+    class: string;
+    dropperStatus: string;
+    previousScore: string;
+    platform: string;
+    status: boolean;
+    whattsapGroupLink: string | null;
+}
 interface ApiResponse {
     data: {
         students: {
@@ -34,13 +38,6 @@ interface ApiResponse {
         }[];
     } | null;
     success: boolean;
-}
-
-interface Student {
-    id: string;
-    name: string;
-    whattsapNumber: string;
-    callNumber: string;
 }
 
 const fetchWeekData = async (weekStart: string) => {
@@ -136,7 +133,6 @@ export default function CallRecord() {
                     title: "Error",
                     description: "Failed to fetch week data",
                 });
-                return;
             }
         };
         if (students.length > 0) {
@@ -204,10 +200,7 @@ export default function CallRecord() {
 
     const getCallStatus = (studentId: string, date: string): CallStatus => {
         const status = callStatuses.get(`${studentId}-${date}`);
-        if (status) {
-            return status;
-        }
-        return "Nothing";
+        return status || "Nothing";
     };
 
     return (
@@ -228,113 +221,116 @@ export default function CallRecord() {
                     <ChevronRightIcon className="h-4 w-4" />
                 </Button>
             </div>
-            <div className="space-y-4">
-                {students.map((student) => (
-                    <Card key={student.id}>
-                        <CardHeader>
-                            <CardTitle className="text-lg flex justify-between items-center">
-                                <span className="truncate">{student.name}</span>
-                                <div className="flex space-x-2">
-                                    <Button
-                                        variant="ghost"
-                                        size="icon"
-                                        onClick={() =>
-                                            window.open(
-                                                `tel:${student.callNumber}`,
-                                            )
-                                        }
-                                    >
-                                        <PhoneIcon className="h-4 w-4" />
-                                    </Button>
-                                    <Button
-                                        variant="ghost"
-                                        size="icon"
-                                        onClick={() =>
-                                            window.open(
-                                                `https://wa.me/${student.whattsapNumber}`,
-                                            )
-                                        }
-                                    >
-                                        <MessageCircleIcon className="h-4 w-4" />
-                                    </Button>
-                                    <Link to={`/profile/${student.id}`}>
-                                        <Button variant="ghost" size="icon">
-                                            <UserIcon className="h-4 w-4" />
-                                        </Button>
-                                    </Link>
-                                </div>
-                            </CardTitle>
-                            <div className="text-sm text-muted-foreground truncate">
-                                Call {student.callNumber}
-                            </div>
-                            <div className="text-sm text-muted-foreground truncate">
-                                WhatsApp {student.whattsapNumber}
-                            </div>
-                        </CardHeader>
-                        <CardContent>
-                            <div
-                                className="overflow-x-auto scrollbar-container"
-                                style={{
-                                    scrollbarWidth: "thin",
-                                    WebkitOverflowScrolling: "touch",
-                                }}
-                            >
-                                <div className="inline-flex space-x-4 pb-4">
-                                    {weekDays.map((day, index) => (
-                                        <div
-                                            key={day}
-                                            className="flex flex-col items-center"
+            <DetailedDailySummary
+                students={students}
+                callStatuses={callStatuses}
+            />
+            <div className="overflow-x-auto">
+                <table className="w-full border-collapse">
+                    <thead>
+                        <tr>
+                            <th className="p-2 border-b text-left">Student</th>
+                            {weekDays.map((day, index) => (
+                                <th
+                                    key={day}
+                                    className="p-2 border-b text-center"
+                                >
+                                    <div className="text-xs font-medium">
+                                        {day}
+                                    </div>
+                                    <div className="text-xs">
+                                        {getDate(index)}
+                                    </div>
+                                </th>
+                            ))}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {students.map((student) => (
+                            <tr key={student.id} className="border-b">
+                                <td className="p-2">
+                                    <div className="font-medium">
+                                        {student.name}
+                                    </div>
+                                    {/* <div className="text-xs text-muted-foreground">
+                                        Call: {student.callNumber}
+                                    </div>
+                                    <div className="text-xs text-muted-foreground">
+                                        WhatsApp: {student.whattsapNumber}
+                                    </div>
+                                    <div className="flex space-x-2 mt-1">
+                                        <Button
+                                            variant="ghost"
+                                            size="icon"
+                                            onClick={() =>
+                                                window.open(
+                                                    `tel:${student.callNumber}`,
+                                                )
+                                            }
                                         >
-                                            <div className="text-xs font-medium mb-1 text-center">
-                                                {day} <br />
-                                                {getDate(index)}
-                                            </div>
-                                            <Select
-                                                value={getCallStatus(
+                                            <PhoneIcon className="h-4 w-4" />
+                                        </Button>
+                                        <Button
+                                            variant="ghost"
+                                            size="icon"
+                                            onClick={() =>
+                                                window.open(
+                                                    `https://wa.me/${student.whattsapNumber}`,
+                                                )
+                                            }
+                                        >
+                                            <MessageCircleIcon className="h-4 w-4" />
+                                        </Button>
+                                        <Link to={`/profile/${student.id}`}>
+                                            <Button variant="ghost" size="icon">
+                                                <UserIcon className="h-4 w-4" />
+                                            </Button>
+                                        </Link>
+                                    </div> */}
+                                </td>
+                                {weekDays.map((day, index) => (
+                                    <td key={day} className="px-1 py-5">
+                                        <Select
+                                            value={getCallStatus(
+                                                student.id,
+                                                getDate(index),
+                                            )}
+                                            onValueChange={(
+                                                value: CallStatus,
+                                            ) =>
+                                                handleStatusChange(
                                                     student.id,
-                                                    getDate(index),
-                                                )}
-                                                onValueChange={(
-                                                    value: CallStatus,
-                                                ) =>
-                                                    handleStatusChange(
-                                                        student.id,
-                                                        day,
-                                                        value,
-                                                    )
-                                                }
+                                                    day,
+                                                    value,
+                                                )
+                                            }
+                                        >
+                                            <SelectTrigger
+                                                className={`w-full ${getStatusColor(getCallStatus(student.id, getDate(index)))}`}
                                             >
-                                                <SelectTrigger
-                                                    className={`w-[90px] ${getStatusColor(getCallStatus(student.id, getDate(index)))}`}
-                                                >
-                                                    <SelectValue />
-                                                </SelectTrigger>
-                                                <SelectContent>
-                                                    <SelectItem
-                                                        value={"Nothing"}
-                                                    >
-                                                        Nothing
-                                                    </SelectItem>
-                                                    <SelectItem
-                                                        value={"Scheduled"}
-                                                    >
-                                                        Scheduled
-                                                    </SelectItem>
-                                                    <SelectItem value={"Done"}>
-                                                        Done
-                                                    </SelectItem>
-                                                    <SelectItem value={"DNP"}>
-                                                        DNP
-                                                    </SelectItem>
-                                                </SelectContent>
-                                            </Select>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        </CardContent>
-                    </Card>
-                ))}
+                                                <SelectValue />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value="Nothing">
+                                                    Nothing
+                                                </SelectItem>
+                                                <SelectItem value="Scheduled">
+                                                    Scheduled
+                                                </SelectItem>
+                                                <SelectItem value="Done">
+                                                    Done
+                                                </SelectItem>
+                                                <SelectItem value="DNP">
+                                                    DNP
+                                                </SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                    </td>
+                                ))}
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
             </div>
         </div>
     );

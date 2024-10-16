@@ -29,7 +29,7 @@ import AdminPanel from "./pages/AdminPanel";
 import ComplaintTickets from "./pages/SeeAllTickets";
 import Juniors from "./pages/Juniors";
 import StudentProfile from "./pages/Profile/StudentProfile";
-import CallRecord from "./pages/CallRecord2";
+import CallRecord from "./pages/CallRecord";
 import MentorSalaryManagement from "./pages/MentorSalary";
 import RoleManagement from "./pages/RoleManagement";
 import SyllabusComponent from "./pages/Syallabus/NeetSyallabus";

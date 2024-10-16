@@ -1,5 +1,3 @@
-"use client";
-
 import { useState, useEffect } from "react";
 import {
     Select,
@@ -225,8 +223,20 @@ export default function SalaryManagement() {
                     <Card className="bg-white shadow-lg rounded-lg overflow-hidden">
                         <CardHeader className="bg-pcb text-white p-6">
                             <CardTitle className="text-xl">
-                                Total To Pay: ${totalToPay.toFixed(2)} | Total
-                                Paid: ${totalPaid.toFixed(2)}
+                                <p className="mb-2">
+                                    Total To Pay:{" "}
+                                    <span className="text-red-500">
+                                        {" "}
+                                        {totalToPay.toFixed(2)}
+                                    </span>
+                                </p>
+                                <p>
+                                    Total Paid:{" "}
+                                    <span className="text-green-600">
+                                        {" "}
+                                        {totalPaid.toFixed(2)}
+                                    </span>
+                                </p>
                             </CardTitle>
                         </CardHeader>
                         <CardContent className="p-6">
@@ -386,7 +396,7 @@ export default function SalaryManagement() {
                                     <Table>
                                         <TableHeader className="sticky top-0 bg-white z-20">
                                             <TableRow className="bg-pcb/10">
-                                                <TableHead className="sticky left-0 bg-pcb/10 text-pcb z-30">
+                                                <TableHead className="sticky top-0 bg-pcb/10 text-pcb z-30">
                                                     Name
                                                 </TableHead>
                                                 {activeTab !== "Employee" && (
@@ -450,7 +460,7 @@ export default function SalaryManagement() {
                                                             key={mentor.id}
                                                             className="hover:bg-gray-50"
                                                         >
-                                                            <TableCell className="sticky left-0 bg-white z-10 after:absolute after:top-0 after:right-0 after:bottom-0 after:w-4 after:bg-gradient-to-r after:from-white after:to-transparent">
+                                                            <TableCell className="sticky left-0 bg-white z-10">
                                                                 {mentor.name}
                                                             </TableCell>
                                                             {activeTab !==
