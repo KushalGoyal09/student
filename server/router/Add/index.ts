@@ -11,6 +11,6 @@ addRouter.post("/student", authMiddleware, addStudent);
 addRouter.post("/supervisor", authMiddleware, addSupervisor);
 addRouter.post("/senior-mentor", authMiddleware, addSeniorMentor);
 addRouter.post("/mentor", authMiddleware, addMentor);
-addRouter.post("/employee", authMiddleware, addEmployee)
+addRouter.post("/employee", authMiddleware, addEmployee);
 
 export default addRouter;

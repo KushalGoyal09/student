@@ -32,7 +32,7 @@ const getMentorSalaryDetail = async (req: AuthRequest, res: Response) => {
         );
         return;
     }
-    const { month, year,salaryRole } = bodySchema.parse(req.body);
+    const { month, year, salaryRole } = bodySchema.parse(req.body);
     const mentorSalary = await db.mentorSalary.findMany({
         where: {
             month,

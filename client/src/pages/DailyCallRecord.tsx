@@ -1,11 +1,6 @@
 import { useMemo } from "react";
 import { format } from "date-fns";
-import {
-    PhoneIcon,
-    CheckCircle,
-    XCircle,
-    AlertCircle,
-} from "lucide-react";
+import { PhoneIcon, CheckCircle, XCircle, AlertCircle } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 

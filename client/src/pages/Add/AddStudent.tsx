@@ -106,7 +106,7 @@ const formSchema = z.object({
     state: z.string(),
     pincode: z.string(),
     country: z.string(),
-    expectation: z.string()
+    expectation: z.string(),
 });
 
 export default function AddStudent() {
@@ -667,7 +667,7 @@ export default function AddStudent() {
                                 )}
                             />
 
-<FormField
+                            <FormField
                                 control={form.control}
                                 name="completeAddress"
                                 render={({ field }) => (
@@ -683,7 +683,7 @@ export default function AddStudent() {
                                     </FormItem>
                                 )}
                             />
-    <FormField
+                            <FormField
                                 control={form.control}
                                 name="pincode"
                                 render={({ field }) => (

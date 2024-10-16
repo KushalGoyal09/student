@@ -174,8 +174,12 @@ const Layout = () => {
         <Suspense fallback={<Loading />}>
             <div className="min-h-screen flex flex-col">
                 <Navbar />
-                {name && role && role !== Role.admin && <WelcomeComponent name={name} />}
-                {name && role && role === Role.admin && <AdminWelcomeComponent />}
+                {name && role && role !== Role.admin && (
+                    <WelcomeComponent name={name} />
+                )}
+                {name && role && role === Role.admin && (
+                    <AdminWelcomeComponent />
+                )}
                 {role && role !== Role.admin && (
                     <Tiles filteredLinks={filteredLinks} />
                 )}

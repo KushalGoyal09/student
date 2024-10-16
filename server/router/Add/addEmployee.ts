@@ -3,13 +3,11 @@ const db = new PrismaClient();
 import { Response } from "express";
 import { AuthRequest, Role } from "../../types";
 import { z } from "zod";
-import {
-    throwForbiddenError,
-} from "../../custom-error/customError";
+import { throwForbiddenError } from "../../custom-error/customError";
 
 const bodySchema = z.object({
     name: z.string(),
-    phoneNumber: z.string()
+    phoneNumber: z.string(),
 });
 
 const addEmployee = async (req: AuthRequest, res: Response) => {
@@ -26,7 +24,7 @@ const addEmployee = async (req: AuthRequest, res: Response) => {
     await db.employee.create({
         data: {
             name,
-            phoneNumber
+            phoneNumber,
         },
     });
     res.json({

@@ -15,8 +15,7 @@ export default function AdminPanel() {
     return (
         <div className="min-h-screen bg-gray-100 p-4">
             <div className="max-w-3xl mx-auto bg-white rounded-lg shadow-md p-6">
-                <div className="flex justify-center mb-6">
-                </div>
+                <div className="flex justify-center mb-6"></div>
                 <h1 className="text-3xl font-bold text-center mb-8 text-pcb">
                     What's up?
                 </h1>

@@ -52,7 +52,7 @@ const getRole = async (req: AuthRequest, res: Response) => {
             },
             select: {
                 name: true,
-                whattsapLink:   true,
+                whattsapLink: true,
             },
         });
         if (!groupMentor) {
@@ -66,7 +66,7 @@ const getRole = async (req: AuthRequest, res: Response) => {
         success: true,
         role,
         name,
-        whattsapLink
+        whattsapLink,
     });
 };
 

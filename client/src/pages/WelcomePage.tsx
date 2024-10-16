@@ -114,10 +114,16 @@ export default function WelcomeComponent() {
                     animate={{ opacity: 1 }}
                     transition={{ delay: 0.5, duration: 0.5 }}
                 >
-                    <p style={{ fontFamily: 'Better Saturday, sans-serif' }} className="text-slate-200 font-semibold">
+                    <p
+                        style={{ fontFamily: "Better Saturday, sans-serif" }}
+                        className="text-slate-200 font-semibold"
+                    >
                         Welcome to
                     </p>
-                    <p style={{ fontFamily: 'Chewy, cursive' }} className="mt-6 text-gray-800">
+                    <p
+                        style={{ fontFamily: "Chewy, cursive" }}
+                        className="mt-6 text-gray-800"
+                    >
                         THE PCB POINT FAMILY
                     </p>
                 </motion.h1>
@@ -126,9 +132,7 @@ export default function WelcomeComponent() {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: 0.7, duration: 0.5 }}
-                >
-                    
-                </motion.p>
+                ></motion.p>
                 <motion.div
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}

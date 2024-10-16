@@ -17,19 +17,22 @@ interface Ticket {
 
 interface TicketResponse {
     success: true;
-    data: Ticket[]
+    data: Ticket[];
 }
 
-const getMyTickets = async (req: AuthRequest, res: Response<TicketResponse>) => {
+const getMyTickets = async (
+    req: AuthRequest,
+    res: Response<TicketResponse>,
+) => {
     const userId = req.userId;
-    if(!userId) {
+    if (!userId) {
         throwUnauthorizedError("User not found");
         return;
     }
 
     const tickets = await db.ticket.findMany({
         where: {
-            craetedByUserId: userId
+            craetedByUserId: userId,
         },
         select: {
             id: true,
@@ -41,8 +44,8 @@ const getMyTickets = async (req: AuthRequest, res: Response<TicketResponse>) => 
             updatedAt: true,
         },
         orderBy: {
-            updatedAt: "desc"
-        }
+            updatedAt: "desc",
+        },
     });
     res.status(200).json({
         data: tickets,

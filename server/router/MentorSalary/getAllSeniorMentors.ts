@@ -36,8 +36,8 @@ const getAllTheSeniors = async (
                 select: {
                     Student: {
                         where: {
-                            status: true
-                        }
+                            status: true,
+                        },
                     },
                 },
             },

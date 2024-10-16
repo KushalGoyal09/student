@@ -23,7 +23,6 @@ export interface Employee {
 }
 
 export interface Salary {
-    id: string;
     userId: string;
     totalSalary: number;
     bonus: number;
@@ -55,6 +54,7 @@ export const months = [
     "December",
 ];
 
+// get all the Group Mentors
 export const getAllGm = async (): Promise<GroupMentor[]> => {
     const { data } = await axios.get("/api/salary/get-mentors", {
         headers: {
@@ -64,6 +64,7 @@ export const getAllGm = async (): Promise<GroupMentor[]> => {
     return data.data;
 };
 
+// get all the senior mentors
 export const getAllSm = async (): Promise<SeniorMentor[]> => {
     const { data } = await axios.get("/api/salary/get-seniors", {
         headers: {
@@ -73,6 +74,7 @@ export const getAllSm = async (): Promise<SeniorMentor[]> => {
     return data.data;
 };
 
+// get all the other employees
 export const getAllemployes = async (): Promise<Employee[]> => {
     const { data } = await axios.get("/api/salary/get-employes", {
         headers: {
@@ -82,6 +84,19 @@ export const getAllemployes = async (): Promise<Employee[]> => {
     return data.data;
 };
 
+// for groupMentor and seniormentor - fetch the common salary setting.
+// if it is null - assume it to be {
+//     baseSalary: 0;
+//     perAj: 0;
+//     payAccordingToRating: boolean;
+//     perAjLess: 0;
+//     perAjMore: 0;
+// }
+// it is used to calculate the total salary of the group mentors and senior mentors
+//
+// totalSalary = perAj * Number of students + base pay + bonus (if the payAccordingToRating === false)
+// totalSalary = perAjLess * Number of students + base pay + bonus (if the payAccordingToRating === false && overAll rating < 4.5)
+// totalSalary = perAjMore * Number of students + base pay + bonus (if the payAccordingToRating === false && overAll rating >= 4.5)
 export const getCommonSalaryDetails = async (
     role: Role,
 ): Promise<CommonSalary | null> => {
@@ -99,6 +114,7 @@ export const getCommonSalaryDetails = async (
     return data.data;
 };
 
+// set or edit the common salary setting.
 export const setCommonSalaryDetails = async (
     salaryRole: Role,
     perAj: number,
@@ -139,6 +155,14 @@ export type Month =
     | "November"
     | "December";
 
+// get salary details for the mentor, senior mentor and others
+// if no enttry found for userId === id
+// assume {
+//     userId: id;
+//     totalSalary: CalculatesThroughCommonSetting (if senior / group mentor) , 0 (if others);
+//     bonus: 0;
+//     paid: boolean;
+// }
 export const getSalaryDetails = async (
     month: Month,
     year: number,
@@ -160,6 +184,7 @@ export const getSalaryDetails = async (
     return data.data;
 };
 
+// edit the salary for a groupMentor, seniorMentor and employee
 export const editSalary = async (
     month: Month,
     year: number,

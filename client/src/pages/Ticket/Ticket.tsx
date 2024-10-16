@@ -2,14 +2,12 @@ import CreateComplaintTicket from "./CreateTicket";
 import PreviousTicket from "./PreviousTickets";
 
 const Ticket = () => {
-
     return (
         <>
-            <CreateComplaintTicket/>
-            <PreviousTicket/>
+            <CreateComplaintTicket />
+            <PreviousTicket />
         </>
-    )
-    
-}
+    );
+};
 
 export default Ticket;

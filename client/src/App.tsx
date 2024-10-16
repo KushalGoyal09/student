@@ -30,7 +30,7 @@ import ComplaintTickets from "./pages/SeeAllTickets";
 import Juniors from "./pages/Juniors";
 import StudentProfile from "./pages/Profile/StudentProfile";
 import CallRecord from "./pages/CallRecord2";
-import MentorSalaryManagement from "./pages/MentorSalary2";
+import MentorSalaryManagement from "./pages/MentorSalary";
 import RoleManagement from "./pages/RoleManagement";
 import SyllabusComponent from "./pages/Syallabus/NeetSyallabus";
 import Syallabus from "./pages/Syallabus/Syallabus";
@@ -77,8 +77,8 @@ const App = () => {
                         },
                         {
                             path: "employee",
-                            element: <AddEmploy/>
-                        }
+                            element: <AddEmploy />,
+                        },
                     ],
                 },
                 {
@@ -159,7 +159,7 @@ const App = () => {
                 },
                 {
                     path: "/employes",
-                    element: <Employee/>
+                    element: <Employee />,
                 },
                 {
                     path: "/syllabus",

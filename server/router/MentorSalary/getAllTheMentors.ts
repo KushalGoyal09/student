@@ -34,8 +34,8 @@ const getAllTheMentors = async (
             name: true,
             Student: {
                 where: {
-                    status: true
-                }
+                    status: true,
+                },
             },
         },
     });
