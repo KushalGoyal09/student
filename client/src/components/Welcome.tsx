@@ -4,7 +4,7 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { User, MessageCircle } from "lucide-react";
 import axios from "axios";
 
-export default function Component({ name }: { name: string }) {
+export default function WelcomeComponent({ name }: { name: string }) {
     const [isHovered, setIsHovered] = useState(false);
     const [whatsappLink, setWhatsappLink] = useState<string | null>(null);
 

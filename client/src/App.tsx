@@ -1,43 +1,48 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { Toaster } from "@/components/ui/toaster";
-import Home from "./pages/Home";
-import Login from "./pages/Login/Login";
-import {
-    AddMentor,
-    AddSeniorMentor,
-    AddStudent,
-    AddSupervisor,
-} from "./pages/Add";
-import Target from "./pages/Target/Target";
-import ChangePassword from "./pages/Admin/ChangePassword";
-import MentorRatingPage from "./pages/SupervisorRating";
-import SupervisorDetails from "./pages/Detail/Supervisor/SupervisorDetail";
-import SupervisorDetailMain from "./pages/Detail/Supervisor/SupervisorDetailMain";
-import SeniorMentorDetail from "./pages/Detail/SeniorMentor/SeniorMentorDetail";
-import SeniorMentorDetailMain from "./pages/Detail/SeniorMentor/SeniorMentorDetailMain";
-import MentorDetail from "./pages/Detail/GroupMentor/MentorDetail";
-import MentorDetailMain from "./pages/Detail/GroupMentor/MentorDetailMain";
-import NotFound from "./pages/NotFound";
+import { lazy } from "react";
+const Home = lazy(() => import("./pages/Home"));
+const Login = lazy(() => import("./pages/Login/Login"));
+const AddMentor = lazy(() => import("./pages/Add/AddMentor"));
+const AddSeniorMentor = lazy(() => import("./pages/Add/AddSeniorMentor"));
+const AddStudent = lazy(() => import("./pages/Add/AddStudent"));
+const AddSupervisor = lazy(() => import("./pages/Add/AddSupervisor"));
+const Target = lazy(() => import("./pages/Target/Target"));
+const ChangePassword = lazy(() => import("./pages/Admin/ChangePassword"));
+const MentorRatingPage = lazy(() => import("./pages/SupervisorRating"));
+const SupervisorDetails = lazy(
+    () => import("./pages/Detail/Supervisor"),
+);
+const SeniorMentorDetail = lazy(
+    () => import("./pages/Detail/SeniorMentor"),
+);
+const MentorDetail = lazy(
+    () => import("./pages/Detail/Mentor"),
+);
+const MentorDetailMain = lazy(
+    () => import("./pages/Detail/MentorDetail"),
+);
+const NotFound = lazy(() => import("./pages/NotFound"));
+const NewAdmissions = lazy(() => import("./pages/New/NewAdmissions"));
+const FeeDetail = lazy(() => import("./pages/New/FeeDetail"));
+const KitDispatchPage = lazy(() => import("./pages/New/KitDetails"));
+const Layout = lazy(() => import("./components/Layout"));
+const MentorFeedback = lazy(() => import("./pages/MentorFeedbacks"));
+const MentorPage = lazy(() => import("./pages/MentorPage"));
+const AdminPanel = lazy(() => import("./pages/AdminPanel"));
+const ComplaintTickets = lazy(() => import("./pages/SeeAllTickets"));
+const Juniors = lazy(() => import("./pages/Juniors"));
+const StudentProfile = lazy(() => import("./pages/Profile/StudentProfile"));
+const CallRecord = lazy(() => import("./pages/Call/CallRecordMentor"));
+const SeniorCall = lazy(() => import("./pages/Call/CallRecordSenior"));
+const MentorSalaryManagement = lazy(() => import("./pages/MentorSalary"));
+const RoleManagement = lazy(() => import("./pages/RoleManagement"));
+const SyllabusComponent = lazy(() => import("./pages/Syallabus/NeetSyallabus"));
+const Syallabus = lazy(() => import("./pages/Syallabus/Syallabus"));
+const AddEmploy = lazy(() => import("./pages/Add/AddEmploy"));
+const Ticket = lazy(() => import("./pages/Ticket/Ticket"));
+const Employee = lazy(() => import("./pages/Detail/Employee"));
 import { RecoilRoot } from "recoil";
-import NewAdmissions from "./pages/New/NewAdmissions";
-import FeeDetail from "./pages/New/FeeDetail";
-import KitDispatchPage from "./pages/New/KitDetails";
-import Layout from "./components/Layout";
-import MentorFeedback from "./pages/MentorFeedbacks";
-import MentorPage from "./pages/MentorPage";
-import AdminPanel from "./pages/AdminPanel";
-import ComplaintTickets from "./pages/SeeAllTickets";
-import Juniors from "./pages/Juniors";
-import StudentProfile from "./pages/Profile/StudentProfile";
-import CallRecord from "./pages/Call/CallRecordMentor";
-import SeniorCall from "./pages/Call/CallRecordSenior";
-import MentorSalaryManagement from "./pages/MentorSalary";
-import RoleManagement from "./pages/RoleManagement";
-import SyllabusComponent from "./pages/Syallabus/NeetSyallabus";
-import Syallabus from "./pages/Syallabus/Syallabus";
-import AddEmploy from "./pages/Add/AddEmploy";
-import Ticket from "./pages/Ticket/Ticket";
-import Employee from "./pages/Employee";
 
 const App = () => {
     const router = createBrowserRouter([
@@ -101,22 +106,10 @@ const App = () => {
                 {
                     path: "/supervisor",
                     element: <SupervisorDetails />,
-                    children: [
-                        {
-                            path: ":username",
-                            element: <SupervisorDetailMain />,
-                        },
-                    ],
                 },
                 {
                     path: "/seniorMentor",
                     element: <SeniorMentorDetail />,
-                    children: [
-                        {
-                            path: ":username",
-                            element: <SeniorMentorDetailMain />,
-                        },
-                    ],
                 },
                 {
                     path: "/mentor",
