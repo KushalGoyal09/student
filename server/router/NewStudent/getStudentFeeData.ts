@@ -25,6 +25,7 @@ const getStudentFeeData = async (req: AuthRequest, res: Response) => {
     const students = await db.student.findMany({
         select: {
             name: true,
+            whattsapNumber: true,
             createdAt: true,
             id: true,
             Fees: {
@@ -37,6 +38,7 @@ const getStudentFeeData = async (req: AuthRequest, res: Response) => {
                             amount: true,
                             date: true,
                             mode: true,
+                            transactionId: true,
                             cleared: true,
                         },
                         orderBy: {

@@ -12,6 +12,7 @@ const bodySchema = z.object({
     studentId: z.string(),
     date: z.coerce.date(),
     status: z.coerce.boolean(),
+    reason: z.string().optional(),
 });
 
 const changeActiveStatus = async (req: AuthRequest, res: Response) => {
@@ -30,7 +31,7 @@ const changeActiveStatus = async (req: AuthRequest, res: Response) => {
         throwBadRequestError(parsedData.error.errors[0].message);
         return;
     }
-    const { studentId, date, status } = parsedData.data;
+    const { studentId, date, status, reason } = parsedData.data;
     if (status === false) {
         await db.student.update({
             where: {
@@ -39,6 +40,7 @@ const changeActiveStatus = async (req: AuthRequest, res: Response) => {
             data: {
                 status,
                 dateOfDeactive: date,
+                reasonOfDeactive: reason,
             },
         });
     } else {

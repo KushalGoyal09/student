@@ -32,7 +32,8 @@ model SeniorMentor {
   password    String
   GroupMentor GroupMentor[]
 
-  supervisor   Supervisor? @relation(fields: [supervisorId], references: [id])
+  Week         SeniorWeek[]
+  supervisor   Supervisor?  @relation(fields: [supervisorId], references: [id])
   supervisorId String?
 }
 
@@ -69,17 +70,18 @@ model Student {
   dropperStatus   String
   previousScore   String
   platform        String
-  completeAddress String
-  landmark        String
-  pincode         String
-  city            String
-  state           String
-  country         String
+  completeAddress String?
+  landmark        String?
+  pincode         String?
+  city            String?
+  state           String?
+  country         String?
   expectation     String
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
   status            Boolean   @default(true)
+  reasonOfDeactive  String?
   dateOfDeactive    DateTime?
   Fees              Fees?
   kitDispatched     Boolean   @default(false)
@@ -94,9 +96,11 @@ model Student {
   StudentCallRecord StudentCallRecord[]
   Target            Target[]
 
-  physicsVisionBoard   PhysicsVisionBoard[]
-  ChemistryVisionBoard ChemistryVisionBoard[]
-  BiologyVisionBoard   BiologyVisionBoard[]
+  physicsVisionBoard      PhysicsVisionBoard[]
+  ChemistryVisionBoard    ChemistryVisionBoard[]
+  BiologyVisionBoard      BiologyVisionBoard[]
+  StudentCallRecordSenior StudentCallRecordSenior[]
+  ParentsCallRecordSenior ParentsCallRecordSenior[]
 }
 
 model PhysicsVisionBoard {
@@ -187,6 +191,62 @@ model Call {
   @@unique([date, studentRecordId])
 }
 
+model SeniorWeek {
+  id           String                    @id @default(uuid())
+  startDate    String
+  endDate      String
+  mentorId     String
+  SeniorMentor SeniorMentor              @relation(fields: [mentorId], references: [id])
+  students     StudentCallRecordSenior[]
+  parents      ParentsCallRecordSenior[]
+
+  @@unique([startDate, mentorId])
+}
+
+model StudentCallRecordSenior {
+  id        String              @id @default(uuid())
+  studentId String
+  weekId    String
+  call      SeniorCallStudent[]
+  Week      SeniorWeek          @relation(fields: [weekId], references: [id])
+  Student   Student             @relation(fields: [studentId], references: [id])
+
+  @@unique([studentId, weekId])
+}
+
+model ParentsCallRecordSenior {
+  id        String             @id @default(uuid())
+  studentId String
+  weekId    String
+  call      SeniorCallParent[]
+  Week      SeniorWeek         @relation(fields: [weekId], references: [id])
+  Student   Student            @relation(fields: [studentId], references: [id])
+
+  @@unique([studentId, weekId])
+}
+
+model SeniorCallStudent {
+  id              String                  @id @default(uuid())
+  date            String
+  day             DaysOfWeek
+  callStatus      CallStatus
+  studentRecord   StudentCallRecordSenior @relation(fields: [studentRecordId], references: [id])
+  studentRecordId String
+
+  @@unique([date, studentRecordId])
+}
+
+model SeniorCallParent {
+  id              String                  @id @default(uuid())
+  date            String
+  day             DaysOfWeek
+  callStatus      CallStatus
+  studentRecord   ParentsCallRecordSenior @relation(fields: [studentRecordId], references: [id])
+  studentRecordId String
+
+  @@unique([date, studentRecordId])
+}
+
 enum DaysOfWeek {
   Monday
   Tuesday
@@ -216,12 +276,13 @@ enum MentorshipPlan {
 }
 
 model Payment {
-  id      String  @id @default(uuid())
-  amount  Int
-  date    String
-  mode    String?
-  cleared Boolean @default(false)
-  fees    Fees    @relation(fields: [feesId], references: [id])
+  id            String  @id @default(uuid())
+  amount        Int
+  date          String
+  mode          String?
+  cleared       Boolean @default(false)
+  transactionId String?
+  fees          Fees    @relation(fields: [feesId], references: [id])
 
   feesId String
 }
@@ -373,14 +434,14 @@ model MentorSalary {
 }
 
 model Salary {
-  id                   String     @id @default(uuid())
-  Role                 SalaryRole @unique
-  
-  baseSalary           Int        @default(0)
-  perAj                Int        @default(0)
-  payAccordingToRating Boolean    @default(false)
-  perAjLess            Int        @default(0)
-  perAjMore            Int        @default(0)
+  id   String     @id @default(uuid())
+  Role SalaryRole @unique
+
+  baseSalary           Int     @default(0)
+  perAj                Int     @default(0)
+  payAccordingToRating Boolean @default(false)
+  perAjLess            Int     @default(0)
+  perAjMore            Int     @default(0)
 }
 
 enum Month {

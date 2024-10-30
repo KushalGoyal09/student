@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { Response } from "express";
 import { PrismaClient } from "@prisma/client";
 import { z } from "zod";
 import { AuthRequest, Role } from "../../types";
@@ -65,6 +65,7 @@ const studentProfile = async (req: AuthRequest, res: Response) => {
             state: true,
             pincode: true,
             country: true,
+            reasonOfDeactive: true,
             groupMentor: {
                 select: {
                     name: true,

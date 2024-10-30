@@ -22,6 +22,8 @@ import slaryRouter from "./router/MentorSalary";
 import visionBoardRouter from "./router/VisionBoard";
 import overallRouter from "./router/OverallSyallabus";
 import roleRouter from "./router/RoleManagement";
+import assignRouter from "./router/Assaign";
+import seniorCallRouter from "./router/SeniorCall";
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -42,6 +44,8 @@ app.use("/api/salary", slaryRouter);
 app.use("/api/vision", visionBoardRouter);
 app.use("/api/overall", overallRouter);
 app.use("/api/role", roleRouter);
+app.use("/api/assaign", assignRouter);
+app.use("/api/seniorCall", seniorCallRouter);
 
 app.use(notFound);
 app.use(errorHandler);

@@ -27,26 +27,50 @@ async function getOverallSyllabusCompletion(): Promise<OverallSyllabusResponse> 
         biology: [],
     };
 
-    for (const subject of subjects) {
-        const chapters = await getChapters(subject);
+    // Fetch all chapters for all subjects in parallel
+    const [physicsChapters, chemistryChapters, biologyChapters] =
+        await Promise.all([
+            prisma.physicsSyallabus.findMany(),
+            prisma.chemistrySyallabus.findMany(),
+            prisma.biologySyallabus.findMany(),
+        ]);
 
-        for (const chapter of chapters) {
-            const seniorMentors = await prisma.seniorMentor.findMany({
+    const chaptersBySubject = {
+        physics: physicsChapters,
+        chemistry: chemistryChapters,
+        biology: biologyChapters,
+    };
+
+    // Fetch all senior mentors with their group mentors and students in a single query
+    const seniorMentors = await prisma.seniorMentor.findMany({
+        include: {
+            GroupMentor: {
                 include: {
-                    GroupMentor: {
+                    Student: {
                         include: {
-                            Student: true,
+                            physicsVisionBoard: true,
+                            ChemistryVisionBoard: true,
+                            BiologyVisionBoard: true,
                         },
                     },
                 },
-            });
+            },
+        },
+    });
 
+    // Process each subject
+    for (const subject of subjects) {
+        const chapters = chaptersBySubject[subject];
+
+        // Process each chapter
+        for (const chapter of chapters) {
             const chapterCompletion: SubjectOverallSyllabus = {
                 chapterId: chapter.id,
                 chapterName: chapter.chapterName,
                 seniorMentor: [],
             };
 
+            // Process each senior mentor
             for (const seniorMentor of seniorMentors) {
                 const seniorMentorCompletion: SeniorMentorCompletion = {
                     seniorMentorUsername: seniorMentor.username,
@@ -57,8 +81,9 @@ async function getOverallSyllabusCompletion(): Promise<OverallSyllabusResponse> 
                     groupMentor: [],
                 };
 
+                // Process each group mentor
                 for (const groupMentor of seniorMentor.GroupMentor) {
-                    const groupMentorCompletion = {
+                    const groupMentorCompletion: GroupMentorCompletion = {
                         groupMentorUsername: groupMentor.username,
                         groupMentorId: groupMentor.id,
                         groupMentorName: groupMentor.name,
@@ -72,10 +97,11 @@ async function getOverallSyllabusCompletion(): Promise<OverallSyllabusResponse> 
                     seniorMentorCompletion.totalNumberOfStudents +=
                         groupMentor.Student.length;
 
+                    // Check completion for each student using pre-fetched vision board data
                     for (const student of groupMentor.Student) {
-                        const visionBoard = await getVisionBoard(
+                        const visionBoard = getVisionBoardFromStudent(
+                            student,
                             subject,
-                            student.id,
                             chapter.id,
                         );
 
@@ -106,53 +132,27 @@ async function getOverallSyllabusCompletion(): Promise<OverallSyllabusResponse> 
     return result;
 }
 
-async function getChapters(subject: Subject) {
-    switch (subject) {
-        case "physics":
-            return prisma.physicsSyallabus.findMany();
-        case "chemistry":
-            return prisma.chemistrySyallabus.findMany();
-        case "biology":
-            return prisma.biologySyallabus.findMany();
-    }
-}
-
-async function getVisionBoard(
+function getVisionBoardFromStudent(
+    student: any,
     subject: Subject,
-    studentId: string,
     chapterId: number,
 ) {
-    switch (subject) {
-        case "physics":
-            return prisma.physicsVisionBoard.findUnique({
-                where: {
-                    studentId_physicsSyallabusId: {
-                        studentId,
-                        physicsSyallabusId: chapterId,
-                    },
-                },
-            });
-        case "chemistry":
-            return prisma.chemistryVisionBoard.findUnique({
-                where: {
-                    studentId_chemistrySyallabusId: {
-                        studentId,
-                        chemistrySyallabusId: chapterId,
-                    },
-                },
-            });
-        case "biology":
-            return prisma.biologyVisionBoard.findUnique({
-                where: {
-                    studentId_biologySyallabusId: {
-                        studentId,
-                        biologySyallabusId: chapterId,
-                    },
-                },
-            });
-    }
+    const visionBoardMap = {
+        physics: student.physicsVisionBoard?.find(
+            (board: any) => board.physicsSyallabusId === chapterId,
+        ),
+        chemistry: student.chemistryVisionBoard?.find(
+            (board: any) => board.chemistrySyallabusId === chapterId,
+        ),
+        biology: student.biologyVisionBoard?.find(
+            (board: any) => board.biologySyallabusId === chapterId,
+        ),
+    };
+
+    return visionBoardMap[subject];
 }
 
+// Interfaces remain the same...
 interface SubjectOverallSyllabus {
     chapterId: number;
     chapterName: string;

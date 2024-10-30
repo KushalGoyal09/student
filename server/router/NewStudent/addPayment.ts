@@ -11,6 +11,7 @@ const bodySchema = z.object({
         amount: z.coerce.number(),
         date: z.string(),
         mode: z.string().nullable(),
+        transactionId: z.string().optional(),
         cleared: z.coerce.boolean(),
     }),
 });
@@ -48,6 +49,7 @@ const addPayment = async (req: AuthRequest, res: Response) => {
             date: payment.date,
             mode: payment.mode,
             cleared: payment.cleared,
+            transactionId: payment.transactionId,
         },
     });
     return res.status(200).json({ success: true });

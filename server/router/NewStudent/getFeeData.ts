@@ -14,6 +14,7 @@ type Payment = {
     amount: number;
     date: string;
     mode: string | null;
+    transactionId: string | null;
     cleared: boolean;
 };
 
@@ -68,6 +69,7 @@ const getFeeData = async (req: AuthRequest, res: Response<FeeDataResponse>) => {
                     id: true,
                     amount: true,
                     date: true,
+                    transactionId: true,
                     mode: true,
                     cleared: true,
                 },
