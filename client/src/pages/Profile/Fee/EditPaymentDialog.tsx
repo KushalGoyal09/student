@@ -15,6 +15,7 @@ type Payment = {
     amount: number;
     date: string;
     mode: string | null;
+    transactionId: string | null;
     cleared: boolean;
 };
 
@@ -91,6 +92,22 @@ export function EditPaymentDialog({
                                 setEditedPayment({
                                     ...editedPayment,
                                     mode: e.target.value,
+                                })
+                            }
+                            className="col-span-3"
+                        />
+                    </div>
+                    <div className="grid grid-cols-4 items-center gap-4">
+                        <Label htmlFor="transactionId" className="text-right">
+                            Transaction ID
+                        </Label>
+                        <Input
+                            id="transactionId"
+                            value={editedPayment.transactionId || ""}
+                            onChange={(e) =>
+                                setEditedPayment({
+                                    ...editedPayment,
+                                    transactionId: e.target.value,
                                 })
                             }
                             className="col-span-3"

@@ -13,54 +13,103 @@ import { AlertCircle } from "lucide-react";
 import axios from "axios";
 import { Input } from "@/components/ui/input";
 
-type Mentor = {
-    id: string;
-    name: string;
-    username: string;
-};
-
 type Props = {
     studentId: string;
     currentMentor?: { name: string; username: string };
 };
 
-const AssignMentor = ({ studentId, currentMentor }: Props) => {
-    const [mentors, setMentors] = useState<Mentor[]>([]);
-    const [selectedMentor, setSelectedMentor] = useState<string>("");
+interface SeniorMentor {
+    id: string;
+    name: string;
+    username: string;
+}
+
+interface GroupMentor {
+    id: string;
+    name: string;
+    username: string;
+}
+
+const fetchSeniorMentors = async (): Promise<SeniorMentor[]> => {
+    const { data } = await axios.get("/api/assaign/seniorMentors", {
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+    });
+    return data.data;
+};
+
+const fetchMentors = async (seniorMentorId: string): Promise<GroupMentor[]> => {
+    const { data } = await axios.post(
+        `/api/assaign/groupMentors/`,
+        {
+            seniorMentorId,
+        },
+        {
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+        },
+    );
+    return data.data;
+};
+
+export default function AssignMentor({ studentId, currentMentor }: Props) {
+    const [seniorMentors, setSeniorMentors] = useState<SeniorMentor[]>([]);
+    const [groupMentors, setGroupMentors] = useState<GroupMentor[]>([]);
+    const [selectedSeniorMentor, setSelectedSeniorMentor] =
+        useState<string>("");
+    const [selectedGroupMentor, setSelectedGroupMentor] = useState<string>("");
     const [groupLink, setGroupLink] = useState<string>("");
     const [isLoading, setIsLoading] = useState(false);
     const { toast } = useToast();
 
     useEffect(() => {
-        const fetchMentors = async () => {
-            setIsLoading(true);
+        const loadSeniorMentors = async () => {
             try {
-                const { data } = await axios.get("/api/detail/mentors", {
-                    headers: {
-                        Authorization: `Bearer ${localStorage.getItem("token")}`,
-                    },
-                });
-                setMentors(data.data);
+                const data = await fetchSeniorMentors();
+                setSeniorMentors(data);
             } catch (error) {
                 toast({
                     title: "Error",
-                    description: "Failed to load mentors. Please try again.",
+                    description:
+                        "Failed to fetch senior mentors. Please try again.",
                     variant: "destructive",
                 });
-            } finally {
-                setIsLoading(false);
             }
         };
 
-        fetchMentors();
+        loadSeniorMentors();
     }, [toast]);
+
+    useEffect(() => {
+        const loadGroupMentors = async () => {
+            if (selectedSeniorMentor) {
+                try {
+                    const data = await fetchMentors(selectedSeniorMentor);
+                    setGroupMentors(data);
+                } catch (error) {
+                    toast({
+                        title: "Error",
+                        description:
+                            "Failed to fetch group mentors. Please try again.",
+                        variant: "destructive",
+                    });
+                }
+            } else {
+                setGroupMentors([]);
+            }
+        };
+
+        loadGroupMentors();
+    }, [selectedSeniorMentor, toast]);
 
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
-        if (!selectedMentor) {
+        if (!selectedGroupMentor) {
             toast({
                 title: "Error",
-                description: "Please select a mentor before submitting.",
+                description: "Please select a group mentor before submitting.",
                 variant: "destructive",
             });
             return;
@@ -71,7 +120,7 @@ const AssignMentor = ({ studentId, currentMentor }: Props) => {
                 "/api/new/assign-mentor",
                 {
                     studentId,
-                    mentorId: selectedMentor,
+                    mentorId: selectedGroupMentor,
                     whattsapGroupLink: groupLink,
                 },
                 {
@@ -115,23 +164,26 @@ const AssignMentor = ({ studentId, currentMentor }: Props) => {
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div className="space-y-2">
                         <label
-                            htmlFor="mentor-select"
+                            htmlFor="senior-mentor-select"
                             className="text-sm font-medium text-gray-700"
                         >
-                            Select Mentor
+                            Select Senior Mentor
                         </label>
                         <Select
-                            onValueChange={setSelectedMentor}
-                            value={selectedMentor}
+                            onValueChange={(value) => {
+                                setSelectedSeniorMentor(value);
+                                setSelectedGroupMentor("");
+                            }}
+                            value={selectedSeniorMentor}
                         >
                             <SelectTrigger
-                                id="mentor-select"
+                                id="senior-mentor-select"
                                 className="w-full"
                             >
-                                <SelectValue placeholder="Select a mentor" />
+                                <SelectValue placeholder="Select a senior mentor" />
                             </SelectTrigger>
                             <SelectContent>
-                                {mentors.map((mentor) => (
+                                {seniorMentors.map((mentor) => (
                                     <SelectItem
                                         key={mentor.id}
                                         value={mentor.id}
@@ -141,15 +193,50 @@ const AssignMentor = ({ studentId, currentMentor }: Props) => {
                                 ))}
                             </SelectContent>
                         </Select>
+                    </div>
+                    {selectedSeniorMentor && (
+                        <div className="space-y-2">
+                            <label
+                                htmlFor="group-mentor-select"
+                                className="text-sm font-medium text-gray-700"
+                            >
+                                Select Group Mentor
+                            </label>
+                            <Select
+                                onValueChange={setSelectedGroupMentor}
+                                value={selectedGroupMentor}
+                            >
+                                <SelectTrigger
+                                    id="group-mentor-select"
+                                    className="w-full"
+                                >
+                                    <SelectValue placeholder="Select a group mentor" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {groupMentors.map((mentor) => (
+                                        <SelectItem
+                                            key={mentor.id}
+                                            value={mentor.id}
+                                        >
+                                            {mentor.name} ({mentor.username})
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        </div>
+                    )}
+                    <div className="space-y-2">
                         <label
                             htmlFor="groupLink"
                             className="text-sm font-medium text-gray-700"
                         >
-                            Whattsap Group Link
+                            WhatsApp Group Link
                         </label>
                         <Input
+                            id="groupLink"
                             value={groupLink}
                             onChange={(e) => setGroupLink(e.target.value)}
+                            placeholder="Enter WhatsApp group link"
                         />
                     </div>
                     <Button
@@ -163,6 +250,4 @@ const AssignMentor = ({ studentId, currentMentor }: Props) => {
             </CardContent>
         </Card>
     );
-};
-
-export default AssignMentor;
+}

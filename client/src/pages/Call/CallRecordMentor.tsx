@@ -27,6 +27,7 @@ interface Student {
     status: boolean;
     whattsapGroupLink: string | null;
 }
+
 interface ApiResponse {
     data: {
         students: {
@@ -252,41 +253,6 @@ export default function CallRecord() {
                                     <div className="font-medium">
                                         {student.name}
                                     </div>
-                                    {/* <div className="text-xs text-muted-foreground">
-                                        Call: {student.callNumber}
-                                    </div>
-                                    <div className="text-xs text-muted-foreground">
-                                        WhatsApp: {student.whattsapNumber}
-                                    </div>
-                                    <div className="flex space-x-2 mt-1">
-                                        <Button
-                                            variant="ghost"
-                                            size="icon"
-                                            onClick={() =>
-                                                window.open(
-                                                    `tel:${student.callNumber}`,
-                                                )
-                                            }
-                                        >
-                                            <PhoneIcon className="h-4 w-4" />
-                                        </Button>
-                                        <Button
-                                            variant="ghost"
-                                            size="icon"
-                                            onClick={() =>
-                                                window.open(
-                                                    `https://wa.me/${student.whattsapNumber}`,
-                                                )
-                                            }
-                                        >
-                                            <MessageCircleIcon className="h-4 w-4" />
-                                        </Button>
-                                        <Link to={`/profile/${student.id}`}>
-                                            <Button variant="ghost" size="icon">
-                                                <UserIcon className="h-4 w-4" />
-                                            </Button>
-                                        </Link>
-                                    </div> */}
                                 </td>
                                 {weekDays.map((day, index) => (
                                     <td key={day} className="px-1 py-5">

@@ -116,12 +116,17 @@ const Layout = () => {
             path: "/call-records",
         },
         {
+            role: [Role.seniorMentor],
+            label: "My Planer",
+            path: "/call",
+        },
+        {
             role: [Role.seniorMentor, Role.supervisor, Role.admin],
             label: "Syallabus",
             path: "/syllabus",
         },
         {
-            role: [Role.groupMentor],
+            role: [Role.groupMentor, Role.seniorMentor],
             label: "Target",
             path: "/target",
         },

@@ -1,10 +1,9 @@
-import { useEffect, useState, useMemo } from "react";
-import { Link } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { useState, useEffect, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { User, CheckCircle, XCircle, Package, Download } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { ArrowUpDown, Download, Filter } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import {
     Select,
     SelectContent,
@@ -13,25 +12,15 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import {
-    DropdownMenu,
-    DropdownMenuTrigger,
-    DropdownMenuContent,
-    DropdownMenuItem,
-} from "@/components/ui/dropdown-menu";
-import {
-    Sheet,
-    SheetContent,
-    SheetDescription,
-    SheetHeader,
-    SheetTitle,
-    SheetTrigger,
-} from "@/components/ui/sheet";
-import { format } from "date-fns";
-import axios from "axios";
-import { toast } from "@/hooks/use-toast";
+    Card,
+    CardContent,
+    CardFooter,
+    CardHeader,
+    CardTitle,
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import * as XLSX from "xlsx";
-import { jsPDF } from "jspdf";
-import autoTable from "jspdf-autotable";
+
 interface Student {
     id: string;
     name: string;
@@ -41,76 +30,123 @@ interface Student {
     kitDispatchedDate: Date | null;
 }
 
-const KitDispatchPage = () => {
+interface StudentWithAddress {
+    name: string;
+    callNumber: string;
+    email: string;
+    completeAddress: string;
+    landmark: string;
+    city: string;
+    state: string;
+    pincode: string;
+    country: string;
+    id: string;
+}
+
+const getStudentsData = async (
+    students: Array<String>,
+): Promise<StudentWithAddress[]> => {
+    const { data } = await axios.post(
+        "/api/new/address",
+        {
+            students,
+        },
+        {
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+        },
+    );
+    return data.data;
+};
+
+const fetchKitDispatchData = async (): Promise<Student[]> => {
+    try {
+        const { data } = await axios.get("/api/new/kit-data", {
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+        });
+        return data.data;
+    } catch (error) {
+        console.error("Error fetching kit dispatch data:", error);
+        return [];
+    }
+};
+
+const markReady = async (studentId: string) => {
+    try {
+        await axios.post(
+            "/api/new/kit-ready",
+            { studentId },
+            {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem("token")}`,
+                },
+            },
+        );
+    } catch (error) {
+        console.error("Error marking kit as ready:", error);
+    }
+};
+
+const markDispatched = async (studentId: string) => {
+    try {
+        const date = new Date();
+        await axios.post(
+            "/api/new/kit-dispatch",
+            { studentId, date },
+            {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem("token")}`,
+                },
+            },
+        );
+    } catch (error) {
+        console.error("Error marking kit as dispatched:", error);
+    }
+};
+
+export default function KitDispatchPage() {
     const [students, setStudents] = useState<Student[]>([]);
-    const [nameSearch, setNameSearch] = useState("");
-    const [sortBy, setSortBy] = useState<
-        "name" | "kitDispatched" | "kitDispatchedDate"
-    >("kitDispatched");
-    const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
-    const [dispatchFilter, setDispatchFilter] = useState<
-        "all" | "dispatched" | "notDispatched"
-    >("all");
-    const [isSheetOpen, setIsSheetOpen] = useState(false);
+    const [searchTerm, setSearchTerm] = useState("");
+    const [kitStatusFilter, setKitStatusFilter] = useState("All");
+    const [dispatchStatusFilter, setDispatchStatusFilter] = useState("All");
+    const [sortBy, setSortBy] = useState("name");
+    const router = useNavigate();
 
     useEffect(() => {
-        const fetchKitDispatchData = async () => {
-            try {
-                const { data } = await axios.get("/api/new/kit-data", {
-                    headers: {
-                        Authorization: `Bearer ${localStorage.getItem("token")}`,
-                    },
-                });
-                setStudents(data.data);
-            } catch (error) {
-                toast({
-                    title: "Error",
-                    description: "Failed to fetch kit dispatch data",
-                    variant: "destructive",
-                });
-            }
+        const loadData = async () => {
+            const data = await fetchKitDispatchData();
+            setStudents(data);
         };
-        fetchKitDispatchData();
+        loadData();
     }, []);
 
+    const handleMarkReady = async (studentId: string) => {
+        await markReady(studentId);
+        setStudents(
+            students.map((student) =>
+                student.id === studentId
+                    ? { ...student, kitReady: true }
+                    : student,
+            ),
+        );
+    };
+
     const handleMarkDispatched = async (studentId: string) => {
-        const date = new Date();
-        try {
-            await axios.post(
-                "/api/new/kit-dispatch",
-                {
-                    studentId,
-                    date,
-                },
-                {
-                    headers: {
-                        Authorization: `Bearer ${localStorage.getItem("token")}`,
-                    },
-                },
-            );
-            setStudents((prevStudents) =>
-                prevStudents.map((student) =>
-                    student.id === studentId
-                        ? {
-                              ...student,
-                              kitDispatched: true,
-                              kitDispatchedDate: date,
-                          }
-                        : student,
-                ),
-            );
-            toast({
-                title: "Success",
-                description: "Kit marked as dispatched",
-                variant: "default",
-            });
-        } catch (error) {
-            toast({
-                title: "Error",
-                description: "Failed to mark kit dispatched",
-                variant: "destructive",
-            });
-        }
+        await markDispatched(studentId);
+        setStudents(
+            students.map((student) =>
+                student.id === studentId
+                    ? {
+                          ...student,
+                          kitDispatched: true,
+                          kitDispatchedDate: new Date(),
+                      }
+                    : student,
+            ),
+        );
     };
 
     const filteredAndSortedStudents = useMemo(() => {
@@ -119,291 +155,219 @@ const KitDispatchPage = () => {
                 (student) =>
                     student.name
                         .toLowerCase()
-                        .includes(nameSearch.toLowerCase()) &&
-                    (dispatchFilter === "all" ||
-                        (dispatchFilter === "dispatched" &&
+                        .includes(searchTerm.toLowerCase()) &&
+                    (kitStatusFilter === "All" ||
+                        (kitStatusFilter === "Ready" && student.kitReady) ||
+                        (kitStatusFilter === "Not Ready" &&
+                            !student.kitReady)) &&
+                    (dispatchStatusFilter === "All" ||
+                        (dispatchStatusFilter === "Dispatched" &&
                             student.kitDispatched) ||
-                        (dispatchFilter === "notDispatched" &&
+                        (dispatchStatusFilter === "Not Dispatched" &&
                             !student.kitDispatched)),
             )
             .sort((a, b) => {
-                if (sortBy === "name") {
-                    return sortOrder === "asc"
-                        ? a.name.localeCompare(b.name)
-                        : b.name.localeCompare(a.name);
-                } else if (sortBy === "kitDispatched") {
-                    return sortOrder === "asc"
-                        ? Number(a.kitDispatched) - Number(b.kitDispatched)
-                        : Number(b.kitDispatched) - Number(a.kitDispatched);
-                } else {
-                    const dateA = a.kitDispatchedDate
-                        ? new Date(a.kitDispatchedDate)
-                        : new Date(0);
-                    const dateB = b.kitDispatchedDate
-                        ? new Date(b.kitDispatchedDate)
-                        : new Date(0);
-                    return sortOrder === "asc"
-                        ? dateA.getTime() - dateB.getTime()
-                        : dateB.getTime() - dateA.getTime();
-                }
+                if (sortBy === "name") return a.name.localeCompare(b.name);
+                if (sortBy === "kitStatus")
+                    return Number(b.kitReady) - Number(a.kitReady);
+                if (sortBy === "dispatchStatus")
+                    return Number(b.kitDispatched) - Number(a.kitDispatched);
+                return 0;
             });
-    }, [students, nameSearch, sortBy, sortOrder, dispatchFilter]);
+    }, [students, searchTerm, kitStatusFilter, dispatchStatusFilter, sortBy]);
 
-    const handleDownload = (exportFormat: "xlsx" | "pdf" | "docx") => {
-        const data = filteredAndSortedStudents.map((student) => ({
-            Name: student.name,
-            Status: student.kitDispatched ? "Dispatched" : "Not Dispatched",
-            "Date of Dispatch": student.kitDispatchedDate
-                ? format(new Date(student.kitDispatchedDate), "PP")
-                : "-",
-        }));
+    const handleDownload = async () => {
+        const studentsWithAddress = await getStudentsData(
+            filteredAndSortedStudents.map((student) => student.id),
+        );
+        const workbook = XLSX.utils.book_new();
+        const worksheet = XLSX.utils.json_to_sheet(
+            studentsWithAddress.map((student, index) => ({
+                orderId: `order${new Date().toISOString().slice(0, 10).replace(/-/g, "")}${(index + 1).toString().padStart(3, "0")}`,
+                "Buyer's mobile number": student.callNumber,
+                "Buyer's First name": student.name.split(" ")[0],
+                "Buyer's last name": student.name.split(" ").slice(1).join(" "),
+                Email: student.email,
+                "Shipping complete Address": student.completeAddress,
+                Landmark: student.landmark,
+                pincode: student.pincode,
+                state: student.state,
+                country: student.country,
+            })),
+        );
 
-        if (exportFormat === "xlsx") {
-            const worksheet = XLSX.utils.json_to_sheet(data);
-            const workbook = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(workbook, worksheet, "Students");
-            XLSX.writeFile(workbook, "student_kit_dispatch.xlsx");
-        } else if (exportFormat === "pdf") {
-            const doc = new jsPDF();
-            autoTable(doc, {
-                head: [["Name", "Status", "Date of Dispatch"]],
-                body: data.map(Object.values),
-            });
-            doc.save("student_kit_dispatch.pdf");
-        } else if (exportFormat === "docx") {
-            let content = "Name\tStatus\tDate of Dispatch\n";
-            data.forEach((row) => {
-                content += `${row.Name}\t${row.Status}\t${row["Date of Dispatch"]}\n`;
-            });
-            const blob = new Blob([content], { type: "text/plain" });
-            const link = document.createElement("a");
-            link.href = URL.createObjectURL(blob);
-            link.download = "student_kit_dispatch.txt";
-            link.click();
-        }
+        XLSX.utils.book_append_sheet(workbook, worksheet, "Students");
+        XLSX.writeFile(workbook, "students_data.xlsx");
     };
 
     return (
-        <div className="container mx-auto py-6 px-4 sm:px-6 lg:px-8">
-            <h1 className="text-2xl font-bold mb-6">Junior Kit Status</h1>
-            <div className="space-y-4 p-4">
-                <Input
-                    placeholder="Search by name"
-                    value={nameSearch}
-                    onChange={(e) => setNameSearch(e.target.value)}
-                    className="w-full"
-                    aria-label="Search by name"
-                />
+        <div className="container mx-auto px-4 py-8">
+            <h1 className="text-3xl font-bold mb-6">Kit Dispatch Management</h1>
 
-                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
-                    <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
-                        <SheetTrigger asChild>
-                            <Button
-                                variant="outline"
-                                className="w-full sm:w-auto"
-                            >
-                                <Filter className="w-4 h-4 mr-2" />
-                                Filter & Sort
-                            </Button>
-                        </SheetTrigger>
-                        <SheetContent
-                            side="right"
-                            className="w-full sm:max-w-md"
-                        >
-                            <SheetHeader>
-                                <SheetTitle>Filter and Sort Options</SheetTitle>
-                                <SheetDescription>
-                                    Adjust your view preferences here.
-                                </SheetDescription>
-                            </SheetHeader>
-                            <div className="mt-4 space-y-4">
-                                <div className="flex flex-col space-y-2">
-                                    <label
-                                        htmlFor="sort-by"
-                                        className="text-sm font-medium"
-                                    >
-                                        Sort by
-                                    </label>
-                                    <Select
-                                        value={sortBy}
-                                        onValueChange={(value) =>
-                                            setSortBy(value as typeof sortBy)
-                                        }
-                                    >
-                                        <SelectTrigger>
-                                            <SelectValue placeholder="Sort by" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectItem value="name">
-                                                Name
-                                            </SelectItem>
-                                            <SelectItem value="kitDispatched">
-                                                Kit Status
-                                            </SelectItem>
-                                            <SelectItem value="kitDispatchedDate">
-                                                Dispatch Date
-                                            </SelectItem>
-                                        </SelectContent>
-                                    </Select>
-                                </div>
-                                <div className="flex items-center space-x-2">
-                                    <label
-                                        htmlFor="sort-order"
-                                        className="text-sm font-medium"
-                                    >
-                                        Sort Order
-                                    </label>
-                                    <Button
-                                        id="sort-order"
-                                        variant="outline"
-                                        size="icon"
-                                        onClick={() =>
-                                            setSortOrder(
-                                                sortOrder === "asc"
-                                                    ? "desc"
-                                                    : "asc",
-                                            )
-                                        }
-                                        aria-label={`Sort ${sortOrder === "asc" ? "ascending" : "descending"}`}
-                                    >
-                                        <ArrowUpDown className="h-4 w-4" />
-                                    </Button>
-                                </div>
-                                <div className="flex flex-col space-y-2">
-                                    <label
-                                        htmlFor="dispatch-filter"
-                                        className="text-sm font-medium"
-                                    >
-                                        Filter by dispatch
-                                    </label>
-                                    <Select
-                                        value={dispatchFilter}
-                                        onValueChange={(value) =>
-                                            setDispatchFilter(
-                                                value as typeof dispatchFilter,
-                                            )
-                                        }
-                                    >
-                                        <SelectTrigger>
-                                            <SelectValue placeholder="Filter by dispatch" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectItem value="all">
-                                                All
-                                            </SelectItem>
-                                            <SelectItem value="dispatched">
-                                                Dispatched
-                                            </SelectItem>
-                                            <SelectItem value="notDispatched">
-                                                Not Dispatched
-                                            </SelectItem>
-                                        </SelectContent>
-                                    </Select>
-                                </div>
-                            </div>
-                        </SheetContent>
-                    </Sheet>
-
-                    <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                            <Button
-                                variant="outline"
-                                className="w-full sm:w-auto"
-                            >
-                                <Download className="w-4 h-4 mr-2" />
-                                Download
-                            </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                            <DropdownMenuItem
-                                onClick={() => handleDownload("xlsx")}
-                            >
-                                Download Excel
-                            </DropdownMenuItem>
-                            <DropdownMenuItem
-                                onClick={() => handleDownload("pdf")}
-                            >
-                                Download PDF
-                            </DropdownMenuItem>
-                            <DropdownMenuItem
-                                onClick={() => handleDownload("docx")}
-                            >
-                                Download Word
-                            </DropdownMenuItem>
-                        </DropdownMenuContent>
-                    </DropdownMenu>
+            <div className="flex flex-col md:flex-row gap-4 mb-6">
+                <div className="flex-1">
+                    <Input
+                        type="text"
+                        placeholder="Search students..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="w-full"
+                    />
+                </div>
+                <div className="flex gap-2 flex-wrap">
+                    <Select
+                        value={kitStatusFilter}
+                        onValueChange={setKitStatusFilter}
+                    >
+                        <SelectTrigger className="w-[150px]">
+                            <SelectValue placeholder="Kit Status" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="All">All</SelectItem>
+                            <SelectItem value="Ready">Ready</SelectItem>
+                            <SelectItem value="Not Ready">Not Ready</SelectItem>
+                        </SelectContent>
+                    </Select>
+                    <Select
+                        value={dispatchStatusFilter}
+                        onValueChange={setDispatchStatusFilter}
+                    >
+                        <SelectTrigger className="w-[150px]">
+                            <SelectValue placeholder="Dispatch Status" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="All">All</SelectItem>
+                            <SelectItem value="Dispatched">
+                                Dispatched
+                            </SelectItem>
+                            <SelectItem value="Not Dispatched">
+                                Not Dispatched
+                            </SelectItem>
+                        </SelectContent>
+                    </Select>
+                    <Select value={sortBy} onValueChange={setSortBy}>
+                        <SelectTrigger className="w-[150px]">
+                            <SelectValue placeholder="Sort By" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="name">Name</SelectItem>
+                            <SelectItem value="kitStatus">
+                                Kit Status
+                            </SelectItem>
+                            <SelectItem value="dispatchStatus">
+                                Dispatch Status
+                            </SelectItem>
+                        </SelectContent>
+                    </Select>
+                    <Button onClick={handleDownload}>
+                        <Download className="h-4 w-4 mr-2" />
+                        Download Excel
+                    </Button>
                 </div>
             </div>
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {filteredAndSortedStudents.map((student) => (
-                    <Card key={student.id} className="w-full">
+                    <Card key={student.id} className="flex flex-col">
                         <CardHeader>
-                            <CardTitle className="text-lg">
-                                {student.name}
+                            <CardTitle className="flex justify-between items-center">
+                                <span>{student.name}</span>
+                                <Button
+                                    size="sm"
+                                    variant="outline"
+                                    onClick={() =>
+                                        router(`/profile/${student.id}`)
+                                    }
+                                >
+                                    <User className="h-4 w-4 mr-1" />
+                                    Profile
+                                </Button>
                             </CardTitle>
                         </CardHeader>
                         <CardContent>
-                            <dl className="grid grid-cols-2 gap-1 text-sm">
-                                <dt className="font-medium">Call Number:</dt>
-                                <dd>{student.callNumber}</dd>
-                                <dt className="font-medium">Kit Status:</dt>
-                                <dd>
-                                    <Badge
-                                        variant={
-                                            student.kitDispatched
-                                                ? "default"
-                                                : "secondary"
-                                        }
-                                    >
-                                        {student.kitDispatched
-                                            ? "Dispatched"
-                                            : "Pending"}
-                                    </Badge>
-                                </dd>
-                                <dt className="font-medium">Dispatch Date:</dt>
-                                <dd>
-                                    {student.kitDispatchedDate
-                                        ? format(
-                                              new Date(
-                                                  student.kitDispatchedDate,
-                                              ),
-                                              "PP",
-                                          )
-                                        : "-"}
-                                </dd>
-                            </dl>
-                            <div className="mt-4 space-y-2">
-                                <Link
-                                    to={`/profile/${student.id}`}
-                                    className="w-full"
+                            <p className="text-sm text-gray-500 mb-2">
+                                Call Number: {student.callNumber}
+                            </p>
+                            <div className="flex gap-2 mb-2">
+                                <Badge
+                                    variant={
+                                        student.kitReady
+                                            ? "default"
+                                            : "secondary"
+                                    }
                                 >
-                                    <Button
-                                        variant="outline"
-                                        size="sm"
-                                        className="w-full"
-                                    >
-                                        View Profile
-                                    </Button>
-                                </Link>
-                                {!student.kitDispatched && (
-                                    <Button
-                                        variant="default"
-                                        size="sm"
-                                        className="w-full"
-                                        onClick={() =>
-                                            handleMarkDispatched(student.id)
-                                        }
-                                    >
-                                        Mark Dispatched
-                                    </Button>
-                                )}
+                                    {student.kitReady ? (
+                                        <CheckCircle className="h-4 w-4 mr-1" />
+                                    ) : (
+                                        <XCircle className="h-4 w-4 mr-1" />
+                                    )}
+                                    Kit{" "}
+                                    {student.kitReady ? "Ready" : "Not Ready"}
+                                </Badge>
+                                <Badge
+                                    variant={
+                                        student.kitDispatched
+                                            ? "default"
+                                            : "secondary"
+                                    }
+                                >
+                                    {student.kitDispatched ? (
+                                        <Package className="h-4 w-4 mr-1" />
+                                    ) : (
+                                        <XCircle className="h-4 w-4 mr-1" />
+                                    )}
+                                    {student.kitDispatched
+                                        ? "Dispatched"
+                                        : "Not Dispatched"}
+                                </Badge>
                             </div>
+                            {student.kitDispatchedDate && (
+                                <p className="text-sm text-gray-500">
+                                    Dispatched on:{" "}
+                                    {new Date(
+                                        student.kitDispatchedDate,
+                                    ).toLocaleDateString()}
+                                </p>
+                            )}
                         </CardContent>
+                        <CardFooter className="mt-auto">
+                            <div className="flex gap-2 w-full">
+                                <Button
+                                    className="flex-1"
+                                    variant={
+                                        student.kitReady
+                                            ? "secondary"
+                                            : "default"
+                                    }
+                                    onClick={() => handleMarkReady(student.id)}
+                                    disabled={student.kitReady}
+                                >
+                                    {student.kitReady ? "Ready" : "Mark Ready"}
+                                </Button>
+                                <Button
+                                    className="flex-1"
+                                    variant={
+                                        student.kitDispatched
+                                            ? "secondary"
+                                            : "default"
+                                    }
+                                    onClick={() =>
+                                        handleMarkDispatched(student.id)
+                                    }
+                                    disabled={
+                                        student.kitDispatched ||
+                                        !student.kitReady
+                                    }
+                                >
+                                    {student.kitDispatched
+                                        ? "Dispatched"
+                                        : "Mark Dispatched"}
+                                </Button>
+                            </div>
+                        </CardFooter>
                     </Card>
                 ))}
             </div>
         </div>
     );
-};
-
-export default KitDispatchPage;
+}

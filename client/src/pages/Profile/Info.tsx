@@ -12,7 +12,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Switch } from "@/components/ui/switch";
 import {
     Edit,
     User,
@@ -48,16 +47,17 @@ interface Student {
     previousScore: string;
     platform: string;
     dateOfDeactive?: Date;
+    reasonOfDeactive?: string;
     expectation: string;
     createdAt: Date;
     whattsapGroupLink: string | null;
     email: string;
-    completeAddress: string;
-    landmark: string;
-    city: string;
-    state: string;
-    pincode: string;
-    country: string;
+    completeAddress: string | null;
+    landmark: string | null;
+    city: string | null;
+    state: string | null;
+    pincode: string | null;
+    country: string | null;
     groupMentor?: {
         name: string;
         username: string;
@@ -66,6 +66,7 @@ interface Student {
 
 export default function EnhancedStudentProfile({ id }: { id: string }) {
     const [isEditing, setIsEditing] = useState(false);
+    const [isActiveEditing, setIsActiveEditing] = useState(false);
     const [student, setStudent] = useState<Student | null>(null);
     const [editedStudent, setEditedStudent] = useState<Student | null>(null);
 
@@ -125,7 +126,7 @@ export default function EnhancedStudentProfile({ id }: { id: string }) {
         }
     };
 
-    const handleStatusChange = async (status: boolean) => {
+    const handleStatusChange = async (status: boolean, reason?: string) => {
         if (!student) return;
 
         try {
@@ -135,6 +136,7 @@ export default function EnhancedStudentProfile({ id }: { id: string }) {
                     studentId: student.id,
                     date: new Date(),
                     status,
+                    reason,
                 },
                 {
                     headers: {
@@ -149,6 +151,7 @@ export default function EnhancedStudentProfile({ id }: { id: string }) {
                           status,
                           dateOfDeactive:
                               status === false ? new Date() : undefined,
+                          reasonOfDeactive: reason,
                       }
                     : null,
             );
@@ -179,21 +182,76 @@ export default function EnhancedStudentProfile({ id }: { id: string }) {
                             className={`text-2xl font-bold ${!student.status ? "text-red-500" : "text-pcb"}`}
                         >
                             {student.name}
+                            {student.gender === "male" ? (
+                                <img
+                                    src="/male.png"
+                                    height={35}
+                                    width={35}
+                                    alt="male"
+                                    className="inline mx-2"
+                                />
+                            ) : (
+                                <img
+                                    src="/female.png"
+                                    height={35}
+                                    width={35}
+                                    alt="female"
+                                    className="inline mx-2"
+                                />
+                            )}
                         </CardTitle>
                         <p className="text-sm text-gray-500">
                             Student ID: {student.id}
                         </p>
                     </div>
                     <div className="flex items-center justify-center gap-2 space-x-2">
-                        <Switch
-                            id="active"
-                            checked={student.status}
-                            onCheckedChange={handleStatusChange}
-                            className="data-[state=checked]:bg-pcb"
-                        />
-                        <Label htmlFor="active" className="text-sm font-medium">
-                            {student.status ? "Active" : "Inactive"}
-                        </Label>
+                        <Dialog
+                            open={isActiveEditing}
+                            onOpenChange={setIsActiveEditing}
+                        >
+                            <DialogTrigger asChild>
+                                <Button>
+                                    {student.status ? "Deactivate" : "Activate"}
+                                </Button>
+                            </DialogTrigger>
+                            <DialogContent>
+                                <DialogHeader>
+                                    <DialogTitle>
+                                        {student.status
+                                            ? "Deactivate Student"
+                                            : "Activate Student"}
+                                    </DialogTitle>
+                                </DialogHeader>
+                                <Label htmlFor="reason" className="text-sm">
+                                    Reason
+                                </Label>
+                                <Input
+                                    id="reason"
+                                    name="reason"
+                                    placeholder="Enter reason"
+                                    required
+                                />
+                                <Button
+                                    type="button"
+                                    className="mt-4"
+                                    onClick={() => {
+                                        handleStatusChange(
+                                            !student.status,
+                                            (
+                                                document.getElementById(
+                                                    "reason",
+                                                ) as HTMLInputElement
+                                            ).value,
+                                        );
+                                        setIsActiveEditing(false);
+                                    }}
+                                >
+                                    {student.status
+                                        ? "Deactivate Student"
+                                        : "Activate Student"}
+                                </Button>
+                            </DialogContent>
+                        </Dialog>
                         <span
                             className="flex items-center space-x-1 text-green-500"
                             onClick={handleOpenWhattsap}
@@ -282,6 +340,12 @@ export default function EnhancedStudentProfile({ id }: { id: string }) {
                                     student.dateOfDeactive,
                                 ).toLocaleDateString()}
                             </p>
+                            <p className="text-black">
+                                Reason:{" "}
+                                {student.reasonOfDeactive
+                                    ? student.reasonOfDeactive
+                                    : "No reason provided"}
+                            </p>
                         </div>
                     )}
                     <Tabs defaultValue="personal" className="w-full">
@@ -321,11 +385,6 @@ export default function EnhancedStudentProfile({ id }: { id: string }) {
                                 />
                                 <InfoCard
                                     icon={User}
-                                    label="Gender"
-                                    value={student.gender}
-                                />
-                                <InfoCard
-                                    icon={User}
                                     label="Father's Name"
                                     value={student.fatherName}
                                 />
@@ -348,21 +407,41 @@ export default function EnhancedStudentProfile({ id }: { id: string }) {
                                     icon={Phone}
                                     label="WhatsApp"
                                     value={student.whattsapNumber}
+                                    onClick={() => {
+                                        window.open(
+                                            `https://wa.me/${student.whattsapNumber}`,
+                                        );
+                                    }}
                                 />
                                 <InfoCard
                                     icon={Phone}
                                     label="Call Number"
                                     value={student.callNumber}
+                                    onClick={() => {
+                                        window.open(
+                                            `tel:${student.callNumber}`,
+                                        );
+                                    }}
                                 />
                                 <InfoCard
                                     icon={Phone}
                                     label="Mother's Number"
                                     value={student.motherNumber}
+                                    onClick={() => {
+                                        window.open(
+                                            `tel:${student.motherNumber}`,
+                                        );
+                                    }}
                                 />
                                 <InfoCard
                                     icon={Phone}
                                     label="Father's Number"
                                     value={student.fatherNumber}
+                                    onClick={() => {
+                                        window.open(
+                                            `tel:${student.fatherNumber}`,
+                                        );
+                                    }}
                                 />
                             </div>
                         </TabsContent>
@@ -436,13 +515,18 @@ function InfoCard({
     icon: Icon,
     label,
     value,
+    onClick,
 }: {
     icon: any;
     label: string;
     value: string;
+    onClick?: () => void;
 }) {
     return (
-        <div className="flex items-center space-x-3 p-4 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200">
+        <div
+            className="flex items-center space-x-3 p-4 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200"
+            onClick={onClick}
+        >
             <div className="bg-pcb/10 p-3 rounded-full">
                 <Icon className="h-6 w-6 text-pcb" />
             </div>

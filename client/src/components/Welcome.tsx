@@ -11,14 +11,18 @@ export default function Component({ name }: { name: string }) {
     useEffect(() => {
         const fetchWhatsappLink = async () => {
             try {
-                const { data } = await axios.get("/api/me");
+                const { data } = await axios.get("/api/me", {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem("token")}`,
+                    },
+                });
                 setWhatsappLink(data.whatsappLink);
             } catch (error) {
                 console.error("Failed to fetch WhatsApp link:", error);
             }
         };
         fetchWhatsappLink();
-    }, []); // Added empty dependency array to run effect only once
+    }, []);
 
     const handleWhatsappClick = () => {
         if (whatsappLink) {

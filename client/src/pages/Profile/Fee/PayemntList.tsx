@@ -15,6 +15,7 @@ type Payment = {
     amount: number;
     date: string;
     mode: string | null;
+    transactionId: string | null;
     cleared: boolean;
 };
 
@@ -45,6 +46,7 @@ export function PaymentList({ payments, onEditPayment }: PaymentListProps) {
                         <TableHead>Amount</TableHead>
                         <TableHead>Date</TableHead>
                         <TableHead>Mode</TableHead>
+                        <TableHead>Transaction ID</TableHead>
                         <TableHead>Cleared</TableHead>
                         <TableHead>Due Days</TableHead>
                         <TableHead>Actions</TableHead>
@@ -63,6 +65,9 @@ export function PaymentList({ payments, onEditPayment }: PaymentListProps) {
                                 {new Date(payment.date).toLocaleDateString()}
                             </TableCell>
                             <TableCell>{payment.mode || "N/A"}</TableCell>
+                            <TableCell>
+                                {payment.transactionId || "N/A"}
+                            </TableCell>
                             <TableCell>
                                 {payment.cleared ? "Yes" : "No"}
                             </TableCell>

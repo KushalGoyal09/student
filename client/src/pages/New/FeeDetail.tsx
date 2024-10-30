@@ -19,6 +19,7 @@ interface Payment {
     amount: number;
     date: Date;
     mode: string | null;
+    transactionId: string | null;
     cleared: boolean;
 }
 
@@ -36,6 +37,7 @@ interface Student {
     totalAmountDue: number;
     id: string;
     name: string;
+    whattsapNumber: string;
     createdAt: Date;
     Fees: StudentFees | null;
 }
@@ -140,6 +142,17 @@ export default function FeeDetails() {
         const nameMatch = student.name
             .toLowerCase()
             .includes(searchTerm.toLowerCase());
+        const numberMatch = student.whattsapNumber.includes(searchTerm);
+        let transactionIdMatch = false;
+        if (student.Fees) {
+            student.Fees.payments.forEach((payment) => {
+                if (payment.transactionId) {
+                    transactionIdMatch =
+                        transactionIdMatch ||
+                        payment.transactionId.includes(searchTerm);
+                }
+            });
+        }
         const feePlanMatch =
             feePlanFilter === "all" ||
             (feePlanFilter === "not-set" && !student.Fees) ||
@@ -155,7 +168,10 @@ export default function FeeDetails() {
             (student.Fees &&
                 student.Fees.mentorshipPlan === mentorshipPlanFilter);
         return (
-            nameMatch && feePlanMatch && allClearMatch && mentorshipPlanMatch
+            (nameMatch || numberMatch || transactionIdMatch) &&
+            feePlanMatch &&
+            allClearMatch &&
+            mentorshipPlanMatch
         );
     });
 
@@ -172,7 +188,7 @@ export default function FeeDetails() {
                     <Search className="w-4 h-4 text-gray-500" />
                     <Input
                         type="text"
-                        placeholder="Search by name..."
+                        placeholder="Search"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                         className="flex-grow"
@@ -260,7 +276,10 @@ export default function FeeDetails() {
                                     Total UnPaid Amount:{" "}
                                     {formatCurrency(student.totalAmountDue)}
                                 </p>
-                                <p>Created: {formatDate(student.createdAt)}</p>
+                                <p>
+                                    Created At: {formatDate(student.createdAt)}
+                                </p>
+                                <p>Whattsap Number: {student.whattsapNumber}</p>
                                 <p
                                     className={getFeePlanColor(
                                         student.Fees?.feesPlan,
@@ -320,6 +339,11 @@ export default function FeeDetails() {
                                                             <p>
                                                                 Mode:{" "}
                                                                 {payment.mode ||
+                                                                    "N/A"}
+                                                            </p>
+                                                            <p>
+                                                                Transaction ID:{" "}
+                                                                {payment.transactionId ||
                                                                     "N/A"}
                                                             </p>
                                                             <p

@@ -14,6 +14,7 @@ type Payment = {
     id: string;
     amount: number;
     date: string;
+    transactionId: string | null;
     mode: string | null;
     cleared: boolean;
 };
