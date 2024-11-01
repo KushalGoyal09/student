@@ -106,13 +106,30 @@ const VisionBoardComponent: FC<VisionBoardComponentProps> = ({ studentId }) => {
     ) => {
         setVisionBoard((prev) => {
             if (!prev) return prev;
+            let flag = false;
             const updatedSubject = prev[subject].map((chapter) => {
                 if (chapter.chapterId === chapterId) {
+                    flag = true;
                     return { ...chapter, [vision]: completed };
                 }
                 return chapter;
             });
-            return { ...prev, [subject]: updatedSubject };
+            if (flag) return { ...prev, [subject]: updatedSubject };
+            const updatedSubjectVision = {
+                studentId,
+                chapterId,
+                notes: false,
+                leacture: false,
+                ncert: false,
+                QP: false,
+                revision: false,
+                viva: false,
+                [vision]: completed,
+            };
+            return {
+                ...prev,
+                [subject]: [...prev[subject], updatedSubjectVision],
+            };
         });
         await setVision({
             studentId,
