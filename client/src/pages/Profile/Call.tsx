@@ -84,6 +84,15 @@ const StudentCallUpdates = ({ studentId }: StudentCallUpdatesProps) => {
     const weekEnd = endOfWeek(currentWeek, { weekStartsOn: 1 });
 
     return (
+        <>
+        <div className="flex justify-between items-center mt-4 p-4 bg-gray-100 rounded-lg shadow-md">
+            <div className="text-lg font-semibold text-gray-700">
+            Insights
+            </div>
+            <div className="text-sm text-gray-600">
+            Total Calls: {callUpdates.length}
+            </div>
+        </div>
         <Card className="w-full mt-6 max-w-6xl mx-auto">
             <CardHeader>
                 <CardTitle className="text-xl font-bold">
@@ -147,6 +156,7 @@ const StudentCallUpdates = ({ studentId }: StudentCallUpdatesProps) => {
                 </div>
             </CardContent>
         </Card>
+        </>
     );
 };
 export default StudentCallUpdates;

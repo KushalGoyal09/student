@@ -1,3 +1,5 @@
+"use client"
+
 import { useState, useEffect } from "react";
 import {
     Select,
@@ -9,6 +11,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
 import {
     Popover,
     PopoverTrigger,
@@ -23,10 +26,15 @@ import { format } from "date-fns";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import PreviewModal from "./Preview";
+import axios from "axios";
+import PreviousTargets from "./PreviousTargets";
 
 interface SubjectTarget {
     chapterId: number;
+    numberOfLecture: number;
+    isFinal?: boolean;
 }
 
 interface DayTarget {
@@ -39,6 +47,43 @@ interface DayTarget {
 
 type TargetType = "Regular" | "Revision" | "Extra";
 type Subject = "physics" | "chemistry" | "biology";
+
+interface LecturesDoneResponse {
+    data: {
+        numberOfExtraLectures: number;
+        numberOfRegularLectures: number;
+        numberOfRevisionLectures: number;
+    };
+    success: boolean;
+}
+
+interface OngoingChapter {
+    chapterId: number;
+    lecturesPerDay: number;
+    lecturesDone: number;
+    isComplete: boolean;
+}
+
+const getLecturesDone = async (
+    studentId: string,
+    chapterId: number,
+    subject: Subject,
+): Promise<LecturesDoneResponse['data']> => {
+    const { data } = await axios.post<LecturesDoneResponse>(
+        "/api/target/getLecturesDone",
+        {
+            studentId,
+            chapterId,
+            subject,
+        },
+        {
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+        },
+    );
+    return data.data;
+};
 
 export default function TargetAssignment() {
     const students = useRecoilValue(existingStudents);
@@ -72,6 +117,27 @@ export default function TargetAssignment() {
             biology: [0, 0, 0],
         },
     });
+    const [ongoingChapters, setOngoingChapters] = useState<{
+        [key in TargetType]: {
+            [key in Subject]: OngoingChapter[];
+        };
+    }>({
+        Regular: {
+            physics: [],
+            chemistry: [],
+            biology: [],
+        },
+        Revision: {
+            physics: [],
+            chemistry: [],
+            biology: [],
+        },
+        Extra: {
+            physics: [],
+            chemistry: [],
+            biology: [],
+        },
+    });
 
     useEffect(() => {
         const initialDates = Array.from({ length: 7 }, (_, i) => {
@@ -94,41 +160,62 @@ export default function TargetAssignment() {
         subject: Subject,
         columnIndex: number,
         checked: boolean,
-    ) => {
+      ) => {
         const chapterId = selectedChapters[targetType][subject][columnIndex];
         if (chapterId === 0) return;
-
+    
         setTargets((prevTargets) => {
-            const targetIndex = prevTargets.findIndex(
-                (t) => t.date === date && t.targetType === targetType,
-            );
-            if (targetIndex === -1) {
-                return [
-                    ...prevTargets,
-                    {
-                        date,
-                        targetType,
-                        physics: subject === "physics" ? [{ chapterId }] : [],
-                        chemistry:
-                            subject === "chemistry" ? [{ chapterId }] : [],
-                        biology: subject === "biology" ? [{ chapterId }] : [],
-                    },
-                ];
+          const targetIndex = prevTargets.findIndex(
+            (t) => t.date === date && t.targetType === targetType,
+          );
+          if (targetIndex === -1) {
+            const lecturesPerDay = ongoingChapters[targetType][subject].find(
+              (chapter) => chapter.chapterId === chapterId
+            )?.lecturesPerDay || 1;
+            return [
+              ...prevTargets,
+              {
+                date,
+                targetType,
+                physics: subject === "physics" ? [{ chapterId, numberOfLecture: lecturesPerDay }] : [],
+                chemistry: subject === "chemistry" ? [{ chapterId, numberOfLecture: lecturesPerDay }] : [],
+                biology: subject === "biology" ? [{ chapterId, numberOfLecture: lecturesPerDay }] : [],
+              },
+            ];
+          } else {
+            const updatedTargets = [...prevTargets];
+            if (checked) {
+              const lecturesPerDay = ongoingChapters[targetType][subject].find(
+                (chapter) => chapter.chapterId === chapterId
+              )?.lecturesPerDay || 1;
+              updatedTargets[targetIndex][subject].push({ chapterId, numberOfLecture: lecturesPerDay });
             } else {
-                const updatedTargets = [...prevTargets];
-                if (checked) {
-                    updatedTargets[targetIndex][subject].push({ chapterId });
-                } else {
-                    updatedTargets[targetIndex][subject] = updatedTargets[
-                        targetIndex
-                    ][subject].filter((t) => t.chapterId !== chapterId);
-                }
-                return updatedTargets;
+              updatedTargets[targetIndex][subject] = updatedTargets[
+                targetIndex
+              ][subject].filter((t) => t.chapterId !== chapterId);
             }
+            return updatedTargets;
+          }
         });
-    };
+    
+        // Update lectures done for the chapter
+        setOngoingChapters((prev) => {
+          const updatedOngoingChapters = { ...prev };
+          const chapterIndex = updatedOngoingChapters[targetType][subject].findIndex(
+            (chapter) => chapter.chapterId === chapterId
+          );
+    
+          if (chapterIndex !== -1) {
+            const lecturesPerDay = updatedOngoingChapters[targetType][subject][chapterIndex].lecturesPerDay;
+            updatedOngoingChapters[targetType][subject][chapterIndex].lecturesDone += checked ? lecturesPerDay/2 : -lecturesPerDay/2;
+          }
+    
+          return updatedOngoingChapters;
+        });
+      };
+    
 
-    const handleChapterSelect = (
+    const handleChapterSelect = async (
         targetType: TargetType,
         subject: Subject,
         columnIndex: number,
@@ -143,12 +230,169 @@ export default function TargetAssignment() {
                 ),
             },
         }));
+
+        if (selectedStudent && chapterId !== 0) {
+            try {
+                const lecturesDone = await getLecturesDone(selectedStudent, chapterId, subject);
+                const lecturesDoneCount = targetType === 'Regular' ? lecturesDone.numberOfRegularLectures :
+                                          targetType === 'Revision' ? lecturesDone.numberOfRevisionLectures :
+                                          lecturesDone.numberOfExtraLectures;
+
+                setOngoingChapters((prev) => {
+                    const updatedOngoingChapters = { ...prev };
+                    const chapterIndex = updatedOngoingChapters[targetType][subject].findIndex(
+                        (chapter) => chapter.chapterId === chapterId
+                    );
+
+                    if (chapterIndex === -1) {
+                        updatedOngoingChapters[targetType][subject].push({
+                            chapterId,
+                            lecturesPerDay: 1,
+                            lecturesDone: lecturesDoneCount,
+                            isComplete: false,
+                        });
+                    } else {
+                        updatedOngoingChapters[targetType][subject][chapterIndex].lecturesDone = lecturesDoneCount;
+                    }
+
+                    return updatedOngoingChapters;
+                });
+            } catch (error) {
+                console.error("Error fetching lectures done:", error);
+            }
+        }
+    };
+
+    const handleLecturesPerDayChange = (
+        targetType: TargetType,
+        subject: Subject,
+        chapterId: number,
+        value: number
+    ) => {
+        setOngoingChapters((prev) => {
+            const updatedOngoingChapters = { ...prev };
+            const chapterIndex = updatedOngoingChapters[targetType][subject].findIndex(
+                (chapter) => chapter.chapterId === chapterId
+            );
+
+            if (chapterIndex !== -1) {
+                updatedOngoingChapters[targetType][subject][chapterIndex].lecturesPerDay = value;
+            }
+
+            return updatedOngoingChapters;
+        });
+    };
+
+    const handleMarkComplete = (
+        targetType: TargetType,
+        subject: Subject,
+        chapterId: number,
+        isComplete: boolean
+    ) => {
+        setOngoingChapters((prev) => {
+            const updatedOngoingChapters = { ...prev };
+            const chapterIndex = updatedOngoingChapters[targetType][subject].findIndex(
+                (chapter) => chapter.chapterId === chapterId
+            );
+
+            if (chapterIndex !== -1) {
+                updatedOngoingChapters[targetType][subject][chapterIndex].isComplete = isComplete;
+            }
+
+            return updatedOngoingChapters;
+        });
+
+        // Set isFinal to true for the last target of this chapter if marked as complete
+        if (isComplete) {
+            setTargets((prevTargets) => {
+                const updatedTargets = [...prevTargets];
+                const lastTargetIndex = (() => {
+                    for (let i = updatedTargets.length - 1; i >= 0; i--) {
+                        const target = updatedTargets[i];
+                        if (target.targetType === targetType && target[subject].some((t: SubjectTarget) => t.chapterId === chapterId)) {
+                            return i;
+                        }
+                    }
+                    return -1;
+                })();
+
+                if (lastTargetIndex !== -1) {
+                    const chapterIndex = updatedTargets[lastTargetIndex][subject].findIndex(t => t.chapterId === chapterId);
+                    if (chapterIndex !== -1) {
+                        updatedTargets[lastTargetIndex][subject][chapterIndex].isFinal = true;
+                    }
+                }
+
+                return updatedTargets;
+            });
+        }
     };
 
     const handlePreview = () => {
         console.log(targets);
         setIsPreviewOpen(true);
     };
+
+    const renderOngoingChaptersBox = (targetType: TargetType) => (
+        <Card className="mt-4 bg-white shadow-md">
+            <CardHeader>
+                <CardTitle className="text-pcb">Ongoing Chapters</CardTitle>
+            </CardHeader>
+            <CardContent>
+                <Tabs defaultValue="physics" className="w-full">
+                    <TabsList className="bg-pcb/5 flex justify-evenly">
+                        <TabsTrigger
+                            value="physics"
+                            className="data-[state=active]:bg-pcb data-[state=active]:text-white w-full"
+                        >
+                            Physics
+                        </TabsTrigger>
+                        <TabsTrigger
+                            value="chemistry"
+                            className="data-[state=active]:bg-pcb data-[state=active]:text-white w-full"
+                        >
+                            Chemistry
+                        </TabsTrigger>
+                        <TabsTrigger
+                            value="biology"
+                            className="data-[state=active]:bg-pcb data-[state=active]:text-white w-full"
+                        >
+                            Biology
+                        </TabsTrigger>
+                    </TabsList>
+                    {["physics", "chemistry", "biology"].map((subject) => (
+                        <TabsContent key={subject} value={subject}>
+                            {ongoingChapters[targetType][subject as Subject].map((chapter) => (
+                                <div key={chapter.chapterId} className="flex items-center justify-between mb-2">
+                                    <span>{syllabus[subject as Subject].find(c => c.id === chapter.chapterId)?.chapterName}</span>
+                                    <div className="flex items-center space-x-4">
+                                        <Label htmlFor={`lectures-per-day-${targetType}-${subject}-${chapter.chapterId}`}>Lectures/day:</Label>
+                                        <Input
+                                            id={`lectures-per-day-${targetType}-${subject}-${chapter.chapterId}`}
+                                            type="number"
+                                            value={chapter.lecturesPerDay}
+                                            onChange={(e) => handleLecturesPerDayChange(targetType, subject as Subject, chapter.chapterId, parseInt(e.target.value))}
+                                            className="w-16"
+                                            min="1"
+                                        />
+                                        <Label htmlFor={`lectures-done-${targetType}-${subject}-${chapter.chapterId}`}>Lectures done:</Label>
+                                        <span id={`lectures-done-${targetType}-${subject}-${chapter.chapterId}`}>{chapter.lecturesDone}</span>
+                                        <Label htmlFor={`complete-${targetType}-${subject}-${chapter.chapterId}`}>Complete:</Label>
+                                        <Switch
+                                            id={`complete-${targetType}-${subject}-${chapter.chapterId}`}
+                                            checked={chapter.isComplete}
+                                            onCheckedChange={(checked) => handleMarkComplete(targetType, subject as Subject, chapter.chapterId, checked)}
+                                        />
+                                    </div>
+                                
+                                </div>
+                            ))}
+                        </TabsContent>
+                    ))}
+                </Tabs>
+            </CardContent>
+        </Card>
+    );
 
     const renderSubjectTable = (targetType: TargetType, subject: Subject) => (
         <Card className="mt-4 bg-white shadow-md">
@@ -212,7 +456,7 @@ export default function TargetAssignment() {
                                     key={date}
                                     className="border-b border-pcb/10"
                                 >
-                                    <td className="p-2 text-pcb text-center sticky left-0 bg-white z-10">
+                                    <td className="p-2  text-pcb text-center sticky left-0 bg-white z-10">
                                         {format(new Date(date), "MMM dd")}
                                     </td>
                                     {[0, 1, 2].map((_, index) => (
@@ -221,6 +465,7 @@ export default function TargetAssignment() {
                                             className="p-2 text-center"
                                         >
                                             <Checkbox
+                                                id={`target-${targetType}-${subject}-${date}-${index}`}
                                                 className="border-pcb/30 text-pcb"
                                                 onCheckedChange={(checked) =>
                                                     handleTargetChange(
@@ -254,7 +499,8 @@ export default function TargetAssignment() {
                 <CardTitle className="text-pcb">{targetType} Targets</CardTitle>
             </CardHeader>
             <CardContent>
-                <Tabs defaultValue="physics" className="w-full">
+                {renderOngoingChaptersBox(targetType)}
+                <Tabs defaultValue="physics" className="w-full mt-4">
                     <TabsList className="bg-pcb/5 flex justify-evenly">
                         <TabsTrigger
                             value="physics"
@@ -331,10 +577,11 @@ export default function TargetAssignment() {
                     </div>
 
                     <div>
-                        <Label className="text-pcb">Start Date</Label>
+                        <Label htmlFor="start-date" className="text-pcb">Start Date</Label>
                         <Popover>
                             <PopoverTrigger asChild>
                                 <Button
+                                    id="start-date"
                                     variant="outline"
                                     className="w-full justify-start text-left font-normal border-pcb/30 text-pcb"
                                 >
@@ -361,6 +608,8 @@ export default function TargetAssignment() {
                     </div>
                 </CardContent>
             </Card>
+
+            <PreviousTargets studentId={selectedStudent} startDate={startDate}  />
 
             {renderTargetSection("Regular")}
             {renderTargetSection("Revision")}
@@ -406,6 +655,7 @@ export default function TargetAssignment() {
                         </div>
                         {includeSpecialNote && (
                             <Textarea
+                                id="special-note"
                                 placeholder="Enter special note"
                                 value={specialNote}
                                 onChange={(e) => setSpecialNote(e.target.value)}

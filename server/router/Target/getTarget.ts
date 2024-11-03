@@ -10,7 +10,7 @@ const bodySchema = z.object({
     studentId: z.string(),
     fromDate: z.string(),
     toDate: z.string(),
-});
+}); 
 
 const getTarget = async (req: AuthRequest, res: Response) => {
     const { studentId, fromDate, toDate } = bodySchema.parse(req.body);

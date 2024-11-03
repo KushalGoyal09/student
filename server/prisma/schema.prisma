@@ -106,15 +106,19 @@ model Student {
 model PhysicsVisionBoard {
   id                 String           @id @default(uuid())
   chapter            PhysicsSyallabus @relation(fields: [physicsSyallabusId], references: [id])
-  notes              Boolean
-  leacture           Boolean
-  ncert              Boolean
-  QP                 Boolean
-  revision           Boolean
-  viva               Boolean
+  notes              Boolean          @default(false)
+  leacture           Boolean          @default(false)
+  ncert              Boolean          @default(false)
+  QP                 Boolean          @default(false)
+  revision           Boolean          @default(false)
+  viva               Boolean          @default(false)
   Student            Student          @relation(fields: [studentId], references: [id])
   studentId          String
   physicsSyallabusId Int
+
+  numberOfRegularLectures  Int @default(0)
+  numberOfRevisionLectures Int @default(0)
+  numberOfExtraLectures    Int @default(0)
 
   @@unique([studentId, physicsSyallabusId])
 }
@@ -122,15 +126,19 @@ model PhysicsVisionBoard {
 model ChemistryVisionBoard {
   id                   String             @id @default(uuid())
   chapter              ChemistrySyallabus @relation(fields: [chemistrySyallabusId], references: [id])
-  notes                Boolean
-  leacture             Boolean
-  ncert                Boolean
-  QP                   Boolean
-  revision             Boolean
-  viva                 Boolean
+  notes                Boolean            @default(false)
+  leacture             Boolean            @default(false)
+  ncert                Boolean            @default(false)
+  QP                   Boolean            @default(false)
+  revision             Boolean            @default(false)
+  viva                 Boolean            @default(false)
   Student              Student            @relation(fields: [studentId], references: [id])
   studentId            String
   chemistrySyallabusId Int
+
+  numberOfRegularLectures  Int @default(0)
+  numberOfRevisionLectures Int @default(0)
+  numberOfExtraLectures    Int @default(0)
 
   @@unique([studentId, chemistrySyallabusId])
 }
@@ -138,15 +146,19 @@ model ChemistryVisionBoard {
 model BiologyVisionBoard {
   id                 String           @id @default(uuid())
   chapter            BiologySyallabus @relation(fields: [biologySyallabusId], references: [id])
-  notes              Boolean
-  leacture           Boolean
-  ncert              Boolean
-  QP                 Boolean
-  revision           Boolean
-  viva               Boolean
+  notes              Boolean          @default(false)
+  leacture           Boolean          @default(false)
+  ncert              Boolean          @default(false)
+  QP                 Boolean          @default(false)
+  revision           Boolean          @default(false)
+  viva               Boolean          @default(false)
   Student            Student          @relation(fields: [studentId], references: [id])
   studentId          String
   biologySyallabusId Int
+
+  numberOfRegularLectures  Int @default(0)
+  numberOfRevisionLectures Int @default(0)
+  numberOfExtraLectures    Int @default(0)
 
   @@unique([studentId, biologySyallabusId])
 }
@@ -375,27 +387,33 @@ enum TargetType {
 }
 
 model PhysicsTarget {
-  id             String           @id @default(uuid())
-  chapterId      Int
-  PhysicsChapter PhysicsSyallabus @relation(fields: [chapterId], references: [id])
-  Target         Target?          @relation(fields: [targetId], references: [id])
-  targetId       String?
+  id              String           @id @default(uuid())
+  chapterId       Int
+  numberOfLecture Int
+  isFinal         Boolean          @default(false)
+  PhysicsChapter  PhysicsSyallabus @relation(fields: [chapterId], references: [id])
+  Target          Target?          @relation(fields: [targetId], references: [id])
+  targetId        String?
 }
 
 model ChemistryTarget {
   id               String             @id @default(uuid())
   chapterId        Int
+  numberOfLecture  Int
+  isFinal          Boolean            @default(false)
   ChemistryChapter ChemistrySyallabus @relation(fields: [chapterId], references: [id])
   Target           Target?            @relation(fields: [targetId], references: [id])
   targetId         String?
 }
 
 model BiologyTarget {
-  id             String           @id @default(uuid())
-  chapterId      Int
-  BiologyChapter BiologySyallabus @relation(fields: [chapterId], references: [id])
-  Target         Target?          @relation(fields: [targetId], references: [id])
-  targetId       String?
+  id              String           @id @default(uuid())
+  chapterId       Int
+  numberOfLecture Int
+  isFinal         Boolean          @default(false)
+  BiologyChapter  BiologySyallabus @relation(fields: [chapterId], references: [id])
+  Target          Target?          @relation(fields: [targetId], references: [id])
+  targetId        String?
 }
 
 model Ticket {

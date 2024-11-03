@@ -1,4 +1,4 @@
-import { PrismaClient, TargetType } from "@prisma/client";
+import { PrismaClient } from "@prisma/client";
 import { Response } from "express";
 import { AuthRequest, Role } from "../../types";
 import { throwUnauthorizedError } from "../../custom-error/customError";
@@ -38,256 +38,139 @@ const markComplete = async (req: AuthRequest, res: Response) => {
 async function updateVisionBoardOnTargetCompletion(targetId: string) {
     const target = await db.target.findUnique({
         where: { id: targetId },
-        include: {
-            physics: { include: { PhysicsChapter: true } },
-            chemistry: { include: { ChemistryChapter: true } },
-            biology: { include: { BiologyChapter: true } },
-            Student: true,
+        select: {
+            id: true,
+            completed: true,
+            studentId: true,
+            physics: {
+                select: {
+                    chapterId: true,
+                    isFinal: true,
+                },
+            },
+            chemistry: {
+                select: {
+                    chapterId: true,
+                    isFinal: true,
+                },
+            },
+            biology: {
+                select: {
+                    chapterId: true,
+                    isFinal: true,
+                },
+            },
+            targetType: true,
         },
     });
 
     if (!target || !target.completed) {
         throw new Error("Target not found or not completed");
     }
-
-    if (target.physics.length > 0) {
-        for (const subjectTarget of target.physics) {
-            const chapterId = subjectTarget.chapterId;
-            const studentId = target.studentId;
-            if (target.targetType === TargetType.Regular) {
-                const incompleteRegularTargets = await db.target.count({
+    const targetType = target.targetType;
+    const studentId = target.studentId;
+    for (let i = 0; i < target.physics.length; i++) {
+        const chapterId = target.physics[i].chapterId;
+        const isFinal = target.physics[i].isFinal;
+        if (isFinal === true) {
+            if (targetType === "Regular") {
+                await db.physicsVisionBoard.update({
                     where: {
-                        completed: false,
-                        targetType: TargetType.Regular,
-                        physics: {
-                            some: { chapterId },
+                        studentId_physicsSyallabusId: {
+                            studentId,
+                            physicsSyallabusId: chapterId,
                         },
-                        studentId,
+                    },
+                    data: {
+                        notes: true,
+                        leacture: true,
+                        ncert: true,
+                        QP: true,
                     },
                 });
-                if (incompleteRegularTargets === 0) {
-                    await db.physicsVisionBoard.upsert({
-                        where: {
-                            studentId_physicsSyallabusId: {
-                                studentId,
-                                physicsSyallabusId: chapterId,
-                            },
-                        },
-                        update: {
-                            notes: true,
-                            leacture: true,
-                            ncert: true,
-                            QP: true,
-                        },
-                        create: {
-                            Student: { connect: { id: studentId } },
-                            chapter: { connect: { id: chapterId } },
-                            notes: true,
-                            leacture: true,
-                            ncert: true,
-                            QP: true,
-                            revision: false,
-                            viva: false,
-                        },
-                    });
-                }
             }
-
-            if (target.targetType === TargetType.Revision) {
-                const incompleteRevisionTargets = await db.target.count({
+            if (targetType === "Revision") {
+                await db.physicsVisionBoard.update({
                     where: {
-                        completed: false,
-                        targetType: TargetType.Revision,
-                        physics: {
-                            some: { chapterId },
+                        studentId_physicsSyallabusId: {
+                            studentId,
+                            physicsSyallabusId: chapterId,
                         },
-                        studentId,
+                    },
+                    data: {
+                        revision: true,
                     },
                 });
-                if (incompleteRevisionTargets === 0) {
-                    await db.physicsVisionBoard.upsert({
-                        where: {
-                            studentId_physicsSyallabusId: {
-                                studentId,
-                                physicsSyallabusId: chapterId,
-                            },
-                        },
-                        update: {
-                            revision: true,
-                        },
-                        create: {
-                            Student: { connect: { id: studentId } },
-                            chapter: { connect: { id: chapterId } },
-                            notes: false,
-                            leacture: false,
-                            ncert: false,
-                            QP: false,
-                            revision: true,
-                            viva: false,
-                        },
-                    });
-                }
             }
         }
     }
-
-    if (target.chemistry.length > 0) {
-        for (const subjectTarget of target.chemistry) {
-            const chapterId = subjectTarget.chapterId;
-            const studentId = target.studentId;
-            if (target.targetType === TargetType.Regular) {
-                const incompleteRegularTargets = await db.target.count({
+    for (let i = 0; i < target.chemistry.length; i++) {
+        const chapterId = target.chemistry[i].chapterId;
+        const isFinal = target.chemistry[i].isFinal;
+        if (isFinal === true) {
+            if (targetType === "Regular") {
+                await db.chemistryVisionBoard.update({
                     where: {
-                        completed: false,
-                        targetType: TargetType.Regular,
-                        chemistry: {
-                            some: { chapterId },
+                        studentId_chemistrySyallabusId: {
+                            studentId,
+                            chemistrySyallabusId: chapterId,
                         },
-                        studentId,
+                    },
+                    data: {
+                        notes: true,
+                        leacture: true,
+                        ncert: true,
+                        QP: true,
                     },
                 });
-                if (incompleteRegularTargets === 0) {
-                    await db.chemistryVisionBoard.upsert({
-                        where: {
-                            studentId_chemistrySyallabusId: {
-                                studentId,
-                                chemistrySyallabusId: chapterId,
-                            },
-                        },
-                        update: {
-                            notes: true,
-                            leacture: true,
-                            ncert: true,
-                            QP: true,
-                        },
-                        create: {
-                            Student: { connect: { id: studentId } },
-                            chapter: { connect: { id: chapterId } },
-                            notes: true,
-                            leacture: true,
-                            ncert: true,
-                            QP: true,
-                            revision: false,
-                            viva: false,
-                        },
-                    });
-                }
             }
-
-            if (target.targetType === TargetType.Revision) {
-                const incompleteRevisionTargets = await db.target.count({
+            if (targetType === "Revision") {
+                await db.chemistryVisionBoard.update({
                     where: {
-                        completed: false,
-                        targetType: TargetType.Revision,
-                        chemistry: {
-                            some: { chapterId },
+                        studentId_chemistrySyallabusId: {
+                            studentId,
+                            chemistrySyallabusId: chapterId,
                         },
-                        studentId,
+                    },
+                    data: {
+                        revision: true,
                     },
                 });
-                if (incompleteRevisionTargets === 0) {
-                    await db.chemistryVisionBoard.upsert({
-                        where: {
-                            studentId_chemistrySyallabusId: {
-                                studentId,
-                                chemistrySyallabusId: chapterId,
-                            },
-                        },
-                        update: {
-                            revision: true,
-                        },
-                        create: {
-                            Student: { connect: { id: studentId } },
-                            chapter: { connect: { id: chapterId } },
-                            notes: false,
-                            leacture: false,
-                            ncert: false,
-                            QP: false,
-                            revision: true,
-                            viva: false,
-                        },
-                    });
-                }
             }
         }
     }
-    if (target.biology.length > 0) {
-        for (const subjectTarget of target.biology) {
-            const chapterId = subjectTarget.chapterId;
-            const studentId = target.studentId;
-            if (target.targetType === TargetType.Regular) {
-                const incompleteRegularTargets = await db.target.count({
+    for (let i = 0; i < target.biology.length; i++) {
+        const chapterId = target.biology[i].chapterId;
+        const isFinal = target.biology[i].isFinal;
+        if (isFinal === true) {
+            if (targetType === "Regular") {
+                await db.biologyVisionBoard.update({
                     where: {
-                        completed: false,
-                        targetType: TargetType.Regular,
-                        biology: {
-                            some: { chapterId },
+                        studentId_biologySyallabusId: {
+                            studentId,
+                            biologySyallabusId: chapterId,
                         },
-                        studentId,
+                    },
+                    data: {
+                        notes: true,
+                        leacture: true,
+                        ncert: true,
+                        QP: true,
                     },
                 });
-                if (incompleteRegularTargets === 0) {
-                    await db.biologyVisionBoard.upsert({
-                        where: {
-                            studentId_biologySyallabusId: {
-                                studentId,
-                                biologySyallabusId: chapterId,
-                            },
-                        },
-                        update: {
-                            notes: true,
-                            leacture: true,
-                            ncert: true,
-                            QP: true,
-                        },
-                        create: {
-                            Student: { connect: { id: studentId } },
-                            chapter: { connect: { id: chapterId } },
-                            notes: true,
-                            leacture: true,
-                            ncert: true,
-                            QP: true,
-                            revision: false,
-                            viva: false,
-                        },
-                    });
-                }
             }
-
-            if (target.targetType === TargetType.Revision) {
-                const incompleteRevisionTargets = await db.target.count({
+            if (targetType === "Revision") {
+                await db.biologyVisionBoard.update({
                     where: {
-                        completed: false,
-                        targetType: TargetType.Revision,
-                        chemistry: {
-                            some: { chapterId },
+                        studentId_biologySyallabusId: {
+                            studentId,
+                            biologySyallabusId: chapterId,
                         },
-                        studentId,
+                    },
+                    data: {
+                        revision: true,
                     },
                 });
-                if (incompleteRevisionTargets === 0) {
-                    await db.biologyVisionBoard.upsert({
-                        where: {
-                            studentId_biologySyallabusId: {
-                                studentId,
-                                biologySyallabusId: chapterId,
-                            },
-                        },
-                        update: {
-                            revision: true,
-                        },
-                        create: {
-                            Student: { connect: { id: studentId } },
-                            chapter: { connect: { id: chapterId } },
-                            notes: false,
-                            leacture: false,
-                            ncert: false,
-                            QP: false,
-                            revision: true,
-                            viva: false,
-                        },
-                    });
-                }
             }
         }
     }

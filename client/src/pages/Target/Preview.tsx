@@ -15,6 +15,8 @@ import autoTable from "jspdf-autotable";
 
 interface SubjectTarget {
     chapterId: number;
+    numberOfLecture: number;
+    isFinal?: boolean;
 }
 
 interface DayTarget {

@@ -131,6 +131,21 @@ export default function Component() {
         );
     }
 
+    const totalCallsDone =
+        data.weekData?.students.reduce((total, student) => {
+            return (
+                total +
+                student.call.filter((call) => {
+                    return call.callStatus === "Done";
+                }).length
+            );
+        }, 0) || 0;
+
+    const totalStudents = data.Student.length;
+    const totalDays = daysOfWeek.length;
+    const averageCallsPerDay = totalCallsDone / totalDays;
+    const averageCallsPerStudentPerWeek = totalCallsDone / totalStudents;
+
     return (
         <div className="container mx-auto px-4 py-8 max-w-4xl">
             <div className="bg-white shadow-lg rounded-lg overflow-hidden">
@@ -221,6 +236,38 @@ export default function Component() {
                     <h2 className="text-2xl font-semibold mb-4">
                         Weekly Call Records
                     </h2>
+
+                    <div className="mb-8">
+                        <h2 className="text-2xl font-semibold mb-4">
+                            Insights
+                        </h2>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                            <div className="bg-gray-50 p-4 rounded-lg">
+                                <h3 className="font-semibold mb-2">
+                                    Total Calls Done
+                                </h3>
+                                <p className="text-3xl font-bold">
+                                    {totalCallsDone}
+                                </p>
+                            </div>
+                            <div className="bg-gray-50 p-4 rounded-lg">
+                                <h3 className="font-semibold mb-2">
+                                    Average Calls Per Day
+                                </h3>
+                                <p className="text-3xl font-bold">
+                                    {averageCallsPerDay.toFixed(2)}
+                                </p>
+                            </div>
+                            <div className="bg-gray-50 p-4 rounded-lg">
+                                <h3 className="font-semibold mb-2">
+                                    Average Calls Per Student Per Week
+                                </h3>
+                                <p className="text-3xl font-bold">
+                                    {averageCallsPerStudentPerWeek.toFixed(2)}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
                     <div className="overflow-x-auto">
                         <table className="w-full border-collapse">
                             <thead>
