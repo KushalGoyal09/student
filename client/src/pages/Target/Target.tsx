@@ -451,7 +451,7 @@ export default function TargetAssignment() {
                                                             ),
                                                         )
                                                     }
-                                                    className="w-16 h-8 text-sm"
+                                                    className="w-8 h-8 text-sm"
                                                     min="1"
                                                 />
                                             </div>
