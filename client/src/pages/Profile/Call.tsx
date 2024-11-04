@@ -85,77 +85,77 @@ const StudentCallUpdates = ({ studentId }: StudentCallUpdatesProps) => {
 
     return (
         <>
-        <div className="flex justify-between items-center mt-4 p-4 bg-gray-100 rounded-lg shadow-md">
-            <div className="text-lg font-semibold text-gray-700">
-            Insights
-            </div>
-            <div className="text-sm text-gray-600">
-            Total Calls: {callUpdates.length}
-            </div>
-        </div>
-        <Card className="w-full mt-6 max-w-6xl mx-auto">
-            <CardHeader>
-                <CardTitle className="text-xl font-bold">
-                    Call Updates
-                </CardTitle>
-                <div className="flex items-center justify-between mt-2">
-                    <Button
-                        variant="outline"
-                        size="icon"
-                        onClick={handlePreviousWeek}
-                    >
-                        <ChevronLeft className="h-4 w-4" />
-                    </Button>
-                    <span className="text-sm font-medium">
-                        {format(weekStart, "MMM d")} -{" "}
-                        {format(weekEnd, "MMM d, yyyy")}
-                    </span>
-                    <Button
-                        variant="outline"
-                        size="icon"
-                        onClick={handleNextWeek}
-                    >
-                        <ChevronRight className="h-4 w-4" />
-                    </Button>
+            <div className="flex justify-between items-center mt-4 p-4 bg-gray-100 rounded-lg shadow-md">
+                <div className="text-lg font-semibold text-gray-700">
+                    Insights
                 </div>
-            </CardHeader>
-            <CardContent>
-                <div className="grid grid-cols-7 gap-2 text-center">
-                    {Object.values(DaysOfWeek).map((day, index) => {
-                        const date = addWeeks(weekStart, 0);
-                        date.setDate(weekStart.getDate() + index);
-                        const callUpdate = callUpdates.find(
-                            (update) =>
-                                update.date === format(date, "yyyy-MM-dd"),
-                        );
-                        const status = callUpdate
-                            ? callUpdate.callStatus
-                            : "nothing";
+                <div className="text-sm text-gray-600">
+                    Total Calls: {callUpdates.length}
+                </div>
+            </div>
+            <Card className="w-full mt-6 max-w-6xl mx-auto">
+                <CardHeader>
+                    <CardTitle className="text-xl font-bold">
+                        Call Updates
+                    </CardTitle>
+                    <div className="flex items-center justify-between mt-2">
+                        <Button
+                            variant="outline"
+                            size="icon"
+                            onClick={handlePreviousWeek}
+                        >
+                            <ChevronLeft className="h-4 w-4" />
+                        </Button>
+                        <span className="text-sm font-medium">
+                            {format(weekStart, "MMM d")} -{" "}
+                            {format(weekEnd, "MMM d, yyyy")}
+                        </span>
+                        <Button
+                            variant="outline"
+                            size="icon"
+                            onClick={handleNextWeek}
+                        >
+                            <ChevronRight className="h-4 w-4" />
+                        </Button>
+                    </div>
+                </CardHeader>
+                <CardContent>
+                    <div className="grid grid-cols-7 gap-2 text-center">
+                        {Object.values(DaysOfWeek).map((day, index) => {
+                            const date = addWeeks(weekStart, 0);
+                            date.setDate(weekStart.getDate() + index);
+                            const callUpdate = callUpdates.find(
+                                (update) =>
+                                    update.date === format(date, "yyyy-MM-dd"),
+                            );
+                            const status = callUpdate
+                                ? callUpdate.callStatus
+                                : "nothing";
 
-                        return (
-                            <div
-                                key={day}
-                                className="flex flex-col items-center"
-                            >
-                                <span className="text-xs font-medium mb-1">
-                                    {day.slice(0, 3)}
-                                </span>
+                            return (
                                 <div
-                                    className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-medium text-white ${getStatusColor(status as CallStatus)}`}
+                                    key={day}
+                                    className="flex flex-col items-center"
                                 >
-                                    {status === "nothing"
-                                        ? "-"
-                                        : status.charAt(0)}
+                                    <span className="text-xs font-medium mb-1">
+                                        {day.slice(0, 3)}
+                                    </span>
+                                    <div
+                                        className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-medium text-white ${getStatusColor(status as CallStatus)}`}
+                                    >
+                                        {status === "nothing"
+                                            ? "-"
+                                            : status.charAt(0)}
+                                    </div>
+                                    <span className="text-xs mt-1">
+                                        {format(date, "d")}
+                                    </span>
                                 </div>
-                                <span className="text-xs mt-1">
-                                    {format(date, "d")}
-                                </span>
-                            </div>
-                        );
-                    })}
-                </div>
-            </CardContent>
-        </Card>
+                            );
+                        })}
+                    </div>
+                </CardContent>
+            </Card>
         </>
     );
 };

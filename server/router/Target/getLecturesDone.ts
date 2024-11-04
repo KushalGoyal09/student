@@ -16,7 +16,7 @@ interface ResponseData {
         numberOfExtraLectures: number;
         numberOfRegularLectures: number;
         numberOfRevisionLectures: number;
-    },
+    };
     success: boolean;
 }
 
