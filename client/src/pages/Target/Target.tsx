@@ -84,6 +84,9 @@ const getLecturesDone = async (
 };
 
 export default function TargetAssignment() {
+    const [checkboxStates, setCheckboxStates] = useState<{
+        [key: string]: boolean;
+    }>({});
     const students = useRecoilValue(existingStudents);
     const syllabus = useRecoilValue(syllabusAtom);
     const [isPreviewOpen, setIsPreviewOpen] = useState(false);
@@ -161,7 +164,11 @@ export default function TargetAssignment() {
     ) => {
         const chapterId = selectedChapters[targetType][subject][columnIndex];
         if (chapterId === 0) return;
-
+        const checkboxKey = `${date}-${targetType}-${subject}-${columnIndex}`;
+        setCheckboxStates((prev) => ({
+            ...prev,
+            [checkboxKey]: checked,
+        }));
         setTargets((prevTargets) => {
             const targetIndex = prevTargets.findIndex(
                 (t) => t.date === date && t.targetType === targetType,
@@ -555,7 +562,7 @@ export default function TargetAssignment() {
                                     key={date}
                                     className="border-b border-pcb/10"
                                 >
-                                    <td className="p-2  text-pcb text-center sticky left-0 bg-white z-10">
+                                    <td className="p-2 text-pcb text-center sticky left-0 bg-white z-10">
                                         {format(new Date(date), "MMM dd")}
                                     </td>
                                     {[0, 1, 2].map((_, index) => (
@@ -566,6 +573,11 @@ export default function TargetAssignment() {
                                             <Checkbox
                                                 id={`target-${targetType}-${subject}-${date}-${index}`}
                                                 className="border-pcb/30 text-pcb"
+                                                checked={
+                                                    checkboxStates[
+                                                        `${date}-${targetType}-${subject}-${index}`
+                                                    ] || false
+                                                }
                                                 onCheckedChange={(checked) =>
                                                     handleTargetChange(
                                                         date,
