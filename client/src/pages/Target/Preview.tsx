@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
     Dialog,
     DialogContent,
@@ -11,6 +11,16 @@ import { Send, Printer, Edit, Check } from "lucide-react";
 import { useRecoilValue } from "recoil";
 import syllabusAtom from "@/recoil/syllabus";
 import { jsPDF } from "jspdf";
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import autoTable from "jspdf-autotable";
 
 interface SubjectTarget {
@@ -26,21 +36,6 @@ interface DayTarget {
     chemistry: SubjectTarget[];
     biology: SubjectTarget[];
 }
-
-const sendTargetToBackend = async (targets: DayTarget[], studentId: string) => {
-    const response = await fetch("/api/target/setTarget", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-        body: JSON.stringify({
-            studentId,
-            target: targets,
-        }),
-    });
-    return response.json();
-};
 
 interface PreviewModalProps {
     isOpen: boolean;
@@ -60,6 +55,21 @@ interface PreviewModalProps {
     };
 }
 
+const sendTargetToBackend = async (targets: DayTarget[], studentId: string) => {
+    const response = await fetch("/api/target/setTarget", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify({
+            studentId,
+            target: targets,
+        }),
+    });
+    return response.json();
+};
+
 const PreviewModal: React.FC<PreviewModalProps> = ({
     isOpen,
     onClose,
@@ -67,7 +77,37 @@ const PreviewModal: React.FC<PreviewModalProps> = ({
     data,
 }) => {
     const [isApproved, setIsApproved] = useState(false);
+    const [showApproveAlert, setShowApproveAlert] = useState(false);
+    const [isDialogOpen, setIsDialogOpen] = useState(isOpen);
+    const syllabus = useRecoilValue(syllabusAtom);
     const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
+    useEffect(() => {
+        setIsDialogOpen(isOpen);
+    }, [isOpen]);
+
+    const handleClose = useCallback(() => {
+        setIsDialogOpen(false);
+        setIsApproved(false);
+        setShowApproveAlert(false);
+        onClose();
+    }, [onClose]);
+
+    useEffect(() => {
+        const handleEscape = (event: KeyboardEvent) => {
+            if (event.key === "Escape") {
+                handleClose();
+            }
+        };
+
+        if (isDialogOpen) {
+            document.addEventListener("keydown", handleEscape);
+        }
+
+        return () => {
+            document.removeEventListener("keydown", handleEscape);
+        };
+    }, [isDialogOpen, handleClose]);
 
     const commonSteps = [
         "👀 Watch Lecture and Take Notes 📝",
@@ -85,8 +125,6 @@ const PreviewModal: React.FC<PreviewModalProps> = ({
         "Note :- Reattempt all marked questions from today's practice on the Next day",
     ];
 
-    const syllabus = useRecoilValue(syllabusAtom);
-
     const handleSendToWhatsApp = async () => {
         if (data.whatsappGroupLink) {
             window.open(`${data.whatsappGroupLink}`, "_blank");
@@ -94,6 +132,7 @@ const PreviewModal: React.FC<PreviewModalProps> = ({
             alert("WhatsApp group link is not available.");
         }
     };
+
     const generatePDF = () => {
         const pdf = new jsPDF();
         const pageWidth = pdf.internal.pageSize.width;
@@ -288,14 +327,20 @@ const PreviewModal: React.FC<PreviewModalProps> = ({
         }
     };
 
+    const handleApproveClick = () => {
+        setShowApproveAlert(true);
+    };
+
     const handleApprove = async () => {
         setIsApproved(true);
+        setShowApproveAlert(false);
         const allTargets = [
             ...data.targets.regular,
             ...data.targets.revision,
             ...data.targets.extra,
         ];
         await sendTargetToBackend(allTargets, data.studentId);
+        handleClose();
     };
 
     const renderTargetTable = (targets: DayTarget[], title: string) => (
@@ -361,110 +406,138 @@ const PreviewModal: React.FC<PreviewModalProps> = ({
     );
 
     return (
-        <Dialog
-            open={isOpen}
-            onOpenChange={() => {
-                setIsApproved(false);
-                onClose();
-            }}
-        >
-            <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-                <DialogHeader>
-                    <DialogTitle className="flex items-center justify-between">
-                        <div className="flex items-center">
-                            <img
-                                src="/pcb-point-logo.png"
-                                alt="PCB Point Logo"
-                                className="w-12 h-12 mr-2"
-                            />
-                            <span className="text-2xl font-bold text-pcb">
-                                Personal Mentorship Programme
-                            </span>
-                        </div>
-                    </DialogTitle>
-                </DialogHeader>
-                <div id="preview-content" className="space-y-4">
-                    <div className="bg-pcb text-white p-4 rounded-t-lg">
-                        <div className="flex justify-between items-center">
-                            <h2 className="text-xl font-bold">
-                                Target for Future Doctor
-                            </h2>
-                            <div className="bg-white text-pcb px-4 py-1 rounded">
-                                {data.studentName}
+        <>
+            <Dialog open={isDialogOpen} onOpenChange={handleClose}>
+                <DialogContent
+                    className="max-w-4xl max-h-[90vh] overflow-y-auto"
+                    onPointerDownOutside={handleClose}
+                >
+                    <DialogHeader>
+                        <DialogTitle className="flex items-center justify-between">
+                            <div className="flex items-center">
+                                <img
+                                    src="/pcb-point-logo.png"
+                                    alt="PCB Point Logo"
+                                    className="w-12 h-12 mr-2"
+                                />
+                                <span className="text-2xl font-bold text-pcb">
+                                    Personal Mentorship Programme
+                                </span>
+                            </div>
+                        </DialogTitle>
+                    </DialogHeader>
+                    <div id="preview-content" className="space-y-4">
+                        <div className="bg-pcb text-white p-4 rounded-t-lg">
+                            <div className="flex justify-between items-center">
+                                <h2 className="text-xl font-bold">
+                                    Target for Future Doctor
+                                </h2>
+                                <div className="bg-white text-pcb px-4 py-1 rounded">
+                                    {data.studentName}
+                                </div>
                             </div>
                         </div>
+                        {renderTargetTable(
+                            data.targets.regular,
+                            "Regular Target 🎯",
+                        )}
+                        {data.targets.revision.length > 0 &&
+                            renderTargetTable(
+                                data.targets.revision,
+                                "Revision Target 🔄",
+                            )}
+                        {data.targets.extra.length > 0 &&
+                            renderTargetTable(
+                                data.targets.extra,
+                                "Extra Target 🚀",
+                            )}
+
+                        {data.includeCommonSteps && (
+                            <div className="p-4 bg-gray-100 rounded">
+                                <h4 className="font-bold mb-2">
+                                    Follow These Steps:
+                                </h4>
+                                <ol className="list-decimal list-inside">
+                                    {commonSteps.map((step, index) => (
+                                        <li key={index}>{step}</li>
+                                    ))}
+                                </ol>
+                            </div>
+                        )}
+
+                        {data.specialNote && (
+                            <div className="p-4 bg-yellow-100 rounded">
+                                <h4 className="font-bold mb-2">
+                                    Special Note by Mentor:
+                                </h4>
+                                <p>{data.specialNote}</p>
+                            </div>
+                        )}
                     </div>
-                    {renderTargetTable(
-                        data.targets.regular,
-                        "Regular Target 🎯",
-                    )}
-                    {data.targets.revision.length > 0 &&
-                        renderTargetTable(
-                            data.targets.revision,
-                            "Revision Target 🔄",
-                        )}
-                    {data.targets.extra.length > 0 &&
-                        renderTargetTable(
-                            data.targets.extra,
-                            "Extra Target 🚀",
-                        )}
 
-                    {data.includeCommonSteps && (
-                        <div className="p-4 bg-gray-100 rounded">
-                            <h4 className="font-bold mb-2">
-                                Follow These Steps:
-                            </h4>
-                            <ol className="list-decimal list-inside">
-                                {commonSteps.map((step, index) => (
-                                    <li key={index}>{step}</li>
-                                ))}
-                            </ol>
-                        </div>
-                    )}
-
-                    {data.specialNote && (
-                        <div className="p-4 bg-yellow-100 rounded">
-                            <h4 className="font-bold mb-2">
-                                Special Note by Mentor:
-                            </h4>
-                            <p>{data.specialNote}</p>
-                        </div>
-                    )}
-                </div>
-
-                <div className="flex flex-wrap justify-start gap-2 mt-4">
-                    <Button
-                        onClick={() => {
-                            setIsApproved(false);
-                            onEdit();
-                        }}
-                        className="bg-yellow-500 hover:bg-yellow-600"
-                    >
-                        <Edit className="mr-2 h-4 w-4" /> Edit
-                    </Button>
-                    <Button
-                        onClick={handleApprove}
-                        className="bg-green-500 hover:bg-green-600"
-                        disabled={isApproved}
-                    >
-                        <Check className="mr-2 h-4 w-4" />{" "}
-                        {isApproved ? "Approved" : "Approve"}
-                    </Button>
-                    <Button
-                        onClick={handlePrintPDF}
-                        className="bg-blue-500 hover:bg-blue-600"
-                    >
-                        <Printer className="mr-2 h-4 w-4" /> Print PDF
-                    </Button>
-                    <Button
-                        onClick={handleSendToWhatsApp}
-                        className="bg-green-500 hover:bg-green-600"
-                    >
-                        <Send className="mr-2 h-4 w-4" /> Send
-                    </Button>
-                </div>
-            </DialogContent>
-        </Dialog>
+                    <div className="flex flex-wrap justify-start gap-2 mt-4">
+                        <Button
+                            onClick={() => {
+                                setIsApproved(false);
+                                onEdit();
+                            }}
+                            className="bg-yellow-500 hover:bg-yellow-600"
+                        >
+                            <Edit className="mr-2 h-4 w-4" /> Edit
+                        </Button>
+                        <Button
+                            onClick={handleApproveClick}
+                            className="bg-green-500 hover:bg-green-600"
+                            disabled={isApproved}
+                        >
+                            <Check className="mr-2 h-4 w-4" />{" "}
+                            {isApproved ? "Approved" : "Approve"}
+                        </Button>
+                        <Button
+                            onClick={handlePrintPDF}
+                            className="bg-blue-500 hover:bg-blue-600"
+                        >
+                            <Printer className="mr-2 h-4 w-4" /> Print PDF
+                        </Button>
+                        <Button
+                            onClick={handleSendToWhatsApp}
+                            className="bg-green-500 hover:bg-green-600"
+                        >
+                            <Send className="mr-2 h-4 w-4" /> Send
+                        </Button>
+                    </div>
+                </DialogContent>
+            </Dialog>
+            <AlertDialog
+                open={showApproveAlert}
+                onOpenChange={setShowApproveAlert}
+            >
+                <AlertDialogContent
+                    onPointerDown={() => setShowApproveAlert(false)}
+                >
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            You will not be able to change the target once you
+                            approve it.
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel
+                            onClick={() => {
+                                setShowApproveAlert(false);
+                                handleClose();
+                            }}
+                        >
+                            Edit
+                        </AlertDialogCancel>
+                        <AlertDialogAction onClick={handleApprove}>
+                            Approve
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
+        </>
     );
 };
 
