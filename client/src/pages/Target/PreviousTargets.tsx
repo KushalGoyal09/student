@@ -4,12 +4,7 @@ import axios from "axios";
 import { format } from "date-fns";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import {
-    Accordion,
-    AccordionContent,
-    AccordionItem,
-    AccordionTrigger,
-} from "@/components/ui/accordion";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Loader2 } from "lucide-react";
 import syllabusAtom from "@/recoil/syllabus";
 
@@ -100,17 +95,45 @@ const PreviousTargets = ({
         return chapter ? chapter.chapterName : "Unknown Chapter";
     };
 
-    const renderChapters = (
-        subject: keyof Syllabus,
-        chapters: { id: string; chapterId: number }[],
-    ) => {
-        return chapters.map((chapter) => (
+    const groupTargetsByType = (targetType: TargetType) => {
+        const filteredTargets = targets.filter(
+            (target) => target.targetType === targetType,
+        );
+        const groupedTargets = {
+            physics: new Set<string>(),
+            chemistry: new Set<string>(),
+            biology: new Set<string>(),
+        };
+
+        filteredTargets.forEach((target) => {
+            target.physics.forEach((chapter) =>
+                groupedTargets.physics.add(
+                    getChapterName("physics", chapter.chapterId),
+                ),
+            );
+            target.chemistry.forEach((chapter) =>
+                groupedTargets.chemistry.add(
+                    getChapterName("chemistry", chapter.chapterId),
+                ),
+            );
+            target.biology.forEach((chapter) =>
+                groupedTargets.biology.add(
+                    getChapterName("biology", chapter.chapterId),
+                ),
+            );
+        });
+
+        return groupedTargets;
+    };
+
+    const renderSubjectChapters = (chapters: Set<string>) => {
+        return Array.from(chapters).map((chapterName) => (
             <Badge
-                key={chapter.id}
+                key={chapterName}
                 variant="outline"
                 className="mr-2 mb-2 bg-white text-pcb"
             >
-                {getChapterName(subject, chapter.chapterId)}
+                {chapterName}
             </Badge>
         ));
     };
@@ -123,66 +146,66 @@ const PreviousTargets = ({
         );
     }
 
+    const targetTypes: TargetType[] = ["Regular", "Revision", "Extra"];
+
     return (
         <div className="space-y-4">
             <h1 className="text-pcb font-bold">Previous Targets</h1>
-            {targets.length === 0 && (
+            {targets.length === 0 ? (
                 <p className="text-black">No targets found</p>
-            )}
-            {targets.map((target) => (
-                <Card key={target.id} className="bg-white border-pcb border-2">
-                    <CardHeader>
-                        <CardTitle className="flex justify-between items-center text-pcb">
-                            <span>
-                                {format(new Date(target.date), "MMMM d, yyyy")}
-                            </span>
-                            <Badge
-                                variant={
-                                    target.completed ? "default" : "destructive"
-                                }
-                                className={
-                                    target.completed
-                                        ? "bg-pcb text-white"
-                                        : "bg-red-500 text-white"
-                                }
+            ) : (
+                <Tabs defaultValue="Regular" className="w-full">
+                    <TabsList className="grid w-full grid-cols-3">
+                        {targetTypes.map((type) => (
+                            <TabsTrigger
+                                key={type}
+                                value={type}
+                                className="text-pcb"
                             >
-                                {target.completed ? "Completed" : "Incomplete"}
-                            </Badge>
-                        </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <Accordion type="single" collapsible className="w-full">
-                            <AccordionItem value="physics">
-                                <AccordionTrigger className="text-pcb">
-                                    Physics
-                                </AccordionTrigger>
-                                <AccordionContent>
-                                    {renderChapters("physics", target.physics)}
-                                </AccordionContent>
-                            </AccordionItem>
-                            <AccordionItem value="chemistry">
-                                <AccordionTrigger className="text-pcb">
-                                    Chemistry
-                                </AccordionTrigger>
-                                <AccordionContent>
-                                    {renderChapters(
-                                        "chemistry",
-                                        target.chemistry,
-                                    )}
-                                </AccordionContent>
-                            </AccordionItem>
-                            <AccordionItem value="biology">
-                                <AccordionTrigger className="text-pcb">
-                                    Biology
-                                </AccordionTrigger>
-                                <AccordionContent>
-                                    {renderChapters("biology", target.biology)}
-                                </AccordionContent>
-                            </AccordionItem>
-                        </Accordion>
-                    </CardContent>
-                </Card>
-            ))}
+                                {type}
+                            </TabsTrigger>
+                        ))}
+                    </TabsList>
+                    {targetTypes.map((type) => {
+                        const groupedTargets = groupTargetsByType(type);
+                        return (
+                            <TabsContent key={type} value={type}>
+                                <Card className="bg-white border-pcb border-2">
+                                    <CardHeader>
+                                        <CardTitle className="text-pcb">
+                                            {type} Targets
+                                        </CardTitle>
+                                    </CardHeader>
+                                    <CardContent>
+                                        <div className="space-y-4">
+                                            {(
+                                                [
+                                                    "physics",
+                                                    "chemistry",
+                                                    "biology",
+                                                ] as const
+                                            ).map((subject) => (
+                                                <div key={subject}>
+                                                    <h3 className="text-pcb font-semibold capitalize mb-2">
+                                                        {subject}
+                                                    </h3>
+                                                    <div>
+                                                        {renderSubjectChapters(
+                                                            groupedTargets[
+                                                                subject
+                                                            ],
+                                                        )}
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </CardContent>
+                                </Card>
+                            </TabsContent>
+                        );
+                    })}
+                </Tabs>
+            )}
         </div>
     );
 };
