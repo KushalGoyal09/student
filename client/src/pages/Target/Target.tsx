@@ -87,6 +87,9 @@ export default function TargetAssignment() {
     const [checkboxStates, setCheckboxStates] = useState<{
         [key: string]: boolean;
     }>({});
+    const [showRevision, setShowRevision] = useState(false);
+    const [showRegular, setShowRegular] = useState(false);
+    const [showExtra, setShowExtra] = useState(false);
     const students = useRecoilValue(existingStudents);
     const syllabus = useRecoilValue(syllabusAtom);
     const [isPreviewOpen, setIsPreviewOpen] = useState(false);
@@ -607,48 +610,79 @@ export default function TargetAssignment() {
     const renderTargetSection = (targetType: TargetType) => (
         <Card className="mt-8 bg-white shadow-md">
             <CardHeader>
-                <CardTitle className="text-pcb">{targetType} Targets</CardTitle>
+                <div className="flex items-center space-x-2">
+                    <Checkbox
+                        id={`${targetType}-targets-checkbox`}
+                        checked={
+                            targetType === "Regular"
+                                ? showRegular
+                                : targetType === "Revision"
+                                  ? showRevision
+                                  : showExtra
+                        }
+                        onCheckedChange={(checked) => {
+                            if (targetType === "Regular") {
+                                setShowRegular(checked as boolean);
+                            } else if (targetType === "Revision") {
+                                setShowRevision(checked as boolean);
+                            } else {
+                                setShowExtra(checked as boolean);
+                            }
+                        }}
+                        className="border-pcb/30 text-pcb"
+                    />
+                    <Label
+                        htmlFor={`${targetType}-targets-checkbox`}
+                        className="text-pcb"
+                    >
+                        {targetType} Targets
+                    </Label>
+                </div>
             </CardHeader>
-            <CardContent>
-                {renderOngoingChaptersBox(targetType)}
-                <Tabs defaultValue="physics" className="w-full mt-4">
-                    <TabsList className="bg-pcb/5 flex justify-evenly">
-                        <TabsTrigger
-                            value="physics"
-                            className="data-[state=active]:bg-pcb data-[state=active]:text-white w-full"
-                        >
-                            Physics
-                        </TabsTrigger>
-                        <TabsTrigger
-                            value="chemistry"
-                            className="data-[state=active]:bg-pcb data-[state=active]:text-white w-full"
-                        >
-                            Chemistry
-                        </TabsTrigger>
-                        <TabsTrigger
-                            value="biology"
-                            className="data-[state=active]:bg-pcb data-[state=active]:text-white w-full"
-                        >
-                            Biology
-                        </TabsTrigger>
-                    </TabsList>
-                    <TabsContent value="physics">
-                        {renderSubjectTable(targetType, "physics")}
-                    </TabsContent>
-                    <TabsContent value="chemistry">
-                        {renderSubjectTable(targetType, "chemistry")}
-                    </TabsContent>
-                    <TabsContent value="biology">
-                        {renderSubjectTable(targetType, "biology")}
-                    </TabsContent>
-                </Tabs>
-                <Button
-                    onClick={addDay}
-                    className="mt-4 bg-pcb text-white hover:bg-pcb/90"
-                >
-                    <Plus className="mr-2 h-4 w-4" /> Add Day
-                </Button>
-            </CardContent>
+            {((targetType === "Regular" && showRegular) ||
+                (targetType === "Revision" && showRevision) ||
+                (targetType === "Extra" && showExtra)) && (
+                <CardContent>
+                    {renderOngoingChaptersBox(targetType)}
+                    <Tabs defaultValue="physics" className="w-full mt-4">
+                        <TabsList className="bg-pcb/5 flex justify-evenly">
+                            <TabsTrigger
+                                value="physics"
+                                className="data-[state=active]:bg-pcb data-[state=active]:text-white w-full"
+                            >
+                                Physics
+                            </TabsTrigger>
+                            <TabsTrigger
+                                value="chemistry"
+                                className="data-[state=active]:bg-pcb data-[state=active]:text-white w-full"
+                            >
+                                Chemistry
+                            </TabsTrigger>
+                            <TabsTrigger
+                                value="biology"
+                                className="data-[state=active]:bg-pcb data-[state=active]:text-white w-full"
+                            >
+                                Biology
+                            </TabsTrigger>
+                        </TabsList>
+                        <TabsContent value="physics">
+                            {renderSubjectTable(targetType, "physics")}
+                        </TabsContent>
+                        <TabsContent value="chemistry">
+                            {renderSubjectTable(targetType, "chemistry")}
+                        </TabsContent>
+                        <TabsContent value="biology">
+                            {renderSubjectTable(targetType, "biology")}
+                        </TabsContent>
+                    </Tabs>
+                    <Button
+                        onClick={addDay}
+                        className="mt-4 bg-pcb text-white hover:bg-pcb/90"
+                    >
+                        <Plus className="mr-2 h-4 w-4" /> Add Day
+                    </Button>
+                </CardContent>
+            )}
         </Card>
     );
 
