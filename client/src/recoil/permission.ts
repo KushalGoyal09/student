@@ -9,11 +9,14 @@ interface Permission {
 }
 
 const fetchPermission = async (token: string) => {
-    const { data } = await axios.get("/api/role/get", {
-        headers: {
-            Authorization: `Bearer ${token}`,
+    const { data } = await axios.get(
+        "http://148.135.136.98:8080/api/role/get",
+        {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
         },
-    });
+    );
     return data.data;
 };
 

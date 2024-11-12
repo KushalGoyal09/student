@@ -41,7 +41,7 @@ const fetchRatings = async (groupMentorId: string): Promise<Ratings | null> => {
             data: Ratings | null;
             success: boolean;
         }>(
-            "/api/rating/get",
+            "http://148.135.136.98:8080/api/rating/get",
             { groupMentorId },
             {
                 headers: {
@@ -71,11 +71,14 @@ export default function MentorRatingPage() {
     useEffect(() => {
         const fetchMentors = async () => {
             try {
-                const { data } = await axios.get("/api/detail/mentors", {
-                    headers: {
-                        Authorization: `Bearer ${localStorage.getItem("token")}`,
+                const { data } = await axios.get(
+                    "http://148.135.136.98:8080/api/detail/mentors",
+                    {
+                        headers: {
+                            Authorization: `Bearer ${localStorage.getItem("token")}`,
+                        },
                     },
-                });
+                );
                 setMentors(data.data);
             } catch (error) {
                 if (isAxiosError(error) && error.response?.data) {
@@ -126,7 +129,7 @@ export default function MentorRatingPage() {
         event.preventDefault();
         try {
             await axios.post(
-                "/api/rating/supervisor",
+                "http://148.135.136.98:8080/api/rating/supervisor",
                 {
                     groupMentorId: selectedMentor,
                     ...ratings,

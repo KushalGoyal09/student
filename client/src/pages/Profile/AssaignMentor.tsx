@@ -31,11 +31,14 @@ interface GroupMentor {
 }
 
 const fetchSeniorMentors = async (): Promise<SeniorMentor[]> => {
-    const { data } = await axios.get("/api/assaign/seniorMentors", {
-        headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
+    const { data } = await axios.get(
+        "http://148.135.136.98:8080/api/assaign/seniorMentors",
+        {
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
         },
-    });
+    );
     return data.data;
 };
 
@@ -46,7 +49,7 @@ const getStudentMentor = async (
     name: string;
 } | null> => {
     const { data } = await axios.post(
-        "/api/profile/student",
+        "http://148.135.136.98:8080/api/profile/student",
         { studentId },
         {
             headers: {
@@ -59,7 +62,7 @@ const getStudentMentor = async (
 
 const fetchMentors = async (seniorMentorId: string): Promise<GroupMentor[]> => {
     const { data } = await axios.post(
-        `/api/assaign/groupMentors/`,
+        `http://148.135.136.98:8080/api/assaign/groupMentors/`,
         {
             seniorMentorId,
         },
@@ -147,7 +150,7 @@ export default function AssignMentor({ studentId, currentMentor }: Props) {
         setIsLoading(true);
         try {
             await axios.post(
-                "/api/new/assign-mentor",
+                "http://148.135.136.98:8080/api/new/assign-mentor",
                 {
                     studentId,
                     mentorId: selectedGroupMentor,

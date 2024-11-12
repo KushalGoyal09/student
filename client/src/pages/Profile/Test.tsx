@@ -58,7 +58,7 @@ export default function FeeManagement({ studentId }: Props) {
             setIsLoading(true);
             try {
                 const { data } = await axios.post(
-                    `/api/new/fee-data`,
+                    `http://148.135.136.98:8080/api/new/fee-data`,
                     { studentId },
                     {
                         headers: {
@@ -82,7 +82,7 @@ export default function FeeManagement({ studentId }: Props) {
     const sendPaymentToBackend = async () => {
         try {
             const { data } = await axios.post(
-                `/api/new/add-payment`,
+                `http://148.135.136.98:8080/api/new/add-payment`,
                 {
                     studentId,
                     payment: newPayment,
@@ -137,7 +137,7 @@ export default function FeeManagement({ studentId }: Props) {
         }
         try {
             const { data } = await axios.put(
-                `/api/new/update-fee-details`,
+                `http://148.135.136.98:8080/api/new/update-fee-details`,
                 {
                     studentId,
                     feesPlan: feePlan,

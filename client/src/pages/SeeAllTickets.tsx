@@ -35,11 +35,14 @@ export default function StylizedTickets() {
 
     const fetchTickets = async () => {
         try {
-            const response = await fetch("/api/ticket/get", {
-                headers: {
-                    Authorization: `Bearer ${localStorage.getItem("token")}`,
+            const response = await fetch(
+                "http://148.135.136.98:8080/api/ticket/get",
+                {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem("token")}`,
+                    },
                 },
-            });
+            );
             const data = await response.json();
             setTickets(data.data);
         } catch (error) {
@@ -57,7 +60,9 @@ export default function StylizedTickets() {
                 currentAudio.pause();
                 cancelAnimationFrame(animationRef.current!);
             }
-            const audio = new Audio(`/api/ticket/uploads/${audioFile}`);
+            const audio = new Audio(
+                `http://148.135.136.98:8080/api/ticket/uploads/${audioFile}`,
+            );
             audio.play();
             setCurrentAudio(audio);
             setIsPlaying(ticketId);
@@ -83,7 +88,7 @@ export default function StylizedTickets() {
 
     const handleResolveTicket = async (id: string) => {
         try {
-            await fetch("/api/ticket/close", {
+            await fetch("http://148.135.136.98:8080/api/ticket/close", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

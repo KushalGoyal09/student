@@ -56,17 +56,20 @@ interface PreviewModalProps {
 }
 
 const sendTargetToBackend = async (targets: DayTarget[], studentId: string) => {
-    const response = await fetch("/api/target/setTarget", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
+    const response = await fetch(
+        "http://148.135.136.98:8080/api/target/setTarget",
+        {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+            body: JSON.stringify({
+                studentId,
+                target: targets,
+            }),
         },
-        body: JSON.stringify({
-            studentId,
-            target: targets,
-        }),
-    });
+    );
     return response.json();
 };
 

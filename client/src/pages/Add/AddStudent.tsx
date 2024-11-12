@@ -145,7 +145,7 @@ export default function AddStudent() {
         setIsSubmitting(true);
         try {
             await axios.post(
-                "/api/add/student",
+                "http://148.135.136.98:8080/api/add/student",
                 {
                     name: data.fullName,
                     gender: data.gender,

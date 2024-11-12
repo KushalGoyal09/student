@@ -35,7 +35,7 @@ export default function Component() {
         }
         try {
             const { data } = await axios.post<Response>(
-                "/api/admin/change-password",
+                "http://148.135.136.98:8080/api/admin/change-password",
                 {
                     newPassword: password,
                 },

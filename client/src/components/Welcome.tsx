@@ -11,11 +11,14 @@ export default function WelcomeComponent({ name }: { name: string }) {
     useEffect(() => {
         const fetchWhatsappLink = async () => {
             try {
-                const { data } = await axios.get("/api/me", {
-                    headers: {
-                        Authorization: `Bearer ${localStorage.getItem("token")}`,
+                const { data } = await axios.get(
+                    "http://148.135.136.98:8080/api/me",
+                    {
+                        headers: {
+                            Authorization: `Bearer ${localStorage.getItem("token")}`,
+                        },
                     },
-                });
+                );
                 setWhatsappLink(data.whatsappLink);
             } catch (error) {
                 console.error("Failed to fetch WhatsApp link:", error);

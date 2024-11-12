@@ -39,17 +39,20 @@ const StudentCallUpdates = ({ studentId }: StudentCallUpdatesProps) => {
     const fetchCallUpdates = async () => {
         const weekStart = startOfWeek(currentWeek, { weekStartsOn: 1 });
         try {
-            const response = await fetch("/api/call/student", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${localStorage.getItem("token")}`,
+            const response = await fetch(
+                "http://148.135.136.98:8080/api/call/student",
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${localStorage.getItem("token")}`,
+                    },
+                    body: JSON.stringify({
+                        studentId,
+                        weekStart: format(weekStart, "yyyy-MM-dd"),
+                    }),
                 },
-                body: JSON.stringify({
-                    studentId,
-                    weekStart: format(weekStart, "yyyy-MM-dd"),
-                }),
-            });
+            );
             if (!response.ok) throw new Error("Failed to fetch call updates");
             const data = await response.json();
             setCallUpdates(data.data);

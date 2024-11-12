@@ -72,7 +72,7 @@ export default function EnhancedStudentProfile({ id }: { id: string }) {
 
     const fetchStudent = useCallback(async () => {
         const { data } = await axios.post(
-            "/api/profile/student",
+            "http://148.135.136.98:8080/api/profile/student",
             { studentId: id },
             {
                 headers: {
@@ -107,11 +107,15 @@ export default function EnhancedStudentProfile({ id }: { id: string }) {
         if (!editedStudent) return;
 
         try {
-            await axios.post("/api/profile/update/student", editedStudent, {
-                headers: {
-                    Authorization: `Bearer ${localStorage.getItem("token")}`,
+            await axios.post(
+                "http://148.135.136.98:8080/api/profile/update/student",
+                editedStudent,
+                {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem("token")}`,
+                    },
                 },
-            });
+            );
             toast({
                 title: "Success",
                 description: "Student updated successfully",
@@ -131,7 +135,7 @@ export default function EnhancedStudentProfile({ id }: { id: string }) {
 
         try {
             await axios.post(
-                "/api/profile/update/status",
+                "http://148.135.136.98:8080/api/profile/update/status",
                 {
                     studentId: student.id,
                     date: new Date(),

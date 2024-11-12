@@ -110,13 +110,16 @@ export default function CreateComplaintTicket() {
         }
 
         try {
-            const response = await fetch("/api/ticket/create", {
-                method: "POST",
-                body: formData,
-                headers: {
-                    Authorization: `Bearer ${localStorage.getItem("token")}`,
+            const response = await fetch(
+                "http://148.135.136.98:8080/api/ticket/create",
+                {
+                    method: "POST",
+                    body: formData,
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem("token")}`,
+                    },
                 },
-            });
+            );
 
             const result = await response.json();
 

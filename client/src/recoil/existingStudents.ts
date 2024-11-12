@@ -16,11 +16,14 @@ interface Student {
 
 const fetchStudents = async (token: string): Promise<Student[]> => {
     try {
-        const { data } = await axios.get("/api/detail/students", {
-            headers: {
-                Authorization: `Bearer ${token}`,
+        const { data } = await axios.get(
+            "http://148.135.136.98:8080/api/detail/students",
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
             },
-        });
+        );
         return data.data;
     } catch (error) {
         return [];

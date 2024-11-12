@@ -37,7 +37,7 @@ type FeeDataResponse = {
 
 const fetchFeeData = async (studentId: string) => {
     const { data } = await axios.post<FeeDataResponse>(
-        "/api/new/fee-data",
+        "http://148.135.136.98:8080/api/new/fee-data",
         { studentId },
         {
             headers: {
@@ -55,7 +55,7 @@ const setFeeStructure = async (
     payments: Payment[],
 ) => {
     const { data } = await axios.post(
-        "/api/new/set-fee-details",
+        "http://148.135.136.98:8080/api/new/set-fee-details",
         {
             studentId,
             feesPlan: feePlan,
@@ -73,7 +73,7 @@ const setFeeStructure = async (
 
 const markFeeClear = async (studentId: string, allClear: boolean) => {
     const { data } = await axios.post(
-        "/api/new/allClear",
+        "http://148.135.136.98:8080/api/new/allClear",
         {
             studentId,
             allClear,
@@ -138,7 +138,7 @@ export default function StudentFeeManagement({
 
     const addPayment = async (studentId: string, payment: Payment) => {
         const { data } = await axios.post(
-            "/api/new/add-payment",
+            "http://148.135.136.98:8080/api/new/add-payment",
             {
                 studentId,
                 payment,

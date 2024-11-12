@@ -31,7 +31,7 @@ const AddEmploy = () => {
 
         try {
             const { data } = await axios.post(
-                "/api/add/employee",
+                "http://148.135.136.98:8080/api/add/employee",
                 {
                     name,
                     phoneNumber,

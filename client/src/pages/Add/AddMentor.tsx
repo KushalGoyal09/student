@@ -42,11 +42,14 @@ export default function AddMentor() {
     useEffect(() => {
         const getSupervisors = async () => {
             try {
-                const { data } = await axios.get("/api/detail/senior-mentors", {
-                    headers: {
-                        Authorization: `Bearer ${localStorage.getItem("token")}`,
+                const { data } = await axios.get(
+                    "http://148.135.136.98:8080/api/detail/senior-mentors",
+                    {
+                        headers: {
+                            Authorization: `Bearer ${localStorage.getItem("token")}`,
+                        },
                     },
-                });
+                );
                 setSupervisors(data.data);
             } catch (error) {
                 setSupervisors([]);
@@ -69,11 +72,15 @@ export default function AddMentor() {
         setError("");
         setSuccess("");
         try {
-            const { data } = await axios.post("/api/add/mentor", formData, {
-                headers: {
-                    Authorization: `Bearer ${localStorage.getItem("token")}`,
+            const { data } = await axios.post(
+                "http://148.135.136.98:8080/api/add/mentor",
+                formData,
+                {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem("token")}`,
+                    },
                 },
-            });
+            );
             setFormData({
                 name: "",
                 username: "",

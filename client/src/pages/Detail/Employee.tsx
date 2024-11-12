@@ -8,11 +8,14 @@ interface Employee {
 }
 
 const fetchEmployees = async (): Promise<Employee[]> => {
-    const { data } = await axios.get("/api/detail/employes", {
-        headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
+    const { data } = await axios.get(
+        "http://148.135.136.98:8080/api/detail/employes",
+        {
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
         },
-    });
+    );
     return data.data;
 };
 

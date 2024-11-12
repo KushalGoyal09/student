@@ -41,11 +41,14 @@ export default function AddSeniorMentor() {
     useEffect(() => {
         const getSupervisors = async () => {
             try {
-                const { data } = await axios.get("/api/detail/supervisors", {
-                    headers: {
-                        Authorization: `Bearer ${localStorage.getItem("token")}`,
+                const { data } = await axios.get(
+                    "http://148.135.136.98:8080/api/detail/supervisors",
+                    {
+                        headers: {
+                            Authorization: `Bearer ${localStorage.getItem("token")}`,
+                        },
                     },
-                });
+                );
                 setSupervisors(data.data);
             } catch (error) {
                 setSupervisors([]);
@@ -69,7 +72,7 @@ export default function AddSeniorMentor() {
         setSuccess("");
         try {
             const { data } = await axios.post(
-                "/api/add/senior-mentor",
+                "http://148.135.136.98:8080/api/add/senior-mentor",
                 formData,
                 {
                     headers: {

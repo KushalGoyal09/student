@@ -14,11 +14,14 @@ interface Mentor {
 
 const fetchMentors = async (): Promise<Mentor[]> => {
     try {
-        const { data } = await axios.get("/api/detail/mentors", {
-            headers: {
-                Authorization: `Bearer ${localStorage.getItem("token")}`,
+        const { data } = await axios.get(
+            "http://148.135.136.98:8080/api/detail/mentors",
+            {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem("token")}`,
+                },
             },
-        });
+        );
         return data.data;
     } catch (error) {
         toast({

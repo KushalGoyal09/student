@@ -11,9 +11,9 @@ export default defineConfig({
     },
     server: {
         proxy: {
-            "/api": {
+            "http://148.135.136.98:8080/api": {
                 target: "http://localhost:8080",
             },
-        }
-    }
+        },
+    },
 });

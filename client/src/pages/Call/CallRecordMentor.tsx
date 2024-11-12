@@ -43,7 +43,7 @@ interface ApiResponse {
 
 const fetchWeekData = async (weekStart: string) => {
     const { data } = await axios.post<ApiResponse>(
-        "/api/call/week-record",
+        "http://148.135.136.98:8080/api/call/week-record",
         { startDay: weekStart },
         {
             headers: {
@@ -66,7 +66,7 @@ const fetchWeekData = async (weekStart: string) => {
 
 const fetchStudentsData = async () => {
     const { data } = await axios.get<{ data: Student[] }>(
-        "/api/detail/students",
+        "http://148.135.136.98:8080/api/detail/students",
         {
             headers: {
                 Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -83,7 +83,7 @@ const saveCallStatus = async (
     date: string,
 ) => {
     await axios.post(
-        "/api/call/save-call-status",
+        "http://148.135.136.98:8080/api/call/save-call-status",
         { studentId, day, status, date },
         {
             headers: {

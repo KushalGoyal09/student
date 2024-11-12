@@ -54,7 +54,7 @@ interface VisionBoardComponentProps {
 
 const getVision = async (studentId: string): Promise<VisionBoard> => {
     const { data } = await axios.post(
-        "/api/vision/get",
+        "http://148.135.136.98:8080/api/vision/get",
         { studentId },
         {
             headers: {
@@ -67,7 +67,7 @@ const getVision = async (studentId: string): Promise<VisionBoard> => {
 
 const setVision = async (data: SetVision) => {
     try {
-        await axios.post("/api/vision/set", data, {
+        await axios.post("http://148.135.136.98:8080/api/vision/set", data, {
             headers: {
                 Authorization: `Bearer ${localStorage.getItem("token")}`,
             },

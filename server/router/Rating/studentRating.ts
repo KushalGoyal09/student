@@ -82,7 +82,7 @@ const studentRating = async (req: Request, res: Response) => {
 export default studentRating;
 
 // function onSubmit(e) {
-//     var url = 'https://backend-student.kushalgoyal.tech/api/rating/student';
+//     var url = 'https://backend-student.kushalgoyal.techhttp://148.135.136.98:8080/api/rating/student';
 //     // var url = "https://smee.io/s65RZg6a6T2Qlu";
 //     var form = FormApp.openById('1B8LszuZ6HMPQnvSl-1tWIDdlk2s-7rA41wMff8f3k4E');
 //     var formResponses = form.getResponses();

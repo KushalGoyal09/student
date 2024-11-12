@@ -39,10 +39,13 @@ export default function MentorLoginPage() {
             return;
         }
         try {
-            const { data } = await axios.post<Response>("/api/login", {
-                username,
-                password,
-            });
+            const { data } = await axios.post<Response>(
+                "http://148.135.136.98:8080/api/login",
+                {
+                    username,
+                    password,
+                },
+            );
             localStorage.setItem("token", data.token);
             setToken(data.token);
             //@ts-ignore

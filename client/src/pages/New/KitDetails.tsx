@@ -47,7 +47,7 @@ const getStudentsData = async (
     students: Array<String>,
 ): Promise<StudentWithAddress[]> => {
     const { data } = await axios.post(
-        "/api/new/address",
+        "http://148.135.136.98:8080/api/new/address",
         {
             students,
         },
@@ -62,11 +62,14 @@ const getStudentsData = async (
 
 const fetchKitDispatchData = async (): Promise<Student[]> => {
     try {
-        const { data } = await axios.get("/api/new/kit-data", {
-            headers: {
-                Authorization: `Bearer ${localStorage.getItem("token")}`,
+        const { data } = await axios.get(
+            "http://148.135.136.98:8080/api/new/kit-data",
+            {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem("token")}`,
+                },
             },
-        });
+        );
         return data.data;
     } catch (error) {
         console.error("Error fetching kit dispatch data:", error);
@@ -77,7 +80,7 @@ const fetchKitDispatchData = async (): Promise<Student[]> => {
 const markReady = async (studentId: string) => {
     try {
         await axios.post(
-            "/api/new/kit-ready",
+            "http://148.135.136.98:8080/api/new/kit-ready",
             { studentId },
             {
                 headers: {
@@ -94,7 +97,7 @@ const markDispatched = async (studentId: string) => {
     try {
         const date = new Date();
         await axios.post(
-            "/api/new/kit-dispatch",
+            "http://148.135.136.98:8080/api/new/kit-dispatch",
             { studentId, date },
             {
                 headers: {

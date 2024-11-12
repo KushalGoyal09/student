@@ -29,11 +29,14 @@ interface Supervisor {
 
 const fetchSupervisors = async (): Promise<Supervisor[]> => {
     try {
-        const { data } = await axios.get("/api/detail/supervisors", {
-            headers: {
-                Authorization: `Bearer ${localStorage.getItem("token")}`,
+        const { data } = await axios.get(
+            "http://148.135.136.98:8080/api/detail/supervisors",
+            {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem("token")}`,
+                },
             },
-        });
+        );
         return data.data;
     } catch (error) {
         toast({
@@ -48,7 +51,7 @@ const fetchSupervisorDetails = async (
 ): Promise<Supervisor> => {
     try {
         const { data } = await axios.post(
-            "/api/detail/supervisor-detail",
+            "http://148.135.136.98:8080/api/detail/supervisor-detail",
             {
                 supervisorUsername: username,
             },
@@ -70,7 +73,7 @@ const fetchSupervisorDetails = async (
 const fetchSMDetails = async (username: string): Promise<SeniorMentor> => {
     try {
         const { data } = await axios.post(
-            "/api/detail/senior-mentor-detail",
+            "http://148.135.136.98:8080/api/detail/senior-mentor-detail",
             {
                 seniorMentorUsername: username,
             },

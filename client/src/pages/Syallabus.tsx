@@ -40,7 +40,9 @@ export default function AdminSyllabus() {
 
     const fetchSyllabus = async () => {
         try {
-            const response = await fetch("/api/syllabus/getAll");
+            const response = await fetch(
+                "http://148.135.136.98:8080/api/syllabus/getAll",
+            );
             if (!response.ok) throw new Error("Failed to fetch syllabus");
             const data = await response.json();
             setSubjectData(data);
@@ -55,7 +57,7 @@ export default function AdminSyllabus() {
         if (!newChapter.trim()) return;
         try {
             const response = await fetch(
-                `/api/syllabus/add${subject.charAt(0).toUpperCase() + subject.slice(1)}`,
+                `http://148.135.136.98:8080/api/syllabus/add${subject.charAt(0).toUpperCase() + subject.slice(1)}`,
                 {
                     method: "POST",
                     headers: {
@@ -90,7 +92,7 @@ export default function AdminSyllabus() {
     const deleteChapter = async (subject: string, id: string) => {
         try {
             const response = await fetch(
-                `/api/syllabus/delete${subject.charAt(0).toUpperCase() + subject.slice(1)}`,
+                `http://148.135.136.98:8080/api/syllabus/delete${subject.charAt(0).toUpperCase() + subject.slice(1)}`,
                 {
                     method: "POST",
                     headers: {

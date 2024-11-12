@@ -49,7 +49,7 @@ type Props = {
 
 const markComplete = async (targetId: string) => {
     await axios.post(
-        "/api/target/complete",
+        "http://148.135.136.98:8080/api/target/complete",
         { targetId },
         {
             headers: {
@@ -61,7 +61,7 @@ const markComplete = async (targetId: string) => {
 
 const deleteTarget = async (targetId: string) => {
     await axios.post(
-        "/api/target/delete",
+        "http://148.135.136.98:8080/api/target/delete",
         { targetId },
         {
             headers: {
@@ -78,7 +78,7 @@ const TargetComponent: React.FC<Props> = ({ studentId }) => {
     useEffect(() => {
         const fetchTargets = async () => {
             const { data } = await axios.post(
-                "/api/target/get-incomplete",
+                "http://148.135.136.98:8080/api/target/get-incomplete",
                 { studentId },
                 {
                     headers: {

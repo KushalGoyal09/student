@@ -24,7 +24,9 @@ import overallRouter from "./router/OverallSyallabus";
 import roleRouter from "./router/RoleManagement";
 import assignRouter from "./router/Assaign";
 import seniorCallRouter from "./router/SeniorCall";
+import cors from "cors";
 
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 

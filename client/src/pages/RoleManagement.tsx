@@ -26,11 +26,14 @@ interface Supervisor {
 }
 
 const fetchSupervisor = async (): Promise<Supervisor[]> => {
-    const { data } = await axios.get("/api/role/get-super", {
-        headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
+    const { data } = await axios.get(
+        "http://148.135.136.98:8080/api/role/get-super",
+        {
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
         },
-    });
+    );
     return data.data;
 };
 
@@ -39,7 +42,7 @@ const getPermissions = async (supervisorId: string) => {
         success: boolean;
         data: Permission;
     }>(
-        "/api/role/get",
+        "http://148.135.136.98:8080/api/role/get",
         {
             supervisorId,
         },
@@ -60,7 +63,7 @@ const setPermissionsBackend = async (
 ) => {
     try {
         await axios.post(
-            "/api/role/set",
+            "http://148.135.136.98:8080/api/role/set",
             {
                 supervisorId,
                 FeeManagement,

@@ -48,7 +48,7 @@ interface OverallSyllabusResponse {
 }
 
 const fetchOverallSyllabus = async (): Promise<OverallSyllabusResponse> => {
-    const { data } = await axios.get("/api/overall", {
+    const { data } = await axios.get("http://148.135.136.98:8080/api/overall", {
         headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
