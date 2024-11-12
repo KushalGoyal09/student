@@ -39,6 +39,24 @@ const fetchSeniorMentors = async (): Promise<SeniorMentor[]> => {
     return data.data;
 };
 
+const getStudentMentor = async (
+    studentId: string,
+): Promise<{
+    username: string;
+    name: string;
+} | null> => {
+    const { data } = await axios.post(
+        "/api/profile/student",
+        { studentId },
+        {
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+        },
+    );
+    return data.student.groupMentor;
+};
+
 const fetchMentors = async (seniorMentorId: string): Promise<GroupMentor[]> => {
     const { data } = await axios.post(
         `/api/assaign/groupMentors/`,
@@ -60,9 +78,21 @@ export default function AssignMentor({ studentId, currentMentor }: Props) {
     const [selectedSeniorMentor, setSelectedSeniorMentor] =
         useState<string>("");
     const [selectedGroupMentor, setSelectedGroupMentor] = useState<string>("");
+    const [assaignedMentor, setAssaignedMentor] = useState<{
+        username: string;
+        name: string;
+    } | null>(null);
     const [groupLink, setGroupLink] = useState<string>("");
     const [isLoading, setIsLoading] = useState(false);
     const { toast } = useToast();
+
+    useEffect(() => {
+        getStudentMentor(studentId).then((data) => {
+            if (data) {
+                setAssaignedMentor(data);
+            }
+        });
+    }, []);
 
     useEffect(() => {
         const loadSeniorMentors = async () => {
@@ -145,75 +175,57 @@ export default function AssignMentor({ studentId, currentMentor }: Props) {
     };
 
     return (
-        <Card className="w-full mt-6 max-w-6xl mx-auto">
-            <CardHeader>
-                <CardTitle className="text-2xl font-bold">
-                    Assign Mentor
-                </CardTitle>
-            </CardHeader>
-            <CardContent>
-                {currentMentor && (
+        <>
+            {assaignedMentor && (
+                <div>
                     <div className="mb-4 p-4 bg-yellow-100 rounded-md flex items-center">
                         <AlertCircle className="h-5 w-5 text-yellow-500 mr-2" />
                         <p className="text-sm text-yellow-700">
-                            Current mentor: {currentMentor.name} (
-                            {currentMentor.username})
+                            Current mentor: {assaignedMentor.name} (
+                            {assaignedMentor.username})
                         </p>
                     </div>
-                )}
-                <form onSubmit={handleSubmit} className="space-y-4">
-                    <div className="space-y-2">
-                        <label
-                            htmlFor="senior-mentor-select"
-                            className="text-sm font-medium text-gray-700"
-                        >
-                            Select Senior Mentor
-                        </label>
-                        <Select
-                            onValueChange={(value) => {
-                                setSelectedSeniorMentor(value);
-                                setSelectedGroupMentor("");
-                            }}
-                            value={selectedSeniorMentor}
-                        >
-                            <SelectTrigger
-                                id="senior-mentor-select"
-                                className="w-full"
-                            >
-                                <SelectValue placeholder="Select a senior mentor" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                {seniorMentors.map((mentor) => (
-                                    <SelectItem
-                                        key={mentor.id}
-                                        value={mentor.id}
-                                    >
-                                        {mentor.name} ({mentor.username})
-                                    </SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
-                    </div>
-                    {selectedSeniorMentor && (
+                </div>
+            )}
+            <Card className="w-full mt-6 max-w-6xl mx-auto">
+                <CardHeader>
+                    <CardTitle className="text-2xl font-bold">
+                        Assign Mentor
+                    </CardTitle>
+                </CardHeader>
+                <CardContent>
+                    {currentMentor && (
+                        <div className="mb-4 p-4 bg-yellow-100 rounded-md flex items-center">
+                            <AlertCircle className="h-5 w-5 text-yellow-500 mr-2" />
+                            <p className="text-sm text-yellow-700">
+                                Current mentor: {currentMentor.name} (
+                                {currentMentor.username})
+                            </p>
+                        </div>
+                    )}
+                    <form onSubmit={handleSubmit} className="space-y-4">
                         <div className="space-y-2">
                             <label
-                                htmlFor="group-mentor-select"
+                                htmlFor="senior-mentor-select"
                                 className="text-sm font-medium text-gray-700"
                             >
-                                Select Group Mentor
+                                Select Senior Mentor
                             </label>
                             <Select
-                                onValueChange={setSelectedGroupMentor}
-                                value={selectedGroupMentor}
+                                onValueChange={(value) => {
+                                    setSelectedSeniorMentor(value);
+                                    setSelectedGroupMentor("");
+                                }}
+                                value={selectedSeniorMentor}
                             >
                                 <SelectTrigger
-                                    id="group-mentor-select"
+                                    id="senior-mentor-select"
                                     className="w-full"
                                 >
-                                    <SelectValue placeholder="Select a group mentor" />
+                                    <SelectValue placeholder="Select a senior mentor" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    {groupMentors.map((mentor) => (
+                                    {seniorMentors.map((mentor) => (
                                         <SelectItem
                                             key={mentor.id}
                                             value={mentor.id}
@@ -224,30 +236,62 @@ export default function AssignMentor({ studentId, currentMentor }: Props) {
                                 </SelectContent>
                             </Select>
                         </div>
-                    )}
-                    <div className="space-y-2">
-                        <label
-                            htmlFor="groupLink"
-                            className="text-sm font-medium text-gray-700"
+                        {selectedSeniorMentor && (
+                            <div className="space-y-2">
+                                <label
+                                    htmlFor="group-mentor-select"
+                                    className="text-sm font-medium text-gray-700"
+                                >
+                                    Select Group Mentor
+                                </label>
+                                <Select
+                                    onValueChange={setSelectedGroupMentor}
+                                    value={selectedGroupMentor}
+                                >
+                                    <SelectTrigger
+                                        id="group-mentor-select"
+                                        className="w-full"
+                                    >
+                                        <SelectValue placeholder="Select a group mentor" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {groupMentors.map((mentor) => (
+                                            <SelectItem
+                                                key={mentor.id}
+                                                value={mentor.id}
+                                            >
+                                                {mentor.name} ({mentor.username}
+                                                )
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                        )}
+                        <div className="space-y-2">
+                            <label
+                                htmlFor="groupLink"
+                                className="text-sm font-medium text-gray-700"
+                            >
+                                WhatsApp Group Link
+                            </label>
+                            <Input
+                                id="groupLink"
+                                value={groupLink}
+                                onChange={(e) => setGroupLink(e.target.value)}
+                                placeholder="Enter WhatsApp group link"
+                            />
+                        </div>
+                        <Button
+                            type="submit"
+                            className="w-full"
+                            disabled={isLoading}
                         >
-                            WhatsApp Group Link
-                        </label>
-                        <Input
-                            id="groupLink"
-                            value={groupLink}
-                            onChange={(e) => setGroupLink(e.target.value)}
-                            placeholder="Enter WhatsApp group link"
-                        />
-                    </div>
-                    <Button
-                        type="submit"
-                        className="w-full"
-                        disabled={isLoading}
-                    >
-                        {isLoading ? "Assigning..." : "Assign Mentor"}
-                    </Button>
-                </form>
-            </CardContent>
-        </Card>
+                            {isLoading ? "Assigning..." : "Assign Mentor"}
+                        </Button>
+                    </form>
+                </CardContent>
+            </Card>
+        </>
     );
 }

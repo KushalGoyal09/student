@@ -255,7 +255,7 @@ export default function CallRecord() {
                                     </div>
                                 </td>
                                 {weekDays.map((day, index) => (
-                                    <td key={day} className="px-1 py-5">
+                                    <td key={day} className="px-1 py-10">
                                         <Select
                                             value={getCallStatus(
                                                 student.id,

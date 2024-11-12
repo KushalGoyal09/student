@@ -32,12 +32,25 @@ const kitReady = async (req: AuthRequest, res: Response) => {
         return res.status(400).json({ error: "Invalid input" });
     }
     const { studentId } = parsedData.data;
+    const student = await db.student.findUnique({
+        where: {
+            id: studentId,
+        },
+        select: {
+            kitReady: true,
+        },
+    });
+
+    if (!student) {
+        return res.status(404).json({ error: "Student not found" });
+    }
+
     await db.student.update({
         where: {
             id: studentId,
         },
         data: {
-            kitReady: true,
+            kitReady: !student.kitReady,
         },
     });
     return res.status(200).json({

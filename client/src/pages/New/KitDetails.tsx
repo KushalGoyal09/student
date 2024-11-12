@@ -128,7 +128,7 @@ export default function KitDispatchPage() {
         setStudents(
             students.map((student) =>
                 student.id === studentId
-                    ? { ...student, kitReady: true }
+                    ? { ...student, kitReady: !student.kitReady }
                     : student,
             ),
         );
@@ -141,8 +141,10 @@ export default function KitDispatchPage() {
                 student.id === studentId
                     ? {
                           ...student,
-                          kitDispatched: true,
-                          kitDispatchedDate: new Date(),
+                          kitDispatched: !student.kitDispatched,
+                          kitDispatchedDate: student.kitDispatched
+                              ? null
+                              : new Date(),
                       }
                     : student,
             ),
@@ -340,7 +342,6 @@ export default function KitDispatchPage() {
                                             : "default"
                                     }
                                     onClick={() => handleMarkReady(student.id)}
-                                    disabled={student.kitReady}
                                 >
                                     {student.kitReady ? "Ready" : "Mark Ready"}
                                 </Button>
@@ -354,10 +355,7 @@ export default function KitDispatchPage() {
                                     onClick={() =>
                                         handleMarkDispatched(student.id)
                                     }
-                                    disabled={
-                                        student.kitDispatched ||
-                                        !student.kitReady
-                                    }
+                                    disabled={!student.kitReady}
                                 >
                                     {student.kitDispatched
                                         ? "Dispatched"
