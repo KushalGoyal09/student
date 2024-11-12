@@ -193,8 +193,8 @@ export const editSalary = async (
     bonus: number,
     paid: boolean,
     mentorType: Role,
-) => {
-    await axios.post(
+): Promise<Salary> => {
+    const { data } = await axios.post(
         "/api/salary/edit-salary",
         {
             month,
@@ -211,4 +211,5 @@ export const editSalary = async (
             },
         },
     );
+    return data.salary;
 };

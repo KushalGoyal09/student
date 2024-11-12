@@ -113,7 +113,7 @@ export default function SalaryManagement() {
         bonus: number,
         paid: boolean,
     ) => {
-        await editSalary(
+        const newsalary = await editSalary(
             selectedMonth,
             selectedYear,
             userId,
@@ -123,9 +123,7 @@ export default function SalaryManagement() {
             activeTab,
         );
         const updatedSalaries = salaries[activeTab].map((salary) =>
-            salary.userId === userId
-                ? { ...salary, totalSalary, bonus, paid }
-                : salary,
+            salary.userId === userId ? newsalary : salary,
         );
         setSalaries({ ...salaries, [activeTab]: updatedSalaries });
         setEditingId(null);
@@ -490,10 +488,10 @@ export default function SalaryManagement() {
                                                     </TableHead>
                                                 )}
                                                 <TableHead className="text-pcb">
-                                                    Total Salary
+                                                    Bonus
                                                 </TableHead>
                                                 <TableHead className="text-pcb">
-                                                    Bonus
+                                                    Total Salary
                                                 </TableHead>
                                                 <TableHead className="text-pcb">
                                                     Paid
@@ -577,32 +575,6 @@ export default function SalaryManagement() {
                                                                 <Input
                                                                     type="number"
                                                                     value={
-                                                                        salary.totalSalary ||
-                                                                        ""
-                                                                    }
-                                                                    onChange={(
-                                                                        e,
-                                                                    ) =>
-                                                                        handleSalaryChange(
-                                                                            mentor.id,
-                                                                            "totalSalary",
-                                                                            Number(
-                                                                                e
-                                                                                    .target
-                                                                                    .value,
-                                                                            ),
-                                                                        )
-                                                                    }
-                                                                    readOnly={
-                                                                        !isEditing
-                                                                    }
-                                                                    className="w-full border-pcb"
-                                                                />
-                                                            </TableCell>
-                                                            <TableCell>
-                                                                <Input
-                                                                    type="number"
-                                                                    value={
                                                                         salary.bonus ||
                                                                         ""
                                                                     }
@@ -625,6 +597,33 @@ export default function SalaryManagement() {
                                                                     className="w-full border-pcb"
                                                                 />
                                                             </TableCell>
+                                                            <TableCell>
+                                                                <Input
+                                                                    type="number"
+                                                                    value={
+                                                                        salary.totalSalary ||
+                                                                        ""
+                                                                    }
+                                                                    onChange={(
+                                                                        e,
+                                                                    ) =>
+                                                                        handleSalaryChange(
+                                                                            mentor.id,
+                                                                            "totalSalary",
+                                                                            Number(
+                                                                                e
+                                                                                    .target
+                                                                                    .value,
+                                                                            ),
+                                                                        )
+                                                                    }
+                                                                    readOnly={
+                                                                        !isEditing
+                                                                    }
+                                                                    className="w-full border-pcb"
+                                                                />
+                                                            </TableCell>
+
                                                             <TableCell>
                                                                 <Button
                                                                     onClick={() =>

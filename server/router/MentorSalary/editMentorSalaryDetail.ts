@@ -38,34 +38,73 @@ const editMentorSalaryDetail = async (req: AuthRequest, res: Response) => {
     }
     const { userId, month, year, totalSalary, bonus, paid, mentorType } =
         bodySchema.parse(req.body);
-    const mentorSalary = await db.mentorSalary.updateMany({
+    const mentorSalary = await db.mentorSalary.findFirst({
         where: {
             month,
             year,
             userId,
             Role: mentorType,
         },
-        data: {
-            totalSalary,
-            bonus,
-            paid,
-        },
     });
-    if (mentorSalary.count === 0) {
+    if (!mentorSalary) {
+        console.log("no salary found");
         await db.mentorSalary.create({
             data: {
                 month,
                 year,
                 userId,
                 Role: mentorType,
-                totalSalary,
+                totalSalary: totalSalary + bonus,
                 bonus,
                 paid,
             },
         });
+    } else {
+        if (bonus === mentorSalary.bonus) {
+            console.log("bonus same");
+            await db.mentorSalary.update({
+                where: {
+                    id: mentorSalary.id,
+                },
+                data: {
+                    totalSalary: totalSalary,
+                    paid,
+                },
+            });
+        } else {
+            console.log("bonus different");
+            const inrement = bonus - mentorSalary.bonus;
+            await db.mentorSalary.update({
+                where: {
+                    id: mentorSalary.id,
+                },
+                data: {
+                    totalSalary: totalSalary + inrement,
+                    bonus,
+                    paid,
+                },
+            });
+        }
     }
+    console.log("done");
+    const salary = await db.mentorSalary.findFirst({
+        where: {
+            month,
+            year,
+            userId,
+            Role: mentorType,
+        },
+        select: {
+            id: true,
+            bonus: true,
+            totalSalary: true,
+            paid: true,
+            userId: true,
+        },
+    })
     res.json({
         success: true,
+        salary,
     });
 };
 
