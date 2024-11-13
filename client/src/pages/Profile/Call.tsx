@@ -40,7 +40,7 @@ const StudentCallUpdates = ({ studentId }: StudentCallUpdatesProps) => {
         const weekStart = startOfWeek(currentWeek, { weekStartsOn: 1 });
         try {
             const response = await fetch(
-                "http://148.135.136.98:8080/api/call/student",
+                "https://thepcbpoint.com/api/call/student",
                 {
                     method: "POST",
                     headers: {

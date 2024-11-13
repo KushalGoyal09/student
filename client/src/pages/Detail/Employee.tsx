@@ -9,7 +9,7 @@ interface Employee {
 
 const fetchEmployees = async (): Promise<Employee[]> => {
     const { data } = await axios.get(
-        "http://148.135.136.98:8080/api/detail/employes",
+        "https://thepcbpoint.com/api/detail/employes",
         {
             headers: {
                 Authorization: `Bearer ${localStorage.getItem("token")}`,

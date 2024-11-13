@@ -111,7 +111,7 @@ export default function CreateComplaintTicket() {
 
         try {
             const response = await fetch(
-                "http://148.135.136.98:8080/api/ticket/create",
+                "https://thepcbpoint.com/api/ticket/create",
                 {
                     method: "POST",
                     body: formData,

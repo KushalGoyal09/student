@@ -16,7 +16,7 @@ interface Ticket {
 
 const getMyTickets = async (): Promise<Ticket[]> => {
     const { data } = await axios.get(
-        "http://148.135.136.98:8080/api/ticket/get-my",
+        "https://thepcbpoint.com/api/ticket/get-my",
         {
             headers: {
                 Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -50,7 +50,7 @@ export default function Previous() {
             setCurrentAudio(audioFile);
             setIsPlaying(true);
             if (audioRef.current) {
-                audioRef.current.src = `http://148.135.136.98:8080/api/ticket/uploads/${audioFile}`;
+                audioRef.current.src = `https://thepcbpoint.com/api/ticket/uploads/${audioFile}`;
                 audioRef.current.play();
             }
         }
@@ -106,7 +106,7 @@ export default function Previous() {
                                     <div className="mt-2">
                                         <audio
                                             ref={audioRef}
-                                            src={`http://148.135.136.98:8080/api/ticket/uploads/${ticket.audioFile}`}
+                                            src={`https://thepcbpoint.com/api/ticket/uploads/${ticket.audioFile}`}
                                             onEnded={() => setIsPlaying(false)}
                                             className="w-full"
                                             controls

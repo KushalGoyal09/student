@@ -15,7 +15,7 @@ interface Mentor {
 const fetchMentors = async (): Promise<Mentor[]> => {
     try {
         const { data } = await axios.get(
-            "http://148.135.136.98:8080/api/detail/mentors",
+            "https://thepcbpoint.com/api/detail/mentors",
             {
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem("token")}`,

@@ -23,7 +23,7 @@ interface SeniorMentor {
 const fetchSeniorMentors = async (): Promise<SeniorMentor[]> => {
     try {
         const { data } = await axios.get(
-            "http://148.135.136.98:8080/api/detail/senior-mentors",
+            "https://thepcbpoint.com/api/detail/senior-mentors",
             {
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -42,7 +42,7 @@ const fetchSeniorMentors = async (): Promise<SeniorMentor[]> => {
 const fetchSMDetails = async (username: string): Promise<SeniorMentor> => {
     try {
         const { data } = await axios.post(
-            "http://148.135.136.98:8080/api/detail/senior-mentor-detail",
+            "https://thepcbpoint.com/api/detail/senior-mentor-detail",
             {
                 seniorMentorUsername: username,
             },

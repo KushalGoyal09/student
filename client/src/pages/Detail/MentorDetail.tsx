@@ -44,7 +44,7 @@ const fetchMentorDetails = async (username: string): Promise<MentorData> => {
         data: MentorData;
         success: boolean;
     }>(
-        "http://148.135.136.98:8080/api/detail/mentor-detail",
+        "https://thepcbpoint.com/api/detail/mentor-detail",
         {
             groupMentorUsername: username,
         },

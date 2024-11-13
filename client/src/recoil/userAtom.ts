@@ -67,7 +67,7 @@ export const nameAtom = atom<string | null>({
 const fetchUser = async (token: string): Promise<User | null> => {
     try {
         const { data } = await axios.get<Response>(
-            "http://148.135.136.98:8080/api/me",
+            "https://thepcbpoint.com/api/me",
             {
                 headers: {
                     Authorization: `Bearer ${token}`,

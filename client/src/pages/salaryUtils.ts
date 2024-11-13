@@ -57,7 +57,7 @@ export const months = [
 // get all the Group Mentors
 export const getAllGm = async (): Promise<GroupMentor[]> => {
     const { data } = await axios.get(
-        "http://148.135.136.98:8080/api/salary/get-mentors",
+        "https://thepcbpoint.com/api/salary/get-mentors",
         {
             headers: {
                 Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -70,7 +70,7 @@ export const getAllGm = async (): Promise<GroupMentor[]> => {
 // get all the senior mentors
 export const getAllSm = async (): Promise<SeniorMentor[]> => {
     const { data } = await axios.get(
-        "http://148.135.136.98:8080/api/salary/get-seniors",
+        "https://thepcbpoint.com/api/salary/get-seniors",
         {
             headers: {
                 Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -83,7 +83,7 @@ export const getAllSm = async (): Promise<SeniorMentor[]> => {
 // get all the other employees
 export const getAllemployes = async (): Promise<Employee[]> => {
     const { data } = await axios.get(
-        "http://148.135.136.98:8080/api/salary/get-employes",
+        "https://thepcbpoint.com/api/salary/get-employes",
         {
             headers: {
                 Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -110,7 +110,7 @@ export const getCommonSalaryDetails = async (
     role: Role,
 ): Promise<CommonSalary | null> => {
     const { data } = await axios.post(
-        "http://148.135.136.98:8080/api/salary/get-common",
+        "https://thepcbpoint.com/api/salary/get-common",
         {
             salaryRole: role,
         },
@@ -133,7 +133,7 @@ export const setCommonSalaryDetails = async (
     baseSalary: number,
 ) => {
     await axios.post(
-        "http://148.135.136.98:8080/api/salary/set-common",
+        "https://thepcbpoint.com/api/salary/set-common",
         {
             salaryRole,
             perAj,
@@ -178,7 +178,7 @@ export const getSalaryDetails = async (
     salaryRole: Role,
 ): Promise<Salary[]> => {
     const { data } = await axios.post(
-        "http://148.135.136.98:8080/api/salary/get-salary",
+        "https://thepcbpoint.com/api/salary/get-salary",
         {
             month,
             year,
@@ -204,7 +204,7 @@ export const editSalary = async (
     mentorType: Role,
 ): Promise<Salary> => {
     const { data } = await axios.post(
-        "http://148.135.136.98:8080/api/salary/edit-salary",
+        "https://thepcbpoint.com/api/salary/edit-salary",
         {
             month,
             year,

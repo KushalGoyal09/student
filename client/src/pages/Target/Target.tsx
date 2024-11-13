@@ -68,7 +68,7 @@ const getLecturesDone = async (
     subject: Subject,
 ): Promise<LecturesDoneResponse["data"]> => {
     const { data } = await axios.post<LecturesDoneResponse>(
-        "http://148.135.136.98:8080/api/target/getLecturesDone",
+        "https://thepcbpoint.com/api/target/getLecturesDone",
         {
             studentId,
             chapterId,

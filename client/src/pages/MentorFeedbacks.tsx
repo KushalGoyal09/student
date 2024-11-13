@@ -21,7 +21,7 @@ export default function MentorFeedback() {
         const getFeedback = async () => {
             try {
                 const { data } = await axios.get<Response>(
-                    "http://148.135.136.98:8080/api/rating/mentor",
+                    "https://thepcbpoint.com/api/rating/mentor",
                     {
                         headers: {
                             Authorization: `Bearer ${localStorage.getItem("token")}`,

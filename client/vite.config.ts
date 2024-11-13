@@ -9,11 +9,11 @@ export default defineConfig({
             "@": path.resolve(__dirname, "./src"),
         },
     },
-    server: {
-        proxy: {
-            "http://148.135.136.98:8080/api": {
-                target: "http://localhost:8080",
-            },
-        },
-    },
+    // server: {
+    //     proxy: {
+    //         "https://thepcbpoint.com/api": {
+    //             target: "http://localhost:8080",
+    //         },
+    //     },
+    // },
 });

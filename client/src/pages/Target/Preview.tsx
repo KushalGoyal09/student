@@ -57,7 +57,7 @@ interface PreviewModalProps {
 
 const sendTargetToBackend = async (targets: DayTarget[], studentId: string) => {
     const response = await fetch(
-        "http://148.135.136.98:8080/api/target/setTarget",
+        "https://thepcbpoint.com/api/target/setTarget",
         {
             method: "POST",
             headers: {

@@ -47,7 +47,7 @@ const getStudentsData = async (
     students: Array<String>,
 ): Promise<StudentWithAddress[]> => {
     const { data } = await axios.post(
-        "http://148.135.136.98:8080/api/new/address",
+        "https://thepcbpoint.com/api/new/address",
         {
             students,
         },
@@ -63,7 +63,7 @@ const getStudentsData = async (
 const fetchKitDispatchData = async (): Promise<Student[]> => {
     try {
         const { data } = await axios.get(
-            "http://148.135.136.98:8080/api/new/kit-data",
+            "https://thepcbpoint.com/api/new/kit-data",
             {
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -80,7 +80,7 @@ const fetchKitDispatchData = async (): Promise<Student[]> => {
 const markReady = async (studentId: string) => {
     try {
         await axios.post(
-            "http://148.135.136.98:8080/api/new/kit-ready",
+            "https://thepcbpoint.com/api/new/kit-ready",
             { studentId },
             {
                 headers: {
@@ -97,7 +97,7 @@ const markDispatched = async (studentId: string) => {
     try {
         const date = new Date();
         await axios.post(
-            "http://148.135.136.98:8080/api/new/kit-dispatch",
+            "https://thepcbpoint.com/api/new/kit-dispatch",
             { studentId, date },
             {
                 headers: {

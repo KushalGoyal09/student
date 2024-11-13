@@ -15,7 +15,7 @@ interface Syllabus {
 
 const fetchSyllabus = async (token: string): Promise<Syllabus> => {
     const response = await fetch(
-        "http://148.135.136.98:8080/api/syllabus/getAll",
+        "https://thepcbpoint.com/api/syllabus/getAll",
         {
             headers: {
                 Authorization: `Bearer ${token}`,
