@@ -9,11 +9,4 @@ export default defineConfig({
             "@": path.resolve(__dirname, "./src"),
         },
     },
-    // server: {
-    //     proxy: {
-    //         "https://thepcbpoint.com/api": {
-    //             target: "http://localhost:8080",
-    //         },
-    //     },
-    // },
 });
