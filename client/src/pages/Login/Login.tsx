@@ -40,7 +40,7 @@ export default function MentorLoginPage() {
         }
         try {
             const { data } = await axios.post<Response>(
-                "https://thepcbpoint.com/api/login",
+                "http://localhost:8080/api/login",
                 {
                     username,
                     password,

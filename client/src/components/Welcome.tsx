@@ -12,7 +12,7 @@ export default function WelcomeComponent({ name }: { name: string }) {
         const fetchWhatsappLink = async () => {
             try {
                 const { data } = await axios.get(
-                    "https://thepcbpoint.com/api/me",
+                    "http://localhost:8080/api/me",
                     {
                         headers: {
                             Authorization: `Bearer ${localStorage.getItem("token")}`,

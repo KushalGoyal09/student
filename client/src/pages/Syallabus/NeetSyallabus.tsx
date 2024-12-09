@@ -29,7 +29,7 @@ const addChapter = async (
     chapterName: string,
 ): Promise<Chapter> => {
     const { data } = await axios.post(
-        "https://thepcbpoint.com/api/syllabus/add",
+        "http://localhost:8080/api/syllabus/add",
         {
             chapterName,
             subject,
@@ -49,7 +49,7 @@ const deleteChapter = async (
 ): Promise<boolean> => {
     try {
         await axios.post(
-            "https://thepcbpoint.com/api/syllabus/delete",
+            "http://localhost:8080/api/syllabus/delete",
             {
                 chapterId,
                 subject,

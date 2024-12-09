@@ -30,7 +30,7 @@ interface Supervisor {
 const fetchSupervisors = async (): Promise<Supervisor[]> => {
     try {
         const { data } = await axios.get(
-            "https://thepcbpoint.com/api/detail/supervisors",
+            "http://localhost:8080/api/detail/supervisors",
             {
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -51,7 +51,7 @@ const fetchSupervisorDetails = async (
 ): Promise<Supervisor> => {
     try {
         const { data } = await axios.post(
-            "https://thepcbpoint.com/api/detail/supervisor-detail",
+            "http://localhost:8080/api/detail/supervisor-detail",
             {
                 supervisorUsername: username,
             },
@@ -73,7 +73,7 @@ const fetchSupervisorDetails = async (
 const fetchSMDetails = async (username: string): Promise<SeniorMentor> => {
     try {
         const { data } = await axios.post(
-            "https://thepcbpoint.com/api/detail/senior-mentor-detail",
+            "http://localhost:8080/api/detail/senior-mentor-detail",
             {
                 seniorMentorUsername: username,
             },

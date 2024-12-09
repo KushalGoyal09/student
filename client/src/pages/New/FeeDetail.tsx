@@ -58,7 +58,7 @@ export default function FeeDetails() {
         const fetchStudents = async () => {
             try {
                 const { data } = await axios.get(
-                    "https://thepcbpoint.com/api/new/fee-data",
+                    "http://localhost:8080/api/new/fee-data",
                     {
                         headers: {
                             Authorization: `Bearer ${localStorage.getItem("token")}`,

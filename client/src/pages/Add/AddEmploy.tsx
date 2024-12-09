@@ -31,7 +31,7 @@ const AddEmploy = () => {
 
         try {
             const { data } = await axios.post(
-                "https://thepcbpoint.com/api/add/employee",
+                "http://localhost:8080/api/add/employee",
                 {
                     name,
                     phoneNumber,

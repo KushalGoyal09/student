@@ -145,7 +145,7 @@ export default function AddStudent() {
         setIsSubmitting(true);
         try {
             await axios.post(
-                "https://thepcbpoint.com/api/add/student",
+                "http://localhost:8080/api/add/student",
                 {
                     name: data.fullName,
                     gender: data.gender,

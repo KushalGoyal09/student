@@ -27,7 +27,7 @@ interface Supervisor {
 
 const fetchSupervisor = async (): Promise<Supervisor[]> => {
     const { data } = await axios.get(
-        "https://thepcbpoint.com/api/role/get-super",
+        "http://localhost:8080/api/role/get-super",
         {
             headers: {
                 Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -42,7 +42,7 @@ const getPermissions = async (supervisorId: string) => {
         success: boolean;
         data: Permission;
     }>(
-        "https://thepcbpoint.com/api/role/get",
+        "http://localhost:8080/api/role/get",
         {
             supervisorId,
         },
@@ -63,7 +63,7 @@ const setPermissionsBackend = async (
 ) => {
     try {
         await axios.post(
-            "https://thepcbpoint.com/api/role/set",
+            "http://localhost:8080/api/role/set",
             {
                 supervisorId,
                 FeeManagement,

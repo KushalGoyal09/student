@@ -56,20 +56,17 @@ interface PreviewModalProps {
 }
 
 const sendTargetToBackend = async (targets: DayTarget[], studentId: string) => {
-    const response = await fetch(
-        "https://thepcbpoint.com/api/target/setTarget",
-        {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-            body: JSON.stringify({
-                studentId,
-                target: targets,
-            }),
+    const response = await fetch("http://localhost:8080/api/target/setTarget", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
-    );
+        body: JSON.stringify({
+            studentId,
+            target: targets,
+        }),
+    });
     return response.json();
 };
 

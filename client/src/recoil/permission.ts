@@ -9,7 +9,7 @@ interface Permission {
 }
 
 const fetchPermission = async (token: string) => {
-    const { data } = await axios.get("https://thepcbpoint.com/api/role/get", {
+    const { data } = await axios.get("http://localhost:8080/api/role/get", {
         headers: {
             Authorization: `Bearer ${token}`,
         },

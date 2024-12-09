@@ -57,7 +57,7 @@ interface ApiResponse {
 
 const fetchWeekData = async (weekStart: string, groupMentorId: string) => {
     const { data } = await axios.post<ApiResponse>(
-        "https://thepcbpoint.com/api/seniorCall/get",
+        "http://localhost:8080/api/seniorCall/get",
         { startDay: weekStart, groupMentorId },
         {
             headers: {
@@ -93,7 +93,7 @@ const fetchWeekData = async (weekStart: string, groupMentorId: string) => {
 
 const fetchMentorsData = async () => {
     const { data } = await axios.get<{ data: GroupMentor[] }>(
-        "https://thepcbpoint.com/api/seniorCall/get-mentors",
+        "http://localhost:8080/api/seniorCall/get-mentors",
         {
             headers: {
                 Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -111,7 +111,7 @@ const saveCallStatus = async (
     callType: CallType,
 ) => {
     await axios.post(
-        "https://thepcbpoint.com/api/seniorCall/save",
+        "http://localhost:8080/api/seniorCall/save",
         { studentId, day, status, date, callType },
         {
             headers: {

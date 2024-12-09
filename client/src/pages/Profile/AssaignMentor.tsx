@@ -32,7 +32,7 @@ interface GroupMentor {
 
 const fetchSeniorMentors = async (): Promise<SeniorMentor[]> => {
     const { data } = await axios.get(
-        "https://thepcbpoint.com/api/assaign/seniorMentors",
+        "http://localhost:8080/api/assaign/seniorMentors",
         {
             headers: {
                 Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -49,7 +49,7 @@ const getStudentMentor = async (
     name: string;
 } | null> => {
     const { data } = await axios.post(
-        "https://thepcbpoint.com/api/profile/student",
+        "http://localhost:8080/api/profile/student",
         { studentId },
         {
             headers: {
@@ -62,7 +62,7 @@ const getStudentMentor = async (
 
 const fetchMentors = async (seniorMentorId: string): Promise<GroupMentor[]> => {
     const { data } = await axios.post(
-        `https://thepcbpoint.com/api/assaign/groupMentors/`,
+        `http://localhost:8080/api/assaign/groupMentors/`,
         {
             seniorMentorId,
         },
@@ -150,7 +150,7 @@ export default function AssignMentor({ studentId, currentMentor }: Props) {
         setIsLoading(true);
         try {
             await axios.post(
-                "https://thepcbpoint.com/api/new/assign-mentor",
+                "http://localhost:8080/api/new/assign-mentor",
                 {
                     studentId,
                     mentorId: selectedGroupMentor,

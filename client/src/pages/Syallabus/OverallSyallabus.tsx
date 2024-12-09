@@ -48,7 +48,7 @@ interface OverallSyllabusResponse {
 }
 
 const fetchOverallSyllabus = async (): Promise<OverallSyllabusResponse> => {
-    const { data } = await axios.get("https://thepcbpoint.com/api/overall", {
+    const { data } = await axios.get("http://localhost:8080/api/overall", {
         headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
         },

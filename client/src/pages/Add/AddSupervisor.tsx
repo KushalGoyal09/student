@@ -34,7 +34,7 @@ const AddSupervisor = () => {
 
         try {
             const { data } = await axios.post(
-                "https://thepcbpoint.com/api/add/supervisor",
+                "http://localhost:8080/api/add/supervisor",
                 {
                     name,
                     username,

@@ -35,7 +35,7 @@ export default function Component() {
         }
         try {
             const { data } = await axios.post<Response>(
-                "https://thepcbpoint.com/api/admin/change-password",
+                "http://localhost:8080/api/admin/change-password",
                 {
                     newPassword: password,
                 },
