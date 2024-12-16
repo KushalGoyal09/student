@@ -41,7 +41,7 @@ const fetchRatings = async (groupMentorId: string): Promise<Ratings | null> => {
             data: Ratings | null;
             success: boolean;
         }>(
-            "http://localhost:8080/api/rating/get",
+            "https://thepcbpoint.com/api/rating/get",
             { groupMentorId },
             {
                 headers: {
@@ -72,7 +72,7 @@ export default function MentorRatingPage() {
         const fetchMentors = async () => {
             try {
                 const { data } = await axios.get(
-                    "http://localhost:8080/api/detail/mentors",
+                    "https://thepcbpoint.com/api/detail/mentors",
                     {
                         headers: {
                             Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -129,7 +129,7 @@ export default function MentorRatingPage() {
         event.preventDefault();
         try {
             await axios.post(
-                "http://localhost:8080/api/rating/supervisor",
+                "https://thepcbpoint.com/api/rating/supervisor",
                 {
                     groupMentorId: selectedMentor,
                     ...ratings,

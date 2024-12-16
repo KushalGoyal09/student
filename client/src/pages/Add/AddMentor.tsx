@@ -43,7 +43,7 @@ export default function AddMentor() {
         const getSupervisors = async () => {
             try {
                 const { data } = await axios.get(
-                    "http://localhost:8080/api/detail/senior-mentors",
+                    "https://thepcbpoint.com/api/detail/senior-mentors",
                     {
                         headers: {
                             Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -73,7 +73,7 @@ export default function AddMentor() {
         setSuccess("");
         try {
             const { data } = await axios.post(
-                "http://localhost:8080/api/add/mentor",
+                "https://thepcbpoint.com/api/add/mentor",
                 formData,
                 {
                     headers: {

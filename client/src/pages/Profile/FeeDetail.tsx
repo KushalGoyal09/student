@@ -74,7 +74,7 @@ export default function FeeManagement({ studentId }: Props) {
             setIsLoading(true);
             try {
                 const { data } = await axios.post(
-                    `http://localhost:8080/api/new/fee-data`,
+                    `https://thepcbpoint.com/api/new/fee-data`,
                     { studentId },
                     {
                         headers: {
@@ -98,7 +98,7 @@ export default function FeeManagement({ studentId }: Props) {
     const sendPaymentToBackend = async () => {
         try {
             const { data } = await axios.post(
-                `http://localhost:8080/api/new/add-payment`,
+                `https://thepcbpoint.com/api/new/add-payment`,
                 {
                     studentId,
                     payment: newPayment,
@@ -153,7 +153,7 @@ export default function FeeManagement({ studentId }: Props) {
         }
         try {
             const { data } = await axios.put(
-                `http://localhost:8080/api/new/update-fee-details`,
+                `https://thepcbpoint.com/api/new/update-fee-details`,
                 {
                     studentId,
                     feesPlan: feePlan,
@@ -196,7 +196,7 @@ export default function FeeManagement({ studentId }: Props) {
         if (!feeData) return;
         try {
             const { data } = await axios.put(
-                `http://localhost:8080/api/new/update-payment`,
+                `https://thepcbpoint.com/api/new/update-payment`,
                 {
                     studentId,
                     paymentIndex: index,

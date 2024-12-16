@@ -46,7 +46,7 @@ const getTargets = async (
     startDate: Date,
 ): Promise<Target[]> => {
     const { data } = await axios.post(
-        "http://localhost:8080/api/target/get",
+        "https://thepcbpoint.com/api/target/get",
         {
             studentId,
             fromDate: format(

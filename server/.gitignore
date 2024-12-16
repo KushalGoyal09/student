@@ -14,7 +14,7 @@ lerna-debug.log*
 
 .cache
 
-# Diagnostic reports (https://nodejs.orghttp://localhost:8080/api/report.html)
+# Diagnostic reports (https://nodejs.orghttps://thepcbpoint.com/api/report.html)
 
 report.[0-9]_.[0-9]_.[0-9]_.[0-9]_.json
 
@@ -50,7 +50,7 @@ bower_components
 
 .lock-wscript
 
-# Compiled binary addons (https://nodejs.orghttp://localhost:8080/api/addons.html)
+# Compiled binary addons (https://nodejs.orghttps://thepcbpoint.com/api/addons.html)
 
 build/Release
 

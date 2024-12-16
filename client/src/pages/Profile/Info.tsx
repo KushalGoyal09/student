@@ -72,7 +72,7 @@ export default function EnhancedStudentProfile({ id }: { id: string }) {
 
     const fetchStudent = useCallback(async () => {
         const { data } = await axios.post(
-            "http://localhost:8080/api/profile/student",
+            "https://thepcbpoint.com/api/profile/student",
             { studentId: id },
             {
                 headers: {
@@ -108,7 +108,7 @@ export default function EnhancedStudentProfile({ id }: { id: string }) {
 
         try {
             await axios.post(
-                "http://localhost:8080/api/profile/update/student",
+                "https://thepcbpoint.com/api/profile/update/student",
                 editedStudent,
                 {
                     headers: {
@@ -135,7 +135,7 @@ export default function EnhancedStudentProfile({ id }: { id: string }) {
 
         try {
             await axios.post(
-                "http://localhost:8080/api/profile/update/status",
+                "https://thepcbpoint.com/api/profile/update/status",
                 {
                     studentId: student.id,
                     date: new Date(),
