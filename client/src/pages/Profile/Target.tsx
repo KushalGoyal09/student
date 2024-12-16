@@ -113,19 +113,27 @@ const TargetComponent: React.FC<Props> = ({ studentId }) => {
     };
 
     const handleMarkComplete = async (targetId: string) => {
-        await markComplete(targetId);
-        setTargets((prevTargets) =>
-            prevTargets.map((t) =>
-                t.id === targetId ? { ...t, completed: true } : t,
-            ),
-        );
+        if (
+            window.confirm(
+                "Are you sure you want to mark this target as complete?",
+            )
+        ) {
+            await markComplete(targetId);
+            setTargets((prevTargets) =>
+                prevTargets.map((t) =>
+                    t.id === targetId ? { ...t, completed: true } : t,
+                ),
+            );
+        }
     };
 
     const handleDeleteTarget = async (targetId: string) => {
-        await deleteTarget(targetId);
-        setTargets((prevTargets) =>
-            prevTargets.filter((t) => t.id !== targetId),
-        );
+        if (window.confirm("Are you sure you want to delete this target?")) {
+            await deleteTarget(targetId);
+            setTargets((prevTargets) =>
+                prevTargets.filter((t) => t.id !== targetId),
+            );
+        }
     };
 
     return (
